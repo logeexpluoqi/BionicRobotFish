@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 09:09:31 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-04 09:36:53
+ * @Last Modified time: 2021-01-04 10:15:26
  */
 /* 
  * @brief: This file is created by 正点原子, modified by luoqi
@@ -17,43 +17,45 @@ void IIC_Init(void)
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOF, ENABLE);
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_10;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;	   //普通输出模式
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;	   //推挽输出
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz; //100MHz
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;	   //上拉
-	GPIO_Init(GPIOF, &GPIO_InitStructure);			   //初始化
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;	   
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;	   
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz; 
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;	   
+	GPIO_Init(GPIOF, &GPIO_InitStructure)
 	IIC_SCL = 1;
 	IIC_SDA = 1;
 }
-//产生IIC起始信号
+
 void IIC_Start(void)
 {
-	SDA_OUT(); //sda线输出
+	SDA_OUT(); 
 	IIC_SDA = 1;
 	IIC_SCL = 1;
 	delay_us(1);
 	IIC_SDA = 0; //START:when CLK is high,DATA change form high to low
 	delay_us(1);
-	IIC_SCL = 0; //钳住I2C总线，准备发送或接收数据
+	IIC_SCL = 0; 
 }
-//产生IIC停止信号
+
 void IIC_Stop(void)
 {
-	SDA_OUT(); //sda线输出
+	SDA_OUT(); 
 	IIC_SCL = 0;
 	IIC_SDA = 0; //STOP:when CLK is high DATA change form low to high
 	delay_us(1);
 	IIC_SCL = 1;
-	IIC_SDA = 1; //发送I2C总线结束信号
+	IIC_SDA = 1; 
 	delay_us(1);
 }
-//等待应答信号到来
-//返回值：1，接收应答失败
-//        0，接收应答成功
+
+/* Return value 
+ * 1: fault
+ * 0: ok
+ */
 u8 IIC_Wait_Ack(void)
 {
 	u8 ucErrTime = 0;
-	SDA_IN(); //SDA设置为输入
+	SDA_IN(); 
 	IIC_SDA = 1;
 	delay_us(1);
 	IIC_SCL = 1;
@@ -67,10 +69,10 @@ u8 IIC_Wait_Ack(void)
 			return 1;
 		}
 	}
-	IIC_SCL = 0; //时钟输出0
+	IIC_SCL = 0; 
 	return 0;
 }
-//产生ACK应答
+
 void IIC_Ack(void)
 {
 	IIC_SCL = 0;
@@ -82,7 +84,7 @@ void IIC_Ack(void)
 	IIC_SCL = 0;
 }
 
-//不产生ACK应答
+
 void IIC_NAck(void)
 {
 	IIC_SCL = 0;
@@ -93,27 +95,28 @@ void IIC_NAck(void)
 	delay_us(1);
 	IIC_SCL = 0;
 }
-//IIC发送一个字节
-//返回从机有无应答
-//1，有应答
-//0，无应答
+
+/* Return value
+ * 1: ack
+ * 0: noack
+ */
 void IIC_Send_Byte(u8 txd)
 {
 	u8 t;
 	SDA_OUT();
-	IIC_SCL = 0; //拉低时钟开始数据传输
+	IIC_SCL = 0; 
 	for (t = 0; t < 8; t++)
 	{
 		IIC_SDA = (txd & 0x80) >> 7;
 		txd <<= 1;
-		delay_us(1); //对TEA5767这三个延时都是必须的
+		delay_us(1); 
 		IIC_SCL = 1;
 		delay_us(1);
 		IIC_SCL = 0;
 		delay_us(1);
 	}
 }
-//读1个字节，ack=1时，发送ACK，ack=0，发送nACK
+/* ack: 1,send ack, 0: send nack */
 u8 IIC_Read_Byte(unsigned char ack)
 {
 	unsigned char i, receive = 0;
@@ -129,8 +132,8 @@ u8 IIC_Read_Byte(unsigned char ack)
 		delay_us(1);
 	}
 	if (!ack)
-		IIC_NAck(); //发送nACK
+		IIC_NAck();
 	else
-		IIC_Ack(); //发送ACK
+		IIC_Ack(); 
 	return receive;
 }

@@ -1,8 +1,8 @@
 /*
  * @Author: luoqi 
  * @Date: 2021-01-04 09:54:11 
- * @Last Modified by:   luoqi 
- * @Last Modified time: 2021-01-04 09:54:11 
+ * @Last Modified by: luoqi
+ * @Last Modified time: 2021-01-04 10:17:33
  */
 /* 
  * @brief: This file is created by 正点原子, modified by luoqi
@@ -10,7 +10,7 @@
 #include "usart.h"
 #include "sys.h"
 
-//如果使用ucos,则包括下面的头文件即可.
+//If use ucos, include follows
 #if SYSTEM_SUPPORT_UCOS
 #include "includes.h" //ucos 使用
 #endif
@@ -26,6 +26,7 @@ struct __FILE
 };
 
 FILE __stdout;
+
 //定义_sys_exit()以避免使用半主机模式
 _sys_exit(int x)
 {
