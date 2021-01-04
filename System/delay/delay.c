@@ -1,21 +1,30 @@
+/*
+ * @Author: luoqi 
+ * @Date: 2021-01-04 09:40:15 
+ * @Last Modified by: luoqi
+ * @Last Modified time: 2021-01-04 09:45:23
+ */
+/* 
+ * @brief: This file is created by 正点原子, modified by luoqi
+ */
 #include "delay.h"
 #include "sys.h"
 
-//如果使用ucos,则包括下面的头文件即可.
+/* If use ucos, need too include follows */
 #if SYSTEM_SUPPORT_UCOS
 #include "includes.h" //ucos 使用
 #endif
 
-static u8 fac_us = 0;  //us延时倍乘数
-static u16 fac_ms = 0; //ms延时倍乘数,在ucos下,代表每个节拍的ms数
+static u8 fac_us = 0;  //us delay factor 
+static u16 fac_ms = 0; //ms delay factor 
 
-#ifdef OS_CRITICAL_METHOD //如果OS_CRITICAL_METHOD定义了,说明使用ucosII了.
-//systick中断服务函数,使用ucos时用到
+#ifdef OS_CRITICAL_METHOD // if defined OS_CRITICAL_METHOD, used ucosII
+
 void SysTick_Handler(void)
 {
-	OSIntEnter(); //进入中断
-	OSTimeTick(); //调用ucos的时钟服务程序
-	OSIntExit();  //触发任务切换软中断
+	OSIntEnter(); // enter interrupt 
+	OSTimeTick(); // call ucos clock service 
+	OSIntExit();  // trigger soft interruput 
 }
 #endif
 

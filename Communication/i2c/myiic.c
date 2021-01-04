@@ -1,7 +1,16 @@
+/*
+ * @Author: luoqi 
+ * @Date: 2021-01-04 09:09:31 
+ * @Last Modified by: luoqi
+ * @Last Modified time: 2021-01-04 09:36:53
+ */
+/* 
+ * @brief: This file is created by 正点原子, modified by luoqi
+ */
 #include "myiic.h"
 #include "delay.h"
 
-//初始化IIC
+/* Init I2C */
 void IIC_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;

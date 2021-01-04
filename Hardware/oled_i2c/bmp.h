@@ -1,8 +1,14 @@
-
-//存储图片数据，图片大小为64*32像素
-
-#ifndef __BMP_H
-#define __BMP_H
+/*
+ * @Author: luoqi 
+ * @Date: 2021-01-04 09:17:22 
+ * @Last Modified by: luoqi
+ * @Last Modified time: 2021-01-04 09:37:01
+ */
+/* 
+ * @brief: This file is created by ????, modified by luoqi
+ */
+#ifndef _BMP_H
+#define _BMP_H
 
 
 unsigned char BMP1[] =

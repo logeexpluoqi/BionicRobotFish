@@ -1,11 +1,21 @@
-#ifndef __OLEDFONT_H
-#define __OLEDFONT_H 	   
-//常用ASCII表
-//偏移量32
-//ASCII字符集
-//偏移量32
-//大小:12*6
-/************************************6*8的点阵************************************/
+/*
+ * @Author: luoqi 
+ * @Date: 2021-01-04 09:37:28 
+ * @Last Modified by: luoqi
+ * @Last Modified time: 2021-01-04 09:40:01
+ */
+/* 
+ * @brief: This file is created by 正点原子, modified by luoqi
+ */
+#ifndef _OLEDFONT_H
+#define _OLEDFONT_H 	   
+
+/* ASCII table
+ * offset: 32
+ * size 12x6
+ */
+
+/* 6x8 fonts */
 const unsigned char F6x8[][6] =		
 {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00,// sp
@@ -101,7 +111,8 @@ const unsigned char F6x8[][6] =
   0x00, 0x44, 0x64, 0x54, 0x4C, 0x44,// z
   0x14, 0x14, 0x14, 0x14, 0x14, 0x14,// horiz lines
 };
-/****************************************8*16的点阵************************************/
+
+/* 8x16 fonts */
 const unsigned char F8X16[]=	  
 {
   0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,// 0

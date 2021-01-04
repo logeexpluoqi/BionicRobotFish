@@ -1,14 +1,20 @@
-#ifndef __USART_H
-#define __USART_H
+/*
+ * @Author: luoqi 
+ * @Date: 2021-01-04 09:54:24 
+ * @Last Modified by: luoqi
+ * @Last Modified time: 2021-01-04 09:54:53
+ */
+/* 
+ * @brief: This file is created by 正点原子, modified by luoqi
+ */
+#ifndef _USART_H
+#define _USART_H
 #include "stdio.h"
 #include "stm32f4xx_conf.h"
 #include "sys.h"
 //////////////////////////////////////////////////////////////////////////////////
 
 //串口1初始化
-//STM32F4工程模板-库函数版本
-//淘宝店铺：http://mcudev.taobao.com
-//********************************************************************************
 //V1.3修改说明
 //支持适应不同频率下的串口波特率设置.
 //加入了对printf的支持

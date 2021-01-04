@@ -1,17 +1,23 @@
+/*
+ * @Author: luoqi 
+ * @Date: 2021-01-04 08:49:52 
+ * @Last Modified by: luoqi
+ * @Last Modified time: 2021-01-04 09:37:15
+ */
+/* 
+ * @brief: This file is created by 正点原子, modified by luoqi
+ */
 #include "oled.h"
 #include "myiic.h"
 #include "oledfont.h"
 #include "stdlib.h"
-//OLED的显存
-//存放格式如下.
-//[0]0 1 2 3 ... 127
-// ....
-// ....
-//[7]0 1 2 3 ... 127
+/* //OLED's display RAM, the data format:
+* [0]0 1 2 3 ... 127
+*  ....
+*  ....
+* [7]0 1 2 3 ... 127 */
 
-/**********************************************
-// IIC Write Command
-**********************************************/
+/* I2C write command */
 void Write_IIC_Command(unsigned char IIC_Command)
 {
 	IIC_Start();
@@ -23,9 +29,7 @@ void Write_IIC_Command(unsigned char IIC_Command)
 	IIC_Wait_Ack();
 	IIC_Stop();
 }
-/**********************************************
-// IIC Write Data
-**********************************************/
+/* I2C write data */
 void Write_IIC_Data(unsigned char IIC_Data)
 {
 	IIC_Start();
@@ -50,9 +54,7 @@ void OLED_WR_Byte(unsigned dat, unsigned cmd)
 	}
 }
 
-/********************************************
-// fill_Picture
-********************************************/
+/*  Fill_Picture */
 void fill_picture(unsigned char fill_Data)
 {
 	unsigned char m, n;
@@ -68,60 +70,66 @@ void fill_picture(unsigned char fill_Data)
 	}
 }
 
+/* Oled draw a point */
 void OLED_Set_Pos(unsigned char x, unsigned char y)
 {
 	OLED_WR_Byte(0xb0 + y, OLED_CMD);
 	OLED_WR_Byte(((x & 0xf0) >> 4) | 0x10, OLED_CMD);
 	OLED_WR_Byte((x & 0x0f), OLED_CMD);
 }
-//开启OLED显示
+
+/* Oled display ON */
 void OLED_Display_On(void)
 {
 	OLED_WR_Byte(0X8D, OLED_CMD); //SET DCDC命令
 	OLED_WR_Byte(0X14, OLED_CMD); //DCDC ON
 	OLED_WR_Byte(0XAF, OLED_CMD); //DISPLAY ON
 }
-//关闭OLED显示
+
+/* oled display OFF */
 void OLED_Display_Off(void)
 {
 	OLED_WR_Byte(0X8D, OLED_CMD); //SET DCDC命令
 	OLED_WR_Byte(0X10, OLED_CMD); //DCDC OFF
 	OLED_WR_Byte(0XAE, OLED_CMD); //DISPLAY OFF
 }
-//清屏函数,清完屏,整个屏幕是黑色的!和没点亮一样!!!
+
+/* Clear oled, all pix is OFF */
 void OLED_Clear(void)
 {
 	u8 i, n;
 	for (i = 0; i < 8; i++)
 	{
-		OLED_WR_Byte(0xb0 + i, OLED_CMD); //设置页地址（0~7）
-		OLED_WR_Byte(0x00, OLED_CMD);	  //设置显示位置—列低地址
-		OLED_WR_Byte(0x10, OLED_CMD);	  //设置显示位置—列高地址
+		OLED_WR_Byte(0xb0 + i, OLED_CMD); // set page addr(0-7)
+		OLED_WR_Byte(0x00, OLED_CMD);	  // set display position - column lower addr
+		OLED_WR_Byte(0x10, OLED_CMD);	  // set display position - column higher addr 
 		for (n = 0; n < 128; n++)
 		{
 			OLED_WR_Byte(0, OLED_DATA);
 		}
-	} //更新显示
+	} // update display
 }
 void OLED_On(void)
 {
 	u8 i, n;
 	for (i = 0; i < 8; i++)
 	{
-		OLED_WR_Byte(0xb0 + i, OLED_CMD); //设置页地址（0~7）
-		OLED_WR_Byte(0x00, OLED_CMD);	  //设置显示位置—列低地址
-		OLED_WR_Byte(0x10, OLED_CMD);	  //设置显示位置—列高地址
+		OLED_WR_Byte(0xb0 + i, OLED_CMD); // set page addr(0-7)
+		OLED_WR_Byte(0x00, OLED_CMD);	  // set display position - column lower addr
+		OLED_WR_Byte(0x10, OLED_CMD);	  // set display position - column higher addr 
 		for (n = 0; n < 128; n++)
 		{
 			OLED_WR_Byte(1, OLED_DATA);
 		}
-	} //更新显示
+	} //update display
 }
-//在指定位置显示一个字符,包括部分字符
-//x:0~127
-//y:0~63
-//mode:0,反白显示;1,正常显示
-//size:选择字体 16/12
+
+/* Display a char at position (x,y)
+ * x: 0 - 127
+ * y: 0 - 63
+ * Char_Size: 16/12
+ */
+
 void OLED_ShowChar(u8 x, u8 y, u8 chr, u8 Char_Size)
 {
 	unsigned char c = 0, i = 0;
@@ -153,7 +161,8 @@ void OLED_ShowChar(u8 x, u8 y, u8 chr, u8 Char_Size)
 		}
 	}
 }
-//m^n函数
+
+//m^n function
 u32 oled_pow(u8 m, u8 n)
 {
 	u32 result = 1;
@@ -163,12 +172,13 @@ u32 oled_pow(u8 m, u8 n)
 	}
 	return result;
 }
-//显示2个数字
-//x,y :起点坐标
-//len :数字的位数
-//size:字体大小
-//mode:模式	0,填充模式;1,叠加模式
-//num:数值(0~4294967295);
+
+/* Display integer numbers 
+ * x,y: start position
+ * len: number digits
+ * size: font size
+ * num: integer number
+ */
 void OLED_ShowNum(u8 x, u8 y, u32 num, u8 len, u8 size2)
 {
 	u8 t, temp;
@@ -189,7 +199,8 @@ void OLED_ShowNum(u8 x, u8 y, u32 num, u8 len, u8 size2)
 		OLED_ShowChar(x + (size2 / 2) * t, y, temp + '0', size2);
 	}
 }
-//显示一个字符号串
+
+/* Display a string */
 void OLED_ShowString(u8 x, u8 y, u8 *chr, u8 Char_Size)
 {
 	unsigned char j = 0;
@@ -205,7 +216,8 @@ void OLED_ShowString(u8 x, u8 y, u8 *chr, u8 Char_Size)
 		j++;
 	}
 }
-//显示汉字
+
+/* Display a Chinese */
 void OLED_ShowCHinese(u8 x, u8 y, u8 no)
 {
 	u8 t, adder = 0;
@@ -222,7 +234,8 @@ void OLED_ShowCHinese(u8 x, u8 y, u8 no)
 		adder += 1;
 	}
 }
-/***********功能描述：显示显示BMP图片128×64起始点坐标(x,y),x的范围0～127，y为页的范围0～7*****************/
+
+/* Display a max 128x64 BMP picture, start position is (x,y) */
 void OLED_DrawBMP(unsigned char x0, unsigned char y0, unsigned char x1, unsigned char y1, unsigned char BMP[])
 {
 	unsigned int j = 0;

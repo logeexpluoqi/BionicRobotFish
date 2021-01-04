@@ -1,3 +1,12 @@
+/*
+ * @Author: luoqi 
+ * @Date: 2021-01-04 09:45:36 
+ * @Last Modified by:   luoqi 
+ * @Last Modified time: 2021-01-04 09:45:36 
+ */
+/* 
+ * @brief: This file is created by 正点原子, modified by luoqi
+ */
 #include "sys.h"  
 
 //系统时钟初始化	
