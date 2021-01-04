@@ -28,10 +28,10 @@ void SysTick_Handler(void)
 }
 #endif
 
-//初始化延迟函数
-//当使用ucos的时候,此函数会初始化ucos的时钟节拍
-//SYSTICK的时钟固定为HCLK时钟的1/8
-//SYSCLK:系统时钟
+/* Initialize delay function
+ * SYSCLK = HCLK/8
+ * SYSCLK: system clock
+ */
 void delay_init(u8 SYSCLK)
 {
 #ifdef OS_CRITICAL_METHOD //如果OS_CRITICAL_METHOD定义了,说明使用ucosII了.
@@ -96,9 +96,10 @@ void delay_ms(u16 nms)
 	delay_us((u32)(nms * 1000)); //普通方式延时
 }
 #else //不用ucos时
-//延时nus
-//nus为要延时的us数.
-//注意:nus的值,不要大于798915us
+
+/* Delay n us 
+ * n < 78915
+ */
 void delay_us(u32 nus)
 {
 	u32 temp;
@@ -112,12 +113,13 @@ void delay_us(u32 nus)
 	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;		//关闭计数器
 	SysTick->VAL = 0X00;							//清空计数器
 }
-//延时nms
-//注意nms的范围
-//SysTick->LOAD为24位寄存器,所以,最大延时为:
-//nms<=0xffffff*8*1000/SYSCLK
-//SYSCLK单位为Hz,nms单位为ms
-//对168M条件下,nms<=798ms
+
+/* Delay n ms
+ * SysTick -> load is a 24bit register
+ * nms < 0xfffffff*8*1000 / SYSCLK
+ * SYSCLK unit is Hz, nms unit is ms
+ * SYSCLK = 168MHz, nms <= 798ms
+ */
 void delay_xms(u16 nms)
 {
 	u32 temp;
@@ -131,8 +133,10 @@ void delay_xms(u16 nms)
 	SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;		//关闭计数器
 	SysTick->VAL = 0X00;							//清空计数器
 }
-//延时nms
-//nms:0~65535
+
+/* Delay n ms
+ * nms: 0 - 65535
+ */
 void delay_ms(u16 nms)
 {
 	u8 repeat = nms / 540; //这里用540,是考虑到某些客户可能超频使用,

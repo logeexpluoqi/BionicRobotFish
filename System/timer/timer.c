@@ -5,6 +5,7 @@
  * @Last Modified time: 2021-01-04 09:53:40
  */
 #include "timer.h"
+#include "time_slice.h"
 
 /* Timer initialize
  * arr: auto reload value
@@ -41,17 +42,9 @@ void TIM3_IRQHandler(void)
 {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) == SET) 
 	{
+		time_slice_tick();
 	}
 	TIM_ClearITPendingBit(TIM3, TIM_IT_Update); 
-}
-
-void TIM6_DAC_IRQHandler(void)
-{
-	if (TIM_GetITStatus(TIM6, TIM_IT_Update) == SET) 
-	{
-		
-	}
-	TIM_ClearITPendingBit(TIM6, TIM_IT_Update); 
 }
 
 void TIM6_Int_Init(u16 arr, u16 psc)
