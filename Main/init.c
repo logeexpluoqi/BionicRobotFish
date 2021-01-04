@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 13:44:41 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-04 18:53:36
+ * @Last Modified time: 2021-01-04 19:20:53
  */
 
 #include "init.h"
@@ -18,4 +18,7 @@ void sys_init()
     OLED_Clear();
     led_init();
     time_slice_init();
+
+    OLED_ShowString(30,0,"WIAS_DSFT",16);
+	OLED_ShowString(64, 7, "by luoqi", 12);
 }

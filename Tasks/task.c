@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 10:41:02 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-04 18:49:26
+ * @Last Modified time: 2021-01-04 19:24:47
  */
 
 #include "task.h"
@@ -61,17 +61,7 @@ void task_500ms()
 
 void task_1s()
 {
-    static unsigned char state = 0;
-    
-    state = !state;
-    if(state)
-    {
-        led_set(LED_0, LED_ON);
-    }
-    else
-    {
-        led_set(LED_0, LED_OFF);
-    }
+    led_sys_run();
 }
 
 void task_5s()

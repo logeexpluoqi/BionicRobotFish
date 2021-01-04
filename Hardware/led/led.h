@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 13:55:04 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-04 18:48:21
+ * @Last Modified time: 2021-01-04 19:22:50
  */
 
 #ifndef _LED_H
@@ -22,5 +22,6 @@ typedef enum LED
 
 void led_init(void);
 void led_set(Led led_num, LedState state);
+void led_sys_run(void);
 
 #endif

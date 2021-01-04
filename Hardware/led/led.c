@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 18:21:16 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-04 18:58:18
+ * @Last Modified time: 2021-01-04 19:22:23
  */
 /*
  * @Author: luoqi 
@@ -77,4 +77,20 @@ void led_set(Led led_num, LedState state)
                 break;
         }
     }
+}
+
+void led_sys_run()
+{
+    static unsigned char state = 0;
+    
+    state = !state;
+    if(state)
+    {
+        led_set(LED_0, LED_ON);
+    }
+    else
+    {
+        led_set(LED_0, LED_OFF);
+    }
+    
 }
