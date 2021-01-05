@@ -2,14 +2,14 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 10:41:02 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-04 19:24:47
+ * @Last Modified time: 2021-01-05 22:34:58
  */
 
 #include "task.h"
 #include "time_slice.h"
 
-#include "oled.h"
-#include "led.h"
+#include "oled_task.h"
+#include "led_task.h"
 
 TimeSliceInitTypedef Tasks[TASK_NUM] = 
 {
@@ -56,7 +56,7 @@ void task_200ms()
 
 void task_500ms()
 {
-
+    oled_disp_test();
 }
 
 void task_1s()

@@ -5,8 +5,6 @@
  * @Last Modified time: 2021-01-04 19:20:31
  */
 #include "init.h"
-#include "delay.h"  
-#include "oled.h"
 #include "time_slice.h"
 
 int main(void)
