@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 10:41:02 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-05 22:34:58
+ * @Last Modified time: 2021-01-06 20:41:05
  */
 
 #include "task.h"
@@ -10,6 +10,7 @@
 
 #include "oled_task.h"
 #include "led_task.h"
+#include "keyboard_task.h"
 
 TimeSliceInitTypedef Tasks[TASK_NUM] = 
 {
@@ -36,7 +37,7 @@ void task_10ms()
 
 void task_20ms()
 {
-
+    key_scan();
 }
 
 void task_50ms()

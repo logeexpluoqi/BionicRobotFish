@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 13:44:41 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-04 19:29:18
+ * @Last Modified time: 2021-01-06 19:21:10
  */
 
 #include "init.h"
@@ -10,6 +10,8 @@
 #include "time_slice.h"
 #include "oled.h"
 #include "led.h"
+#include "can.h"
+#include "keyboard.h"
 
 void sys_init()
 {
@@ -17,6 +19,7 @@ void sys_init()
     OLED_Init();
     OLED_Clear();
     led_init();
+	keyboard_init();
     
     time_slice_init();
 
