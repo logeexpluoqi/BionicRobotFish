@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 21:22:57 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-05 17:29:23
+ * @Last Modified time: 2021-01-06 15:17:58
  */
 /* 
  * modified from 正点原子，by luoqi
@@ -22,8 +22,8 @@
  * brp: Baud rate divider; Rage: 1-1024; tq = (brp)*tpclk1;
  * mode: @ref CAN_operating_mode; Rage: CAN_Mode_Normal, CAN_Mode_LoopBack;
  * 
- * fpclk is 36MHz when this clock initialized, if set CAN_Normal_Init(CAN_SJW_1tq,CAN_BS2_6tq,CAN_BS1_7tq,6,CAN_Mode_LoopBack)
- * buad rate is 42MHz / ((1+6+7) * 6) = 500Kbps
+ * fpclk is 36MHz when this clock initialized, if set CAN_Normal_Init(CAN_SJW_1tq,
+ * CAN_BS2_6tq,CAN_BS1_7tq,6,CAN_Mode_LoopBack) buad rate is 42MHz / ((1+6+7) * 6) = 500Kbps
  * 
  * return value: 0, initial is ok; 1: fault
  */
@@ -121,10 +121,14 @@ u8 can_receive_msg(u8 *buf)
     u32 i;
     CanRxMsg RxMessage;
     if (CAN_MessagePending(CAN1, CAN_FIFO0) == 0)
+    {
         return 0;                             //没有接收到数据,直接退出
+    }
     CAN_Receive(CAN1, CAN_FIFO0, &RxMessage); //读取数据
     for (i = 0; i < RxMessage.DLC; i++)
+    {
         buf[i] = RxMessage.Data[i];
+    }
     return RxMessage.DLC;
 }
 

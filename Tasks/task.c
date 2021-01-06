@@ -41,7 +41,7 @@ void task_20ms()
 
 void task_50ms()
 {
-
+    oled_disp_test();
 }
 
 void task_100ms()
@@ -56,7 +56,7 @@ void task_200ms()
 
 void task_500ms()
 {
-    oled_disp_test();
+    
 }
 
 void task_1s()

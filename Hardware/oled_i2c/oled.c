@@ -130,7 +130,7 @@ void OLED_On(void)
  * Char_Size: 16/12
  */
 
-void OLED_ShowChar(u8 x, u8 y, u8 chr, u8 Char_Size)
+void OLED_ShowChar(u8 x, u8 y, u8 chr, FontSize f_size)
 {
 	unsigned char c = 0, i = 0;
 	c = chr - ' '; //得到偏移后的值
@@ -139,7 +139,7 @@ void OLED_ShowChar(u8 x, u8 y, u8 chr, u8 Char_Size)
 		x = 0;
 		y = y + 2;
 	}
-	if (Char_Size == 16)
+	if (f_size == FONT_LARGE)
 	{
 		OLED_Set_Pos(x, y);
 		for (i = 0; i < 8; i++)
@@ -179,7 +179,7 @@ u32 oled_pow(u8 m, u8 n)
  * size: font size
  * num: integer number
  */
-void OLED_ShowNum(u8 x, u8 y, u32 num, u8 len, u8 size2)
+void OLED_ShowNum(u8 x, u8 y, u32 num, u8 len, FontSize f_size)
 {
 	u8 t, temp;
 	u8 enshow = 0;
@@ -190,23 +190,23 @@ void OLED_ShowNum(u8 x, u8 y, u32 num, u8 len, u8 size2)
 		{
 			if (temp == 0)
 			{
-				OLED_ShowChar(x + (size2 / 2) * t, y, ' ', size2);
+				OLED_ShowChar(x + (f_size / 2) * t, y, ' ', f_size);
 				continue;
 			}
 			else
 				enshow = 1;
 		}
-		OLED_ShowChar(x + (size2 / 2) * t, y, temp + '0', size2);
+		OLED_ShowChar(x + (f_size / 2) * t, y, temp + '0', f_size);
 	}
 }
 
 /* Display a string */
-void OLED_ShowString(u8 x, u8 y, u8 *chr, u8 Char_Size)
+void OLED_ShowString(u8 x, u8 y, u8 *chr, FontSize f_size)
 {
 	unsigned char j = 0;
 	while (chr[j] != '\0')
 	{
-		OLED_ShowChar(x, y, chr[j], Char_Size);
+		OLED_ShowChar(x, y, chr[j], f_size);
 		x += 8;
 		if (x > 120)
 		{

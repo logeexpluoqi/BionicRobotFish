@@ -20,6 +20,6 @@ void sys_init()
     
     time_slice_init();
 
-    OLED_ShowString(30,0,"WIAS_DSFT",16);
-	OLED_ShowString(64, 7, "by luoqi", 12);
+    OLED_ShowString(30,0,"WIAS_DSFT",FONT_LARGE);
+	OLED_ShowString(64, 7, "by luoqi", FONT_SMALL);
 }
