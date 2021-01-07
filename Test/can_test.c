@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-07 10:00:56 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-07 15:19:47
+ * @Last Modified time: 2021-01-07 17:50:46
  */
 
 #include "can_test.h"
@@ -45,9 +45,11 @@ void can_test()
     unsigned char receive_data_len;
     unsigned char i;
 
+    can1_msg.dlc = 8; // a frame 8 byte data
+
     if(key.key_1 == KEY_H)
     {
-        is_send_fault = can_send_msg(can1_msg.send_data, 8);
+        is_send_fault = can_send_msg(can1_msg);
         if(is_send_fault)
         {
             OLED_ShowChar(110, 2, 'X', FONT_LARGE);
@@ -55,7 +57,7 @@ void can_test()
 		else
 		{
 			OLED_ShowChar(110, 2, 'O', FONT_LARGE);
-            for(i=0; i<8; i++)
+            for(i=0; i<can1_msg.dlc; i++)
             {
                 OLED_ShowChar(20+8*i, 2, can1_msg.send_data[i], FONT_LARGE);
             }
@@ -63,11 +65,16 @@ void can_test()
         receive_data_len = can_receive_msg(can1_msg.receive_data);
         if(receive_data_len != 0)
         {
+            OLED_ShowChar(110, 4, 'O', FONT_LARGE);
             for(i=0; i < receive_data_len; i++)
             {
                 OLED_ShowChar(20+8*i, 4, can1_msg.receive_data[i], FONT_LARGE);
             }
             receive_data_len = 0;
+        }
+        else
+        {
+            OLED_ShowChar(110, 4, 'X', FONT_LARGE);
         }
     }
     if(key.key_2 == KEY_H)
@@ -78,6 +85,7 @@ void can_test()
             OLED_ShowChar(20+8*i, 4, ' ', FONT_LARGE);
         }
         OLED_ShowChar(110, 2, ' ', FONT_LARGE);
+        OLED_ShowChar(110, 4, ' ', FONT_LARGE);
     }
 }
 

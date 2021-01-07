@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 21:22:57 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-07 13:55:15
+ * @Last Modified time: 2021-01-07 17:37:29
  */
 /* 
  * modified from 正点原子，by luoqi
@@ -19,7 +19,7 @@ void can_init()
     can1.tsjw = CAN_SJW_1tq;
     can1.tbs2 = CAN_BS2_6tq;
     can1.tbs1 = CAN_BS1_7tq;
-    can1.brp = 6;
+    can1.brp = 3;
     can1.mode = CAN_Mode_LoopBack;
 	
     can1_mode_init(&can1);
@@ -90,36 +90,37 @@ unsigned char can1_mode_init(CanInitTypedef* can_init_data)
 
 #if CAN1_RX0_INT_ENABLE
 
-    CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE); //FIFO0消息挂号中断允许.
+    CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE); // fifo 0  msg append enable 
 
     NVIC_InitStructure.NVIC_IRQChannel = CAN1_RX0_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1; // 主优先级为1
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;        // 次优先级为0
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1; 
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 #endif
     return 0;
 }
 
-unsigned char can_send_msg(unsigned char *msg, unsigned char len)
+unsigned char can_send_msg(CanMsgTypedef msg)
 {
     unsigned char mbox;
     unsigned short i = 0;
     CanTxMsg TxMessage;
-    TxMessage.StdId = 0x12; // 标准标识符为0
-    TxMessage.ExtId = 0x12; // 设置扩展标示符（29位）
-    TxMessage.IDE = 0;      // 使用扩展标识符
-    TxMessage.RTR = 0;      // 消息类型为数据帧，一帧8位
-    TxMessage.DLC = len;    // 发送两帧信息
-    for (i = 0; i < len; i++)
+    TxMessage.StdId = msg.std_id; // standard ID identify 
+    TxMessage.ExtId = msg.ext_id; // extend ID identify 
+    TxMessage.IDE = msg.ide;      // indentifier extension
+    TxMessage.RTR = msg.rtr;      // remote transmission request
+    TxMessage.DLC = msg.dlc;    // data length code
+
+    for (i = 0; i < msg.dlc; i++)
     {
-        TxMessage.Data[i] = msg[i]; // 第一帧信息
+        TxMessage.Data[i] = msg.send_data[i]; // send a frame
     }
     mbox = CAN_Transmit(CAN1, &TxMessage);
     i = 0;
     while ((CAN_TransmitStatus(CAN1, mbox) == CAN_TxStatus_Failed) && (i < 0XFFF))
     {
-        i++; //等待发送结束
+        i++; // wait for send finish
     }
     if (i >= 0XFFF)
     {
@@ -135,9 +136,9 @@ unsigned char can_receive_msg(unsigned char *buf)
     CanRxMsg RxMessage;
     if (CAN_MessagePending(CAN1, CAN_FIFO0) == 0)
     {
-        return 0;                             //没有接收到数据,直接退出
+        return 0; // if no data received, quit 
     }
-    CAN_Receive(CAN1, CAN_FIFO0, &RxMessage); //读取数据
+    CAN_Receive(CAN1, CAN_FIFO0, &RxMessage); // read receive data from fifo
     for (i = 0; i < RxMessage.DLC; i++)
     {
         buf[i] = RxMessage.Data[i];
@@ -145,7 +146,7 @@ unsigned char can_receive_msg(unsigned char *buf)
     return RxMessage.DLC;
 }
 
-#if CAN1_RX0_INT_ENABLE //使能RX0中断
+#if CAN1_RX0_INT_ENABLE // enable can1 rx0 interrupt
 //中断服务函数
 void CAN1_RX0_IRQHandler(void)
 {

@@ -207,7 +207,14 @@ void OLED_ShowString(u8 x, u8 y, u8 *chr, FontSize f_size)
 	while (chr[j] != '\0')
 	{
 		OLED_ShowChar(x, y, chr[j], f_size);
-		x += 8;
+		if(f_size == FONT_LARGE)
+		{
+			x += 8;
+		}
+		else if(f_size == FONT_SMALL)
+		{
+			x += 6;
+		}
 		if (x > 120)
 		{
 			x = 0;
