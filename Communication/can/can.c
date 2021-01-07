@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 21:22:57 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-06 15:17:58
+ * @Last Modified time: 2021-01-07 13:55:15
  */
 /* 
  * modified from 正点原子，by luoqi
@@ -11,6 +11,19 @@
 #include "can.h"
 #include "stm32f4xx_can.h"
 
+
+void can_init()
+{
+    CanInitTypedef can1;
+
+    can1.tsjw = CAN_SJW_1tq;
+    can1.tbs2 = CAN_BS2_6tq;
+    can1.tbs1 = CAN_BS1_7tq;
+    can1.brp = 6;
+    can1.mode = CAN_Mode_LoopBack;
+	
+    can1_mode_init(&can1);
+}
 
 /* CAN initialize
  * tsjw: Resynchronize jump time unit. @ref CAN_synchronisation_jump_width;  
@@ -27,7 +40,7 @@
  * 
  * return value: 0, initial is ok; 1: fault
  */
-u8 can_init(u8 tsjw, u8 tbs2, u8 tbs1, u16 brp, u8 mode)
+unsigned char can1_mode_init(CanInitTypedef* can_init_data)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     CAN_InitTypeDef CAN_InitStructure;
@@ -56,11 +69,11 @@ u8 can_init(u8 tsjw, u8 tbs2, u8 tbs1, u16 brp, u8 mode)
     CAN_InitStructure.CAN_NART = ENABLE;   // 禁止报文自动传送
     CAN_InitStructure.CAN_RFLM = DISABLE;  // 报文不锁定,新的覆盖旧的
     CAN_InitStructure.CAN_TXFP = DISABLE;  // 优先级由报文标识符决定
-    CAN_InitStructure.CAN_Mode = mode;     // 模式设置
-    CAN_InitStructure.CAN_SJW = tsjw;      // 重新同步跳跃宽度(Tsjw)为tsjw+1个时间单位 CAN_SJW_1tq~CAN_SJW_4tq
-    CAN_InitStructure.CAN_BS1 = tbs1;      // Tbs1范围CAN_BS1_1tq ~CAN_BS1_16tq
-    CAN_InitStructure.CAN_BS2 = tbs2;      // Tbs2范围CAN_BS2_1tq ~	CAN_BS2_8tq
-    CAN_InitStructure.CAN_Prescaler = brp; // 分频系数(Fdiv)为brp+1
+    CAN_InitStructure.CAN_Mode = can_init_data->mode;     // 模式设置
+    CAN_InitStructure.CAN_SJW = can_init_data->tsjw;      // 重新同步跳跃宽度(Tsjw)为tsjw+1个时间单位 CAN_SJW_1tq~CAN_SJW_4tq
+    CAN_InitStructure.CAN_BS1 = can_init_data->tbs1;      // Tbs1范围CAN_BS1_1tq ~CAN_BS1_16tq
+    CAN_InitStructure.CAN_BS2 = can_init_data->tbs2;      // Tbs2范围CAN_BS2_1tq ~	CAN_BS2_8tq
+    CAN_InitStructure.CAN_Prescaler = can_init_data->brp; // 分频系数(Fdiv)为brp+1
     CAN_Init(CAN1, &CAN_InitStructure);    // 初始化CAN1
 
     /* Configure CAN filter */
@@ -88,10 +101,10 @@ u8 can_init(u8 tsjw, u8 tbs2, u8 tbs1, u16 brp, u8 mode)
     return 0;
 }
 
-u8 can_send_msg(u8 *msg, u8 len)
+unsigned char can_send_msg(unsigned char *msg, unsigned char len)
 {
-    u8 mbox;
-    u16 i = 0;
+    unsigned char mbox;
+    unsigned short i = 0;
     CanTxMsg TxMessage;
     TxMessage.StdId = 0x12; // 标准标识符为0
     TxMessage.ExtId = 0x12; // 设置扩展标示符（29位）
@@ -116,9 +129,9 @@ u8 can_send_msg(u8 *msg, u8 len)
     return 0;
 }
 
-u8 can_receive_msg(u8 *buf)
+unsigned char can_receive_msg(unsigned char *buf)
 {
-    u32 i;
+    unsigned int i;
     CanRxMsg RxMessage;
     if (CAN_MessagePending(CAN1, CAN_FIFO0) == 0)
     {
