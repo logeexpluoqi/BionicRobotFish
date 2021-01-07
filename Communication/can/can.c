@@ -20,7 +20,7 @@ void can_init()
     can1.tbs2 = CAN_BS2_6tq;
     can1.tbs1 = CAN_BS1_7tq;
     can1.brp = 3;
-    can1.mode = CAN_Mode_LoopBack;
+    can1.mode = CAN_Mode_Normal;
 	
     can1_mode_init(&can1);
 }
