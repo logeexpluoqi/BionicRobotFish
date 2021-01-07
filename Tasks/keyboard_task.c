@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-06 20:20:08 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-06 20:59:49
+ * @Last Modified time: 2021-01-07 14:28:06
  */
 
 #include "keyboard_task.h"
@@ -16,18 +16,18 @@ void key_scan()
     key = keyboard_scan();
     if(key.key_2 == KEY_H)
     {
-        OLED_ShowChar(0,3,'Y',FONT_LARGE);
+        OLED_ShowChar(5,7,'H',FONT_SMALL);
     }
     else
     {
-        OLED_ShowChar(0,3,'N',FONT_LARGE);
+        OLED_ShowChar(5,7,'L',FONT_SMALL);
     }
     if(key.key_1 == KEY_H)
     {
-        OLED_ShowChar(10,3,'Y',FONT_LARGE);
+        OLED_ShowChar(15,7,'H',FONT_SMALL);
     }
     else
     {
-        OLED_ShowChar(10,3,'N',FONT_LARGE);
+        OLED_ShowChar(15,7,'L',FONT_SMALL);
     }
 }
