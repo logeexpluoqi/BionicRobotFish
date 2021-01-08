@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-08 09:16:00 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-08 14:31:00
+ * @Last Modified time: 2021-01-08 17:28:24
  */
 
 #include "ak_motor.h"
@@ -12,7 +12,8 @@
 #include "oled.h"
 
 CanMsgTypedef can1_msg;
-AkMotorInfo motor;
+AkMotorCtrl ak_motor_ctrl_data;
+AkMotorInfo ak_motor_info[20];
 
 void ak_motor_ctrl_init()
 {
@@ -25,7 +26,7 @@ void ak_motor_ctrl_init()
     OLED_ShowString(0, 4, "R:", FONT_LARGE);
 }
 
-unsigned char ak_motor_ctrl(AkMotorInfo motor)
+unsigned char ak_motor_ctrl(AkMotorCtrl ak_motor_ctrl_data)
 {
     AkMotorType motor_type;
     unsigned int p_dst, v_dst, t_dst;
@@ -36,8 +37,8 @@ unsigned char ak_motor_ctrl(AkMotorInfo motor)
     float kp_min, kp_max;
     float kd_min, kd_max;
 
-    can1_msg.std_id = motor.id;
-    motor_type = motor_type_detect(motor.id);
+    can1_msg.std_id = ak_motor_ctrl_data.id;
+    motor_type = motor_type_detect(ak_motor_ctrl_data.id);
 
     if(motor_type == AK10_9)
     {
@@ -56,17 +57,17 @@ unsigned char ak_motor_ctrl(AkMotorInfo motor)
         kd_min = AK80_9_KD_MIN; kd_max = AK80_9_KD_MAX;
     }
 
-    motor.p_dst = p_limit(motor.p_dst, motor_type);
-    motor.v_dst = v_limit(motor.v_dst, motor_type);
-    motor.t_dst = t_limit(motor.t_dst, motor_type);
-    motor.kp = kp_limit(motor.kp, motor_type);
-    motor.kd = kp_limit(motor.kd, motor_type);
+    ak_motor_ctrl_data.p_dst = p_limit(ak_motor_ctrl_data.p_dst, motor_type);
+    ak_motor_ctrl_data.v_dst = v_limit(ak_motor_ctrl_data.v_dst, motor_type);
+    ak_motor_ctrl_data.t_dst = t_limit(ak_motor_ctrl_data.t_dst, motor_type);
+    ak_motor_ctrl_data.kp = kp_limit(ak_motor_ctrl_data.kp, motor_type);
+    ak_motor_ctrl_data.kd = kp_limit(ak_motor_ctrl_data.kd, motor_type);
 
-    p_dst = float2uint(motor.p_dst, p_min, p_max, 16);
-    v_dst = float2uint(motor.v_dst, v_min, v_max, 12);
-    t_dst = float2uint(motor.t_dst, t_min, t_max, 12);
-    kp = float2uint(motor.kp, kp_min, kp_max, 12);
-    kd = float2uint(motor.kd, kd_min, kd_max, 12);
+    p_dst = float2uint(ak_motor_ctrl_data.p_dst, p_min, p_max, 16);
+    v_dst = float2uint(ak_motor_ctrl_data.v_dst, v_min, v_max, 12);
+    t_dst = float2uint(ak_motor_ctrl_data.t_dst, t_min, t_max, 12);
+    kp = float2uint(ak_motor_ctrl_data.kp, kp_min, kp_max, 12);
+    kd = float2uint(ak_motor_ctrl_data.kd, kd_min, kd_max, 12);
 
     can1_msg.send_data[0] = p_dst >> 8;
     can1_msg.send_data[1] = p_dst & 0xff;
@@ -83,7 +84,7 @@ unsigned char ak_motor_ctrl(AkMotorInfo motor)
         return 0;
 }
 
-unsigned char motor_mode_set(AkMotorCmd cmd)
+unsigned char ak_motor_mode_set(AkMotorCmd cmd)
 {
     switch(cmd)
     {
@@ -128,6 +129,51 @@ unsigned char motor_mode_set(AkMotorCmd cmd)
     }
 
     return (can_send_msg(can1_msg));
+}
+
+unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
+{
+    unsigned char motor_type;
+	unsigned char len;
+    unsigned int position, velocity, current;
+    float p_min, p_max;
+    float v_min, v_max;
+    float i_min, i_max;
+
+    len = can_receive_msg(can1_msg.receive_data);
+    motor_type = motor_type_detect(can1_msg.receive_data[0]);
+
+    if(motor_type == AK10_9)
+    {
+        p_min = AK10_9_P_MIN; p_max = AK10_9_P_MAX;
+        v_min = AK10_9_V_MIN; v_max = AK10_9_V_MAX;
+        t_min = AK10_9_T_MIN; t_max = AK10_9_T_MAX;
+    }
+    else if(motor_type == AK80_9)
+    {
+        p_min = AK80_9_P_MIN; p_max = AK80_9_P_MAX;
+        v_min = AK80_9_V_MIN; v_max = AK80_9_V_MAX;
+        t_min = AK80_9_T_MIN; t_max = AK80_9_T_MAX;
+    }
+
+    if(len != 0)
+    {
+        position = (can1_msg.receive_data[1] << 8) | can1_msg.receive_data[2];
+        velocity = (can1_msg.receive_data[3] << 4) | (can1_msg.receive_data[4] >> 4);
+        current = ((can1_msg.receive_data[4] & 0x0f) << 8) | can1_msg.receive_data[5];
+    }
+    ak_motor_info[can1_msg.receive_data[0]].position = unit2float(position, p_min, p_max, 16);
+    ak_motor_info[can1_msg.receive_data[0]].velocity = unit2float(velocity, v_min, v_max, 12);
+    ak_motor_info[can1_msg.receive_data[0]].current = unit2float(current, i_min, i_max, 12);
+
+}
+
+float unit2float(unsigned int x, float x_min, float x_max, float bits)
+{
+    float span = x_max - x_min;
+    float offset = x_min;
+
+    return ((float)x) * span / ((float)((1 << bits) - 1)) + offset;
 }
 
 unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits)

@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-08 09:15:07 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-08 14:25:45
+ * @Last Modified time: 2021-01-08 17:23:13
  */
 
 #ifndef _AK_MOTOR_H
@@ -29,6 +29,14 @@ typedef struct
     float t_dst;
     float kp;
     float kd;
+} AkMotorCtrl;
+
+typedef struct
+{
+    float position;
+    float velocity;
+    float torque;
+    float current;
 } AkMotorInfo;
 
 float p_limit(float p, AkMotorType m_type);
@@ -39,9 +47,11 @@ float kd_limit(float kd, AkMotorType m_type);
 
 AkMotorType motor_type_detect(unsigned char id);
 unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits);
+float unit2float(unsigned int x, float x_min, float x_max, float bits);
 
 void ak_motor_ctrl_init(void);
-unsigned char motor_mode_set(AkMotorCmd cmd);
-unsigned char ak_motor_ctrl(AkMotorInfo motor);
+unsigned char ak_motor_mode_set(AkMotorCmd cmd);
+unsigned char ak_motor_ctrl(AkMotorCtrl motor);
+unsigned char ak_motor_info_receive(AkMotorInfo* motor_info);
 
 #endif
