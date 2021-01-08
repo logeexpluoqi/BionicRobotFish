@@ -13,7 +13,7 @@
 
 extern KeyTypedef key; // define in: /Tasks/keyboard task.c
 
-CanMsgTypedef can1_msg;
+extern CanMsgTypedef can1_msg;
 
 void can_test_init()
 {
