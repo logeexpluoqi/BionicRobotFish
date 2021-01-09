@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-08 09:15:07 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-08 17:23:13
+ * @Last Modified time: 2021-01-09 09:39:08
  */
 
 #ifndef _AK_MOTOR_H
@@ -47,7 +47,7 @@ float kd_limit(float kd, AkMotorType m_type);
 
 AkMotorType motor_type_detect(unsigned char id);
 unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits);
-float unit2float(unsigned int x, float x_min, float x_max, float bits);
+float unit2float(unsigned int x, float x_min, float x_max, unsigned char bits);
 
 void ak_motor_ctrl_init(void);
 unsigned char ak_motor_mode_set(AkMotorCmd cmd);

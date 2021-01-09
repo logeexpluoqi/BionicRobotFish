@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-08 09:16:00 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-08 17:28:24
+ * @Last Modified time: 2021-01-09 09:37:35
  */
 
 #include "ak_motor.h"
@@ -141,19 +141,23 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     float i_min, i_max;
 
     len = can_receive_msg(can1_msg.receive_data);
+    if(len == 0)
+    {
+        return 1;
+    }
     motor_type = motor_type_detect(can1_msg.receive_data[0]);
 
     if(motor_type == AK10_9)
     {
         p_min = AK10_9_P_MIN; p_max = AK10_9_P_MAX;
         v_min = AK10_9_V_MIN; v_max = AK10_9_V_MAX;
-        t_min = AK10_9_T_MIN; t_max = AK10_9_T_MAX;
+        i_min = AK10_9_T_MIN; i_max = AK10_9_T_MAX;
     }
     else if(motor_type == AK80_9)
     {
         p_min = AK80_9_P_MIN; p_max = AK80_9_P_MAX;
         v_min = AK80_9_V_MIN; v_max = AK80_9_V_MAX;
-        t_min = AK80_9_T_MIN; t_max = AK80_9_T_MAX;
+        i_min = AK80_9_T_MIN; i_max = AK80_9_T_MAX;
     }
 
     if(len != 0)
@@ -166,9 +170,11 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     ak_motor_info[can1_msg.receive_data[0]].velocity = unit2float(velocity, v_min, v_max, 12);
     ak_motor_info[can1_msg.receive_data[0]].current = unit2float(current, i_min, i_max, 12);
 
+
+    return 0;
 }
 
-float unit2float(unsigned int x, float x_min, float x_max, float bits)
+float unit2float(unsigned int x, float x_min, float x_max, unsigned char bits)
 {
     float span = x_max - x_min;
     float offset = x_min;
