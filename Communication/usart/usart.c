@@ -2,14 +2,14 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 09:54:11 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-09 10:35:57
+ * @Last Modified time: 2021-01-09 15:06:03
  */
 /* 
  * @brief: This file is created by 正点原子, modified by luoqi
  */
 #include "usart.h"
 
-unsigned char usart_rx_data_buf[USART_REC_LEN]; // receive data buff,  max byte: USART_REC_LEN 
+unsigned char usart_rx_data[USART_REC_LEN]; // receive data buff,  max byte: USART_REC_LEN 
 
 /* bit 15: receive a frame data finish flag 
  * bit 14: receive 0x0d, CR symbal
@@ -17,7 +17,7 @@ unsigned char usart_rx_data_buf[USART_REC_LEN]; // receive data buff,  max byte:
  */
 unsigned short usart_rx_state = 0; //uart receive state
 
-/* *********************************************************** */
+/* ****************************start**************************** */
 #if 1
 #pragma import(__use_no_semihosting)
 
@@ -43,7 +43,7 @@ int fputc(int ch, FILE *f)
 	return ch;
 }
 #endif
-/* ************************************************************ */
+/* ****************************end***************************** */
 
 void usart_init(u32 bound)
 {
@@ -51,22 +51,19 @@ void usart_init(u32 bound)
 	USART_InitTypeDef USART_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);  //使能GPIOA时钟
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE); //使能USART1时钟
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE); 
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE); 
 
-	//串口1对应引脚复用映射
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);  //GPIOA9复用为USART1
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1); //GPIOA10复用为USART1
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);  
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1); 
 
-	//USART1端口配置
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10; //GPIOA9与GPIOA10
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;			//复用功能
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		//速度50MHz
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;			//推挽复用输出
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;			//上拉
-	GPIO_Init(GPIOA, &GPIO_InitStructure);					//初始化PA9，PA10
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10; 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	//USART1 初始化设置
 	USART_InitStructure.USART_BaudRate = bound;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
@@ -76,7 +73,6 @@ void usart_init(u32 bound)
 	USART_Init(USART1, &USART_InitStructure);
 
 	USART_Cmd(USART1, ENABLE);
-
 	USART_ClearFlag(USART1, USART_FLAG_TC);
 
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE); 
@@ -94,33 +90,33 @@ void usart_init(u32 bound)
  */
 void USART1_IRQHandler(void)
 {
-	u8 res;
-	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) //接收中断(接收到的数据必须是0x0d 0x0a结尾)
+	unsigned char usart_rx_byte_data;
+	
+	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) 
 	{
-		res = USART_ReceiveData(USART1); //(USART1->DR), 读取接收到的数据
+		usart_rx_byte_data = USART_ReceiveData(USART1); // (USART1->DR), read usart receive register
 
 		if ((usart_rx_state & 0x8000) == 0) // receive not finished
 		{
 			if (usart_rx_state & 0x4000) // receive 0x0d
 			{
-				if (res != 0x0a)
-					usart_rx_state = 0; // receive fault, start agin
+				if (usart_rx_byte_data != 0x0a)
+					usart_rx_state = 0; // receive fault, restart
 				else
 					usart_rx_state |= 0x8000; // receive finished
 			}
 			else // not receive 0x0d, CR symbol
-			{
-				if (res == 0x0d)
+			{  
+				if (usart_rx_byte_data == 0x0d)
 					usart_rx_state |= 0x4000;
 				else
 				{
-					usart_rx_data_buf[usart_rx_state & 0X3FFF] = res;
+					usart_rx_data[usart_rx_state & 0X3FFF] = usart_rx_byte_data;
 					usart_rx_state++;
 					if (usart_rx_state > (USART_REC_LEN - 1))
-						usart_rx_state = 0; //接收数据错误,重新开始接收
+						usart_rx_state = 0x0000; // receive fault, restart
 				}
 			}
 		}
 	}
 }
-
