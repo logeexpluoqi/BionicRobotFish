@@ -26,7 +26,7 @@ void ak_motor_ctrl_init()
     OLED_ShowString(0, 4, "R:", FONT_LARGE);
 }
 
-unsigned char ak_motor_ctrl(AkMotorCtrl ak_motor_ctrl_data)
+unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
 {
     AkMotorType motor_type;
     unsigned int p_dst, v_dst, t_dst;
@@ -37,8 +37,8 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ak_motor_ctrl_data)
     float kp_min, kp_max;
     float kd_min, kd_max;
 
-    can1_msg.std_id = ak_motor_ctrl_data.id;
-    motor_type = motor_type_detect(ak_motor_ctrl_data.id);
+    can1_msg.std_id = ctrl_data.id;
+    motor_type = motor_type_detect(ctrl_data.id);
 
     if(motor_type == AK10_9)
     {
@@ -57,17 +57,17 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ak_motor_ctrl_data)
         kd_min = AK80_9_KD_MIN; kd_max = AK80_9_KD_MAX;
     }
 
-    ak_motor_ctrl_data.p_dst = p_limit(ak_motor_ctrl_data.p_dst, motor_type);
-    ak_motor_ctrl_data.v_dst = v_limit(ak_motor_ctrl_data.v_dst, motor_type);
-    ak_motor_ctrl_data.t_dst = t_limit(ak_motor_ctrl_data.t_dst, motor_type);
-    ak_motor_ctrl_data.kp = kp_limit(ak_motor_ctrl_data.kp, motor_type);
-    ak_motor_ctrl_data.kd = kp_limit(ak_motor_ctrl_data.kd, motor_type);
+    ctrl_data.p_dst = p_limit(ctrl_data.p_dst, motor_type);
+    ctrl_data.v_dst = v_limit(ctrl_data.v_dst, motor_type);
+    ctrl_data.t_dst = t_limit(ctrl_data.t_dst, motor_type);
+    ctrl_data.kp = kp_limit(ctrl_data.kp, motor_type);
+    ctrl_data.kd = kp_limit(ctrl_data.kd, motor_type);
 
-    p_dst = float2uint(ak_motor_ctrl_data.p_dst, p_min, p_max, 16);
-    v_dst = float2uint(ak_motor_ctrl_data.v_dst, v_min, v_max, 12);
-    t_dst = float2uint(ak_motor_ctrl_data.t_dst, t_min, t_max, 12);
-    kp = float2uint(ak_motor_ctrl_data.kp, kp_min, kp_max, 12);
-    kd = float2uint(ak_motor_ctrl_data.kd, kd_min, kd_max, 12);
+    p_dst = float2uint(ctrl_data.p_dst, p_min, p_max, 16);
+    v_dst = float2uint(ctrl_data.v_dst, v_min, v_max, 12);
+    t_dst = float2uint(ctrl_data.t_dst, t_min, t_max, 12);
+    kp = float2uint(ctrl_data.kp, kp_min, kp_max, 12);
+    kd = float2uint(ctrl_data.kd, kd_min, kd_max, 12);
 
     can1_msg.send_data[0] = p_dst >> 8;
     can1_msg.send_data[1] = p_dst & 0xff;
