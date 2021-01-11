@@ -18,24 +18,24 @@
 /* IO direction set: in/out */
 #define SDA_IN()                          \
 	{                                     \
-		GPIOF->MODER &= ~(3 << (10 * 2)); \
-		GPIOF->MODER |= 0 << 10 * 2;      \
-		GPIOF->PUPDR &= ~(3 << (10 * 2)); \
-		GPIOF->PUPDR |= 0 << (10 * 2);    \
+		GPIOB->MODER &= ~(3 << (14 * 2)); \
+		GPIOB->MODER |= 0 << 14 * 2;      \
+		GPIOB->PUPDR &= ~(3 << (14 * 2)); \
+		GPIOB->PUPDR |= 0 << (14 * 2);    \
 	} //PF10 input mode
 
 #define SDA_OUT()                         \
 	{                                     \
-		GPIOF->MODER &= ~(3 << (10 * 2)); \
-		GPIOF->MODER |= 1 << 10 * 2;      \
-		GPIOF->PUPDR &= ~(3 << (10 * 2)); \
-		GPIOF->PUPDR |= 1 << (10 * 2);    \
+		GPIOB->MODER &= ~(3 << (14 * 2)); \
+		GPIOB->MODER |= 1 << 14 * 2;      \
+		GPIOB->PUPDR &= ~(3 << (14 * 2)); \
+		GPIOB->PUPDR |= 1 << (14 * 2);    \
 	} //PF10 output mode
 
 /* IO control function */
-#define IIC_SCL PFout(8)  // SCL
-#define IIC_SDA PFout(10) // SDA output mode
-#define READ_SDA PFin(10) // SDA input mode
+#define IIC_SCL PBout(13)  // SCL
+#define IIC_SDA PBout(14) // SDA output mode
+#define READ_SDA PBin(14) // SDA input mode
 
 /* I2C control function */
 void IIC_Init(void);				 // init i2c port

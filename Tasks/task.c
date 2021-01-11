@@ -13,6 +13,8 @@
 #include "keyboard_task.h"
 #include "ak_motor_ctrl_task.h"
 
+#include "usart.h"
+
 TimeSliceInitTypedef Tasks[TASK_NUM] = 
 {
     {0, 5, 5, task_5ms},
@@ -68,5 +70,7 @@ void task_1s()
 
 void task_5s()
 {
-    
+    static unsigned char i;
+    printf("Num %d\n",i);
+    i++;
 }
