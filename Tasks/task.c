@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 10:41:02 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-12 17:01:11
+ * @Last Modified time: 2021-01-12 18:47:15
  */
 
 #include "task.h"
@@ -72,9 +72,11 @@ void task_1s()
 void task_5s()
 {
     unsigned char i;
-	for(i = 0; i < 122; i++)
+	for(i = 0; i < 26; i++)
 	{
-		usart1_msg.tx_data[i] = i;
+		usart1_msg.tx_data[i] = 'A' + i;
+        usart1_msg.tx_data[i+26] = 'a' + i;
+        usart1_msg.tx_data[i+36] = '0' + i;
 	}
     usart1_tx_data_dma();
 }
