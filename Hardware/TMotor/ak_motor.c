@@ -22,6 +22,12 @@ void ak_motor_ctrl_init()
     can1_msg.ide = 0;
     can1_msg.dlc = 8; // a frame 8 byte data
 
+    ak_motor_ctrl_data.p_dst = 0;
+    ak_motor_ctrl_data.v_dst = 0;
+    ak_motor_ctrl_data.t_dst = 0;
+    ak_motor_ctrl_data.kp = 0;
+    ak_motor_ctrl_data.kd = 0;
+
     OLED_ShowString(0, 2, "S:", FONT_LARGE);
     OLED_ShowString(0, 4, "R:", FONT_LARGE);
 }
@@ -33,7 +39,7 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
     unsigned int kp, kd;
     float p_min, p_max;
     float v_min, v_max;
-    float t_min, t_max;
+    float i_min, i_max;
     float kp_min, kp_max;
     float kd_min, kd_max;
 
@@ -44,7 +50,7 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
     {
         p_min = AK10_9_P_MIN; p_max = AK10_9_P_MAX;
         v_min = AK10_9_V_MIN; v_max = AK10_9_V_MAX;
-        t_min = AK10_9_T_MIN; t_max = AK10_9_T_MAX;
+        i_min = AK10_9_I_MIN; i_max = AK10_9_I_MAX;
         kp_min = AK10_9_KP_MIN; kp_max = AK10_9_KP_MAX;
         kd_min = AK10_9_KD_MIN; kd_max = AK10_9_KD_MAX;
     }
@@ -52,7 +58,7 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
     {
         p_min = AK80_9_P_MIN; p_max = AK80_9_P_MAX;
         v_min = AK80_9_V_MIN; v_max = AK80_9_V_MAX;
-        t_min = AK80_9_T_MIN; t_max = AK80_9_T_MAX;
+        i_min = AK80_9_I_MIN; i_max = AK80_9_I_MAX;
         kp_min = AK80_9_KP_MIN; kp_max = AK80_9_KP_MAX;
         kd_min = AK80_9_KD_MIN; kd_max = AK80_9_KD_MAX;
     }
@@ -65,7 +71,7 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
 
     p_dst = float2uint(ctrl_data.p_dst, p_min, p_max, 16);
     v_dst = float2uint(ctrl_data.v_dst, v_min, v_max, 12);
-    t_dst = float2uint(ctrl_data.t_dst, t_min, t_max, 12);
+    t_dst = float2uint(ctrl_data.t_dst, i_min, i_max, 12);
     kp = float2uint(ctrl_data.kp, kp_min, kp_max, 12);
     kd = float2uint(ctrl_data.kd, kd_min, kd_max, 12);
 
@@ -86,6 +92,8 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
 
 unsigned char ak_motor_mode_set(AkMotorCmd cmd)
 {
+    unsigned char ret;
+
     switch(cmd)
     {
     case ENTER_MOTOR_CTRL:
@@ -128,7 +136,22 @@ unsigned char ak_motor_mode_set(AkMotorCmd cmd)
         break;
     }
 
-    return (can_send_msg(can1_msg));
+    ret = can_send_msg(can1_msg);
+    clear_send_data();
+
+    return ret;
+}
+
+void clear_send_data()
+{
+    can1_msg.send_data[0] = 0x7f;
+    can1_msg.send_data[1] = 0xff;
+    can1_msg.send_data[2] = 0x7f;
+    can1_msg.send_data[3] = 0xf0;
+    can1_msg.send_data[4] = 0x00;
+    can1_msg.send_data[5] = 0x33;
+    can1_msg.send_data[6] = 0x37;
+    can1_msg.send_data[7] = 0xff;
 }
 
 unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
@@ -151,13 +174,13 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     {
         p_min = AK10_9_P_MIN; p_max = AK10_9_P_MAX;
         v_min = AK10_9_V_MIN; v_max = AK10_9_V_MAX;
-        i_min = AK10_9_T_MIN; i_max = AK10_9_T_MAX;
+        i_min = AK10_9_I_MIN; i_max = AK10_9_I_MAX;
     }
     else if(motor_type == AK80_9)
     {
         p_min = AK80_9_P_MIN; p_max = AK80_9_P_MAX;
         v_min = AK80_9_V_MIN; v_max = AK80_9_V_MAX;
-        i_min = AK80_9_T_MIN; i_max = AK80_9_T_MAX;
+        i_min = AK80_9_I_MIN; i_max = AK80_9_I_MAX;
     }
 
     if(len != 0)
@@ -259,19 +282,19 @@ float t_limit(float t, AkMotorType m_type)
 
     if(m_type == AK10_9)
     {
-        if(t < AK10_9_T_MIN) 
-            ret_data = AK10_9_T_MIN;
-        else if(t > AK10_9_T_MAX) 
-            ret_data = AK10_9_T_MAX;
+        if(t < AK10_9_I_MIN) 
+            ret_data = AK10_9_I_MIN;
+        else if(t > AK10_9_I_MAX) 
+            ret_data = AK10_9_I_MAX;
         else
             ret_data = t;
     }
     else if(m_type == AK80_9)
     {
-        if(t < AK80_9_T_MIN) 
-            ret_data = AK80_9_T_MIN;
-        else if(t > AK80_9_T_MAX) 
-            ret_data = AK80_9_T_MAX;
+        if(t < AK80_9_I_MIN) 
+            ret_data = AK80_9_I_MIN;
+        else if(t > AK80_9_I_MAX) 
+            ret_data = AK80_9_I_MAX;
         else
             ret_data = t ;
     }

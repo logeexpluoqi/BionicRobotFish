@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 10:41:02 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-08 15:08:06
+ * @Last Modified time: 2021-01-12 17:01:11
  */
 
 #include "task.h"
@@ -14,6 +14,8 @@
 #include "ak_motor_ctrl_task.h"
 
 #include "usart.h"
+
+extern UsartMsgTypedef usart1_msg;
 
 TimeSliceInitTypedef Tasks[TASK_NUM] = 
 {
@@ -30,7 +32,6 @@ TimeSliceInitTypedef Tasks[TASK_NUM] =
 
 void task_5ms()
 {
-
 }
 
 void task_10ms()
@@ -70,7 +71,10 @@ void task_1s()
 
 void task_5s()
 {
-    static unsigned char i;
-    printf("Num %d\n",i);
-    i++;
+    unsigned char i;
+	for(i = 0; i < 122; i++)
+	{
+		usart1_msg.tx_data[i] = i;
+	}
+    usart1_tx_data_dma();
 }

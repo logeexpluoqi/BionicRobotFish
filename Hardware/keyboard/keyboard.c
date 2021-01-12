@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-06 19:23:23 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-06 20:37:29
+ * @Last Modified time: 2021-01-12 17:39:08
  */
 
 #include "keyboard.h"
@@ -27,20 +27,32 @@ void keyboard_init()
 KeyTypedef keyboard_scan()
 {
 	static unsigned char scan_filter = 0;
+    
     KeyTypedef key;
 	
     key.key_1 = KEY_NULL;
     key.key_2 = KEY_NULL;
+    key.key1_edge = KEY_NULL;
+    key.key2_edge = KEY_NULL;
 
     if(scan_filter == 1)
     {
         if(rkey_1 == 1)
         {
+            if(key.key1_edge == KEY_NULL)
+            {
+                key.key1_edge = KEY_RISE_EDGE;
+            }
+            else
+            {
+                key.key1_edge = KEY_NULL;
+            }
             key.key_1 = KEY_H;
         } 
         else 
         {
             key.key_1 = KEY_NULL;
+            key.key1_edge = KEY_NULL;
         }
 
         if(rkey_2 == 1)
@@ -51,10 +63,10 @@ KeyTypedef keyboard_scan()
         {
             key.key_2 = KEY_NULL;
         }
-
+        
         scan_filter = 0;
     }
-
+    
     if(rkey_1 == 1 | rkey_2 == 1)
     {
         scan_filter = 1;

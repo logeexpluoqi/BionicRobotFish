@@ -110,7 +110,7 @@ unsigned char can_send_msg(CanMsgTypedef msg)
     TxMessage.ExtId = msg.ext_id; // extend ID identify 
     TxMessage.IDE = msg.ide;      // indentifier extension
     TxMessage.RTR = msg.rtr;      // remote transmission request
-    TxMessage.DLC = msg.dlc;    // data length code
+    TxMessage.DLC = msg.dlc;      // data length code
 
     for (i = 0; i < msg.dlc; i++)
     {

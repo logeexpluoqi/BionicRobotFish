@@ -2,20 +2,22 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 09:54:11 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-09 15:06:03
+ * @Last Modified time: 2021-01-12 16:40:33
  */
 /* 
  * @brief: This file is created by 正点原子, modified by luoqi
  */
 #include "usart.h"
+#include "ak_motor.h"
+#include "stm32f4xx_dma.h"
+#include "dma.h"
+#include "stm32f4xx_usart.h"
 
-unsigned char usart_rx_data[USART_REC_LEN]; // receive data buff,  max byte: USART_REC_LEN 
+#include "oled.h"
 
-/* bit 15: receive a frame data finish flag 
- * bit 14: receive 0x0d, CR symbal
- * bit 13-0: receive data length x, x Byte, range: 0-2^14
- */
-unsigned short usart_rx_state = 0; //uart receive state
+extern AkMotorCtrl ak_motor_ctrl_data;
+
+UsartMsgTypedef usart1_msg;
 
 /* ****************************start**************************** */
 #if 1
@@ -38,26 +40,27 @@ _sys_exit(int x)
 /* Redefine fputc function */
 int fputc(int ch, FILE *f)
 {
-	while ((USART1->SR & 0X40) == 0); // until send over
+	while ((USART1->SR & 0X40) == 0)
+		; // until send over
 	USART1->DR = (u8)ch;
 	return ch;
 }
 #endif
 /* ****************************end***************************** */
 
-void usart_init(u32 bound)
+void usart1_init(u32 bound)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	USART_InitTypeDef USART_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE); 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE); 
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);  
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1); 
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10; 
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -75,13 +78,46 @@ void usart_init(u32 bound)
 	USART_Cmd(USART1, ENABLE);
 	USART_ClearFlag(USART1, USART_FLAG_TC);
 
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE); 
 
 	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+
+	DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
+	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream7_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	DMA_ITConfig(DMA2_Stream7, DMA_IT_TC, ENABLE);
+
+	usart1_msg.rx_state = 0x0000;
+}
+
+void usart1_init_dma()
+{
+	dma_config(DMA2_Stream7, DMA_Channel_4, (u32)&USART1->DR, (u32)usart1_msg.tx_data, USART_TX_LEN);
+}
+
+void usart1_tx_data(unsigned char *tx_data)
+{
+	unsigned char i;
+
+	for (i = 0; i < USART_TX_LEN; i++)
+	{
+		USART_SendData(USART1, tx_data[i]);
+		while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+	}
+}
+
+void usart1_tx_data_dma()
+{
+	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+
+	dma_tx_data(DMA2_Stream7, USART_TX_LEN);
 }
 
 /* UART data receive interrupt function
@@ -91,32 +127,40 @@ void usart_init(u32 bound)
 void USART1_IRQHandler(void)
 {
 	unsigned char usart_rx_byte_data;
-	
-	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) 
+
+	if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
 	{
 		usart_rx_byte_data = USART_ReceiveData(USART1); // (USART1->DR), read usart receive register
 
-		if ((usart_rx_state & 0x8000) == 0) // receive not finished
+		if ((usart1_msg.rx_state & 0x8000) == 0) // receive not finished
 		{
-			if (usart_rx_state & 0x4000) // receive 0x0d
+			if (usart1_msg.rx_state & 0x4000) // receive 0x0d
 			{
 				if (usart_rx_byte_data != 0x0a)
-					usart_rx_state = 0; // receive fault, restart
+					usart1_msg.rx_state = 0; // receive fault, restart
 				else
-					usart_rx_state |= 0x8000; // receive finished
+					usart1_msg.rx_state |= 0x8000; // receive finished
 			}
 			else // not receive 0x0d, CR symbol
-			{  
+			{
 				if (usart_rx_byte_data == 0x0d)
-					usart_rx_state |= 0x4000;
+					usart1_msg.rx_state |= 0x4000;
 				else
 				{
-					usart_rx_data[usart_rx_state & 0X3FFF] = usart_rx_byte_data;
-					usart_rx_state++;
-					if (usart_rx_state > (USART_REC_LEN - 1))
-						usart_rx_state = 0x0000; // receive fault, restart
+					usart1_msg.rx_data[usart1_msg.rx_state & 0X3FFF] = usart_rx_byte_data;
+					usart1_msg.rx_state++;
+					if (usart1_msg.rx_state > (USART_RX_LEN - 1))
+						usart1_msg.rx_state = 0x0000; // receive fault, restart
 				}
 			}
 		}
+	}
+}
+
+void DMA2_Stream7_IRQHandler(void)
+{
+	if(DMA_GetFlagStatus(DMA2_Stream7, DMA_FLAG_TCIF7) == SET)
+	{
+		DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
 	}
 }

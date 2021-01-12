@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 13:44:41 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-09 10:03:09
+ * @Last Modified time: 2021-01-12 16:37:48
  */
 
 #include "init.h"
@@ -24,9 +24,10 @@ void sys_init()
     OLED_Clear();
     led_init();
 	keyboard_init();
-    ak_motor_ctrl_init();
-    usart_init(115200);
+    usart1_init_dma();
+    usart1_init(115200);
     can_init();
+    ak_motor_ctrl_init();
 
     time_slice_init();
 

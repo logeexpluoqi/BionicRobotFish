@@ -12,8 +12,8 @@
 #define AK10_9_P_MAX    95.5f
 #define AK10_9_V_MIN    -30.0f
 #define AK10_9_V_MAX    30.0f
-#define AK10_9_T_MIN    -18.0f
-#define AK10_9_T_MAX    18.0f
+#define AK10_9_I_MIN    -18.0f
+#define AK10_9_I_MAX    18.0f
 #define AK10_9_KP_MIN   0.0f
 #define AK10_9_KP_MAX   500.0f
 #define AK10_9_KD_MIN   0.0f
