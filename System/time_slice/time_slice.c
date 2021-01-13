@@ -13,7 +13,7 @@ extern TimeSliceInitTypedef Tasks[TASK_NUM];
 
 void time_slice_init()
 {
-	TIM3_Int_Init(10-1,8400-1); // 1kHz
+	tim3_int_init(10-1,8400-1); // 1kHz
 }
 
 void time_slice_process()

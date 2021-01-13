@@ -2,14 +2,12 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 10:41:02 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-12 18:47:15
+ * @Last Modified time: 2021-01-13 17:04:49
  */
 
 #include "task.h"
 #include "time_slice.h"
-
-#include "oled_task.h"
-#include "led_task.h"
+#include "system_run.h"
 #include "keyboard_task.h"
 #include "ak_motor_ctrl_task.h"
 
@@ -46,7 +44,7 @@ void task_20ms()
 
 void task_50ms()
 {
-    oled_disp_test();
+    oled_sys_run();
 }
 
 void task_100ms()

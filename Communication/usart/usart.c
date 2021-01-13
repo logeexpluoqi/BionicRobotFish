@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 09:54:11 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-12 16:40:33
+ * @Last Modified time: 2021-01-12 21:56:47
  */
 /* 
  * @brief: This file is created by 正点原子, modified by luoqi
@@ -13,7 +13,7 @@
 #include "dma.h"
 #include "stm32f4xx_usart.h"
 
-#include "oled.h"
+#include "oled_task.h"
 
 extern AkMotorCtrl ak_motor_ctrl_data;
 

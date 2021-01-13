@@ -7,27 +7,29 @@
 
 #include "keyboard_task.h"
 #include "keyboard.h"
-#include "oled.h"
+#include "oled_task.h"
+
+extern OledDispMsgTypedef oled_disp;
 
 KeyTypedef key;
 
 void key_scan()
 {
     key = keyboard_scan();
-    if(key.key_2 == KEY_H)
-    {
-        OLED_ShowChar(5,7,'H',FONT_SMALL);
-    }
-    else
-    {
-        OLED_ShowChar(5,7,'L',FONT_SMALL);
-    }
     if(key.key_1 == KEY_H)
     {
-        OLED_ShowChar(15,7,'H',FONT_SMALL);
+        sys_disp_char(5, 7, 'H', SMALL);
     }
     else
     {
-        OLED_ShowChar(15,7,'L',FONT_SMALL);
+        sys_disp_char(5, 7, 'L', SMALL);
+    }
+    if(key.key_2 == KEY_H)
+    {
+        sys_disp_char(15, 7, 'H', SMALL);
+    }
+    else
+    {
+        sys_disp_char(15, 7, 'L', SMALL);
     }
 }
