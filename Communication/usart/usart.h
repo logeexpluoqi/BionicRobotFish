@@ -9,9 +9,6 @@
  */
 #ifndef _USART_H
 #define _USART_H
-#include "stdio.h"
-#include "stm32f4xx_conf.h"
-#include "sys.h"
 
 #define USART_TX_LEN 112
 #define USART_RX_LEN 28 
@@ -29,7 +26,7 @@ typedef struct
 } UsartMsgTypedef;
 
 
-void usart1_init(u32 bound);
+void usart1_init(unsigned int bound);
 void usart1_init_dma(void);
 void usart1_tx_data(unsigned char *tx_data);
 void usart1_dma_tx_data(unsigned char msg[USART_TX_LEN], unsigned char len);

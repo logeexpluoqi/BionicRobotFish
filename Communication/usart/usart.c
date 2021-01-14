@@ -8,6 +8,7 @@
  * @brief: This file is created by 正点原子, modified by luoqi
  */
 #include "usart.h"
+#include "stdio.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_gpio.h"
@@ -49,7 +50,7 @@ int fputc(int ch, FILE *f)
 #endif
 /* ****************************end***************************** */
 
-void usart1_init(u32 bound)
+void usart1_init(unsigned int bound)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	USART_InitTypeDef USART_InitStructure;
@@ -126,16 +127,11 @@ void usart1_dma_tx_data(unsigned char msg[USART_TX_LEN], unsigned char len)
 void USART1_IRQHandler(void)
 {
 	unsigned char usart_rx_byte_data;
-	unsigned char i;
 
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
 	{
 		usart_rx_byte_data = USART_ReceiveData(USART1); // (USART1->DR), read usart receive register
-		for(i = 0; i<112; i++)
-		{
-			usart1_msg.tx_data[i] = usart_rx_byte_data;
-		}
-		usart1_dma_tx_data(usart1_msg.tx_data, 112);
+		
 		if ((usart1_msg.rx_state & 0x8000) == 0) // receive not finished
 		{
 			if (usart1_msg.rx_state & 0x4000) // receive 0x0d
@@ -150,10 +146,7 @@ void USART1_IRQHandler(void)
 					msg_distribute(usart1_msg.rx_data);
 					
 					/* ************************************************** */
-					for(i = 0; i < 28; i ++)
-					{
-						printf("%x ", usart1_msg.rx_data[i]);
-					}
+					usart1_dma_tx_data(usart1_msg.rx_data, 28);
 				}
 			}
 			else // not receive 0x0d, CR symbol
@@ -175,8 +168,6 @@ void USART1_IRQHandler(void)
 
 void DMA2_Stream7_IRQHandler(void)
 {
-	sys_disp_str(0,0,"DMA",LARGE);
-	printf("DMA INT");
 	if(DMA_GetFlagStatus(DMA2_Stream7, DMA_FLAG_TCIF7) == SET)
 	{
 		DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);

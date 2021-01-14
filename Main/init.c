@@ -5,6 +5,7 @@
  * @Last Modified time: 2021-01-12 16:37:48
  */
 
+#include "stdio.h"
 #include "init.h"
 #include "misc.h"
 #include "delay.h"
