@@ -8,12 +8,8 @@
 #ifndef _MSG_CODEC_H
 #define _MSG_CODEC_H
 
-typedef struct codec 
-{
-    float num;
-    unsigned char chr[2];
-} CodecTypedef;
-
+float msg_char_to_float(unsigned char chr_1, unsigned char chr_0);
+void msg_float_to_char(float num, unsigned char *pdst);
 
 
 #endif

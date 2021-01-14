@@ -7,12 +7,11 @@
 
 #include "msg_codec.h"
 
-CodecTypedef codec;
 
 /* Receive data decode 
  * a float data use 2byte, 
  */
-void msg_char_to_float(unsigned char chr_1, unsigned char chr_0)
+float msg_char_to_float(unsigned char chr_0, unsigned char chr_1)
 {
     short int num_int;
     
@@ -20,10 +19,10 @@ void msg_char_to_float(unsigned char chr_1, unsigned char chr_0)
         num_int = -(((chr_1 & 0x7f) << 8) | chr_0);
     else
         num_int = ((chr_1 & 0x7f) << 8) | chr_0;
-    codec.num = (float)num_int / 100;
+    return (float)num_int / 100;
 }
 
-void msg_float_to_char(float num)
+void msg_float_to_char(float num, unsigned char *pdst)
 {
     short int num_int;
 
@@ -31,13 +30,13 @@ void msg_float_to_char(float num)
     if(num_int < 0)
     {   
         num_int = -num_int;
-        codec.chr[1] = (num_int >> 8) | 0x80;
-        codec.chr[0] = num_int & 0x00ff;
+        *pdst = (num_int >> 8) | 0x80;
+        *(pdst + 1) = num_int & 0x00ff;
     }
     else
     {
-        codec.chr[1] = num_int >> 8;
-        codec.chr[0] = num_int & 0xff;
+        *pdst = num_int >> 8;
+        *(pdst + 1) = num_int & 0xff;
     }
 }
 
