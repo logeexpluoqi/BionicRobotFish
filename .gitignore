@@ -3,4 +3,5 @@
 /Obj
 *.json
 *.exe
+/Test/temp.c
 keilkilll.bat
