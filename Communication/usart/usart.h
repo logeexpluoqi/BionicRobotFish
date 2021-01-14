@@ -32,5 +32,5 @@ typedef struct
 void usart1_init(u32 bound);
 void usart1_init_dma(void);
 void usart1_tx_data(unsigned char *tx_data);
-void usart1_tx_data_dma(void);
+void usart1_dma_tx_data(unsigned char msg[USART_TX_LEN], unsigned char len);
 #endif
