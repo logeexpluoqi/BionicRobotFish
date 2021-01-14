@@ -19,7 +19,6 @@ void sys_disp_init()
 
     oled_disp.refresh_flag = 0;
 
-
     OLED_Init();
     OLED_Clear();
     OLED_ShowString(30, 0, "WIAS_DSFT", FONT_LARGE);
