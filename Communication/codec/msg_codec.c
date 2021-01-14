@@ -1,10 +1,11 @@
-#include <stdio.h>
+/*
+ * @Author: luoqi 
+ * @Date: 2021-01-13 22:46:10 
+ * @Last Modified by: luoqi
+ * @Last Modified time: 2021-01-13 22:49:44
+ */
 
-typedef struct codec 
-{
-    float num;
-    unsigned char chr[2];
-} CodecTypedef;
+#include "msg_codec.h"
 
 CodecTypedef codec;
 
@@ -25,10 +26,10 @@ void msg_char_to_float(unsigned char chr_1, unsigned char chr_0)
 void msg_float_to_char(float num)
 {
     short int num_int;
+
     num_int = (short int)(num * 100);
-    printf(">> %d\n", num_int);
     if(num_int < 0)
-    {
+    {   
         num_int = -num_int;
         codec.chr[1] = (num_int >> 8) | 0x80;
         codec.chr[0] = num_int & 0x00ff;
@@ -38,20 +39,7 @@ void msg_float_to_char(float num)
         codec.chr[1] = num_int >> 8;
         codec.chr[0] = num_int & 0xff;
     }
-    
-    printf(">> %x, %x\n", codec.chr[1], codec.chr[0]);
 }
 
-int main()
-{
-    // CodecTypedef codec;
-    float a = 45.02f;
-    
-    msg_float_to_char(a);
-    printf("chr[1]: %x, chr[0]: %x\n", codec.chr[1], codec.chr[0]);
-    msg_char_to_float(codec.chr[1], codec.chr[0]);
 
-    printf("Org: %f, Trans: %f\n", a, codec.num);
 
-    return 0;
-}
