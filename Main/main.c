@@ -10,7 +10,7 @@
 #include "ak_motor.h"
 #include "keyboard.h"
 
-#include "oled.h"
+#include "oled_task.h"
 
 extern AkMotorCtrl ak_motor_ctrl_data;
 extern KeyTypedef key;

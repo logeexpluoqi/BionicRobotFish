@@ -69,12 +69,5 @@ void task_1s()
 
 void task_5s()
 {
-    unsigned char i;
-	for(i = 0; i < 26; i++)
-	{
-		usart1_msg.tx_data[i] = 'A' + i;
-        usart1_msg.tx_data[i+26] = 'a' + i;
-        usart1_msg.tx_data[i+36] = '0' + i;
-	}
-    usart1_tx_data_dma();
+    
 }

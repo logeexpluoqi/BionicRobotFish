@@ -21,8 +21,6 @@ void sys_disp_init()
 
     OLED_Init();
     OLED_Clear();
-    OLED_ShowString(30, 0, "WIAS_DSFT", FONT_LARGE);
-    OLED_ShowString(72, 7, "by luoqi", FONT_SMALL);
     
     EXTI_InitStructure.EXTI_Line = EXTI_Line3;
     EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;

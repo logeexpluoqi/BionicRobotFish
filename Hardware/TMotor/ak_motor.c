@@ -9,7 +9,6 @@
 #include "ak80_9.h"
 #include "ak10_9.h"
 #include "can.h"
-#include "oled.h"
 
 CanMsgTypedef can1_msg;
 AkMotorCtrl ak_motor_ctrl_data;
@@ -27,9 +26,6 @@ void ak_motor_ctrl_init()
     ak_motor_ctrl_data.t_dst = 0;
     ak_motor_ctrl_data.kp = 0;
     ak_motor_ctrl_data.kd = 0;
-
-    OLED_ShowString(0, 2, "S:", FONT_LARGE);
-    OLED_ShowString(0, 4, "R:", FONT_LARGE);
 }
 
 unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)

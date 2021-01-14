@@ -10,6 +10,8 @@
 
 #include "can.h"
 #include "stm32f4xx_can.h"
+#include "stm32f4xx_rcc.h"
+#include "stm32f4xx_gpio.h"
 
 
 void can_init()

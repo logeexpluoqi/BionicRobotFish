@@ -11,7 +11,7 @@
 /* Receive data decode 
  * a float data use 2byte, 
  */
-float msg_char_to_float(unsigned char chr_0, unsigned char chr_1)
+float msg_char_to_float(unsigned char chr_1, unsigned char chr_0)
 {
     short int num_int;
     

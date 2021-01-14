@@ -18,18 +18,18 @@ void key_scan()
     key = keyboard_scan();
     if(key.key_1 == KEY_H)
     {
-        sys_disp_char(5, 7, 'H', SMALL);
+        sys_disp_char(0, 7, 'H', SMALL);
     }
     else
     {
-        sys_disp_char(5, 7, 'L', SMALL);
+        sys_disp_char(0, 7, 'L', SMALL);
     }
     if(key.key_2 == KEY_H)
     {
-        sys_disp_char(15, 7, 'H', SMALL);
+        sys_disp_char(8, 7, 'H', SMALL);
     }
     else
     {
-        sys_disp_char(15, 7, 'L', SMALL);
+        sys_disp_char(8, 7, 'L', SMALL);
     }
 }
