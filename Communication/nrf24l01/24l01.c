@@ -1,13 +1,13 @@
+/*
+ * @Author: luoqi 
+ * @Date: 2021-01-15 21:11:02 
+ * @Last Modified by:   luoqi 
+ * @Last Modified time: 2021-01-15 21:11:02 
+ */
 #include "24l01.h"
 #include "lcd.h"
 #include "delay.h"
 #include "spi.h"
-//////////////////////////////////////////////////////////////////////////////////	 
- 
-//NRF24L01驱动代码	   
-//STM32F4工程模板-库函数版本
-//淘宝店铺：http://mcudev.taobao.com								  
-////////////////////////////////////////////////////////////////////////////////// 	
     
 const u8 TX_ADDRESS[TX_ADR_WIDTH]={0x34,0x43,0x10,0x10,0x01}; //发送地址
 const u8 RX_ADDRESS[RX_ADR_WIDTH]={0x34,0x43,0x10,0x10,0x01}; //发送地址

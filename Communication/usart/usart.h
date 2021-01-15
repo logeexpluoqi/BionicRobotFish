@@ -4,14 +4,11 @@
  * @Last Modified by: luoqi
  * @Last Modified time: 2021-01-12 14:56:15
  */
-/* 
- * @brief: This file is created by 正点原子, modified by luoqi
- */
 #ifndef _USART_H
 #define _USART_H
 
 #define USART_TX_LEN 112
-#define USART_RX_LEN 10 
+#define USART_RX_LEN 1 
 
 typedef struct 
 {

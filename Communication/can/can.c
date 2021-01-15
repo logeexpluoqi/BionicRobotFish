@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 21:22:57 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-07 17:37:29
+ * @Last Modified time: 2021-01-15 21:15:14
  */
 /* 
  * modified from 正点原子，by luoqi
@@ -17,7 +17,7 @@
 void can_init()
 {
     CanInitTypedef can1;
-
+    /* 1Mbps */
     can1.tsjw = CAN_SJW_1tq;
     can1.tbs2 = CAN_BS2_6tq;
     can1.tbs1 = CAN_BS1_7tq;
@@ -71,12 +71,12 @@ unsigned char can1_mode_init(CanInitTypedef* can_init_data)
     CAN_InitStructure.CAN_NART = ENABLE;   // 禁止报文自动传送
     CAN_InitStructure.CAN_RFLM = DISABLE;  // 报文不锁定,新的覆盖旧的
     CAN_InitStructure.CAN_TXFP = DISABLE;  // 优先级由报文标识符决定
-    CAN_InitStructure.CAN_Mode = can_init_data->mode;     // 模式设置
-    CAN_InitStructure.CAN_SJW = can_init_data->tsjw;      // 重新同步跳跃宽度(Tsjw)为tsjw+1个时间单位 CAN_SJW_1tq~CAN_SJW_4tq
-    CAN_InitStructure.CAN_BS1 = can_init_data->tbs1;      // Tbs1范围CAN_BS1_1tq ~CAN_BS1_16tq
-    CAN_InitStructure.CAN_BS2 = can_init_data->tbs2;      // Tbs2范围CAN_BS2_1tq ~	CAN_BS2_8tq
-    CAN_InitStructure.CAN_Prescaler = can_init_data->brp; // 分频系数(Fdiv)为brp+1
-    CAN_Init(CAN1, &CAN_InitStructure);    // 初始化CAN1
+    CAN_InitStructure.CAN_Mode = can_init_data->mode;
+    CAN_InitStructure.CAN_SJW = can_init_data->tsjw;      // Tsjw = tsjw+1, CAN_SJW_1tq~CAN_SJW_4tq
+    CAN_InitStructure.CAN_BS1 = can_init_data->tbs1;      // Tbs1: CAN_BS1_1tq ~CAN_BS1_16tq
+    CAN_InitStructure.CAN_BS2 = can_init_data->tbs2;      // Tbs2: CAN_BS2_1tq ~	CAN_BS2_8tq
+    CAN_InitStructure.CAN_Prescaler = can_init_data->brp; // f_div = brp+1
+    CAN_Init(CAN1, &CAN_InitStructure);
 
     /* Configure CAN filter */
     CAN_FilterInitStructure.CAN_FilterNumber = 0; // filter 0
@@ -149,7 +149,6 @@ unsigned char can_receive_msg(unsigned char *buf)
 }
 
 #if CAN1_RX0_INT_ENABLE // enable can1 rx0 interrupt
-//中断服务函数
 void CAN1_RX0_IRQHandler(void)
 {
     CanRxMsg RxMessage;

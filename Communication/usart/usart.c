@@ -4,9 +4,6 @@
  * @Last Modified by: luoqi
  * @Last Modified time: 2021-01-14 08:39:54
  */
-/* 
- * @brief: This file is created by 正点原子, modified by luoqi
- */
 #include "usart.h"
 #include "stdio.h"
 #include "stm32f4xx.h"
@@ -130,7 +127,7 @@ void USART1_IRQHandler(void)
 	unsigned char i;
 	unsigned char usart_rx_byte;
 	static unsigned char rx_byte_cnt = 0;
-	static unsigned char sof = 0;
+	static unsigned char sof = 0; // start of frame
 	static unsigned char rx_frame[USART_RX_LEN];
 
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
