@@ -8,18 +8,16 @@
 #ifndef _AK10_9_H
 #define _AK10_9_H
 
-#define AK10_9_P_MIN    -95.5f
-#define AK10_9_P_MAX    95.5f
-#define AK10_9_V_MIN    -30.0f
-#define AK10_9_V_MAX    30.0f
-#define AK10_9_T_MIN    -18.0f
-#define AK10_9_T_MAX    18.0f
-#define AK10_9_KP_MIN   0.0f
-#define AK10_9_KP_MAX   500.0f
-#define AK10_9_KD_MIN   0.0f
-#define AK10_9_KD_MAX   5.0f
-// #define AK10_9_I_MIN
-// #define AK10_9_I_MAX
+#define AK10_9_P_MIN    -12.5f
+#define AK10_9_P_MAX     12.5f
+#define AK10_9_V_MIN    -45.0f
+#define AK10_9_V_MAX     45.0f
+#define AK10_9_T_MIN    -54.0f
+#define AK10_9_T_MAX     54.0f
+#define AK10_9_KP_MIN    0.0f
+#define AK10_9_KP_MAX    500.0f
+#define AK10_9_KD_MIN    0.0f
+#define AK10_9_KD_MAX    5.0f
 
 
 
