@@ -11,18 +11,13 @@
 #define _USART_H
 
 #define USART_TX_LEN 112
-#define USART_RX_LEN 28 
+#define USART_RX_LEN 10 
 
 typedef struct 
 {
     unsigned char tx_data[USART_TX_LEN];
     unsigned char rx_data[USART_RX_LEN];
-
-    /* bit 15: receive a frame data finish flag 
-     * bit 14: receive 0x0d, CR symbal
-     * bit 13-0: receive data length x, x Byte, range: 0-2^14
-     */
-    unsigned short rx_state;
+    unsigned char rx_cnt;
 } UsartMsgTypedef;
 
 

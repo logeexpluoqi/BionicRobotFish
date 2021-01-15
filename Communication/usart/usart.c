@@ -80,21 +80,21 @@ void usart1_init(unsigned int bound)
 	DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
 	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream7_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 	DMA_ITConfig(DMA2_Stream7, DMA_IT_TC, ENABLE);
 
 	USART_ClearFlag(USART1, USART_FLAG_RXNE);
 	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 
 	USART_Cmd(USART1, ENABLE);
-	usart1_msg.rx_state = 0x0000;
+	usart1_msg.rx_cnt = 0;
 }
 
 void usart1_init_dma()
@@ -113,12 +113,13 @@ void usart1_tx_data(unsigned char *tx_data)
 	}
 }
 
-void usart1_dma_tx_data(unsigned char msg[USART_TX_LEN], unsigned char len)
+void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
 {
 	dma_config(DMA2_Stream7, DMA_Channel_4, (u32)&USART1->DR, (u32)msg, len);
 	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
 	dma_tx_data(DMA2_Stream7, len);
 }
+
 
 /* UART data receive interrupt function
  * data must start of 0x0d and end of 0x0a
@@ -126,44 +127,28 @@ void usart1_dma_tx_data(unsigned char msg[USART_TX_LEN], unsigned char len)
  */
 void USART1_IRQHandler(void)
 {
-	unsigned char usart_rx_byte_data;
+	unsigned char usart_rx_byte;
+	static unsigned char rx_byte_cnt = 0;
+	static unsigned char sof = 0;
 
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
 	{
-		usart_rx_byte_data = USART_ReceiveData(USART1); // (USART1->DR), read usart receive register
+		usart_rx_byte = USART_ReceiveData(USART1); // (USART1->DR), read usart receive register
 		
-		if ((usart1_msg.rx_state & 0x8000) == 0) // receive not finished
+		if(sof == 1)
 		{
-			if (usart1_msg.rx_state & 0x4000) // receive 0x0d
+			usart1_msg.rx_data[rx_byte_cnt] = usart_rx_byte;
+			rx_byte_cnt ++;
+			if(rx_byte_cnt == USART_RX_LEN)
 			{
-				if (usart_rx_byte_data != 0x0a)
-					usart1_msg.rx_state = 0; // receive fault, restart
-				else
-				{
-					usart1_msg.rx_state |= 0x8000; // receive finished
-					
-					/* *************** Receice data decode ************** */
-					msg_distribute(usart1_msg.rx_data);
-					
-					/* ************************************************** */
-					usart1_dma_tx_data(usart1_msg.rx_data, 28);
-				}
-			}
-			else // not receive 0x0d, CR symbol
-			{
-				if (usart_rx_byte_data == 0x0d)
-					usart1_msg.rx_state |= 0x4000;
-				else
-				{
-					usart1_msg.rx_data[usart1_msg.rx_state & 0X3FFF] = usart_rx_byte_data;
-					usart1_msg.rx_state++;
-					if (usart1_msg.rx_state > (USART_RX_LEN - 1))
-						usart1_msg.rx_state = 0x0000; // receive fault, restart
-				}
+				usart1_dma_tx_data(usart1_msg.rx_data,USART_RX_LEN);
+				sof = 0;
+				rx_byte_cnt = 0;
 			}
 		}
+		if((usart_rx_byte == '>') && (sof == 0))
+			sof = 1;
 	}
-	USART_ClearFlag(USART1, USART_FLAG_RXNE);
 }
 
 void DMA2_Stream7_IRQHandler(void)

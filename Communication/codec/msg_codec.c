@@ -30,13 +30,13 @@ void msg_float_to_char(float num, unsigned char *pdst)
     if(num_int < 0)
     {   
         num_int = -num_int;
-        *pdst = (num_int >> 8) | 0x80;
-        *(pdst + 1) = num_int & 0x00ff;
+        *(pdst + 1) = (num_int >> 8) | 0x80;
+        *pdst = num_int & 0x00ff;
     }
     else
     {
-        *pdst = num_int >> 8;
-        *(pdst + 1) = num_int & 0xff;
+        *(pdst + 1) = num_int >> 8;
+        *pdst = num_int & 0xff;
     }
 }
 
