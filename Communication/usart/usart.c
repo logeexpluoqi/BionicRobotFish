@@ -127,26 +127,35 @@ void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
  */
 void USART1_IRQHandler(void)
 {
+	unsigned char i;
 	unsigned char usart_rx_byte;
 	static unsigned char rx_byte_cnt = 0;
 	static unsigned char sof = 0;
+	static unsigned char rx_frame[USART_RX_LEN];
 
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
 	{
 		usart_rx_byte = USART_ReceiveData(USART1); // (USART1->DR), read usart receive register
 		
-		if(sof == 1)
+		if(rx_byte_cnt == USART_RX_LEN)
 		{
-			usart1_msg.rx_data[rx_byte_cnt] = usart_rx_byte;
-			rx_byte_cnt ++;
-			if(rx_byte_cnt == USART_RX_LEN)
+			if(usart_rx_byte == '}')
 			{
-				usart1_dma_tx_data(usart1_msg.rx_data,USART_RX_LEN);
-				sof = 0;
-				rx_byte_cnt = 0;
+				for(i=0; i< USART_RX_LEN; i++)
+				{
+					usart1_msg.rx_data[i] = rx_frame[i];
+				}
+				usart1_dma_tx_data(usart1_msg.rx_data, USART_RX_LEN);
 			}
+			sof = 0;
+			rx_byte_cnt = 0;
 		}
-		if((usart_rx_byte == '>') && (sof == 0))
+		else if((sof == 1) && (rx_byte_cnt != USART_RX_LEN))
+		{
+			rx_frame[rx_byte_cnt] = usart_rx_byte;
+			rx_byte_cnt ++;
+		}
+		if((usart_rx_byte == '{') && (sof == 0))
 			sof = 1;
 	}
 }
