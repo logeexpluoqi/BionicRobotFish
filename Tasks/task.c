@@ -17,15 +17,15 @@ extern UsartMsgTypedef usart1_msg;
 
 TimeSliceInitTypedef Tasks[TASK_NUM] = 
 {
-    {0, 5, 5, task_5ms},
-    {0, 10, 10 ,task_10ms},
-    {0, 20, 20, task_20ms},
-    {0, 50, 50, task_50ms},
-    {0, 100, 100, task_100ms},
-    {0, 200, 200, task_200ms},
-    {0, 500, 500, task_500ms},
-    {0, 1000, 1000, task_1s},
-    {0, 5000, 5000, task_5s}
+    { 0, 5,    5,    task_5ms   },
+    { 0, 10,   10,   task_10ms  },
+    { 0, 20,   20,   task_20ms  },
+    { 0, 50,   50,   task_50ms  },
+    { 0, 100,  100,  task_100ms },
+    { 0, 200,  200,  task_200ms },
+    { 0, 500,  500,  task_500ms },
+    { 0, 1000, 1000, task_1s    },
+    { 0, 5000, 5000, task_5s    }
 };
 
 void task_5ms()
