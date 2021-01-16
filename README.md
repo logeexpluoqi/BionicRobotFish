@@ -57,7 +57,7 @@
 
 
 
-**控制信号共28 byte，发送时需要将这28个byte放在{ }中，如：{B0 B1 ... B27}**
+**控制信号共28 byte，发送时需要将这28个byte放在{ }中，如：{ab12CRfg45}表示发送的数据是：ab12CRfg45.**
 
 | Name | Info | Size (bit) | Size (byte)|
 | - | - | - | - |

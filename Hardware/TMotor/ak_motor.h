@@ -16,13 +16,14 @@ typedef enum
 
 typedef enum
 {
-    ENTER_MOTOR_CTRL,
-    QUIT_MOTOR_CTRL,
-    SET_ZERO_POS
+    ENTER_MOTOR_CTRL = 1,
+    QUIT_MOTOR_CTRL = 2,
+    SET_ZERO_POS = 3
 } AkMotorCmd;
 
 typedef struct
 {
+    unsigned char ctrl_en_flag;
     unsigned char id;
     float p_dst;
     float v_dst;

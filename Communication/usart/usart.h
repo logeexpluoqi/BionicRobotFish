@@ -8,7 +8,7 @@
 #define _USART_H
 
 #define USART_TX_LEN 112
-#define USART_RX_LEN 1 
+#define USART_RX_LEN 28
 
 typedef struct 
 {

@@ -34,7 +34,7 @@ void task_5ms()
 
 void task_10ms()
 {
-    ak_motor_ctrl_task();
+    ak_motor_ctrl_task(); 
 }
 
 void task_20ms()

@@ -16,6 +16,6 @@ typedef enum cmd
     SET_MOTOR_ZERO  = 3
 } MsgCmd;
 
-void msg_distribute(unsigned char msg[28]);
+void msg_distribute(unsigned char *msg);
 
 #endif

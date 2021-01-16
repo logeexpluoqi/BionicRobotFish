@@ -45,7 +45,7 @@ int main(void)
 	sys_init();
 	while(1)
 	{	
-		motor_ctrl_test();
+		// motor_ctrl_test();
 		time_slice_process();
 	}
 }

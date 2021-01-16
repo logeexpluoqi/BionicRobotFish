@@ -14,8 +14,6 @@
 #include "dma.h"
 #include "msg_distribute.h"
 
-#include "oled_task.h"
-
 UsartMsgTypedef usart1_msg;
 
 /* ****************************start**************************** */
@@ -142,6 +140,7 @@ void USART1_IRQHandler(void)
 				{
 					usart1_msg.rx_data[i] = rx_frame[i];
 				}
+				msg_distribute(usart1_msg.rx_data);
 				usart1_dma_tx_data(usart1_msg.rx_data, USART_RX_LEN);
 			}
 			sof = 0;

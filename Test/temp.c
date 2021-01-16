@@ -3,7 +3,7 @@
 /* Receive data decode 
  * a float data use 2byte, 
  */
-float msg_char_to_float(unsigned char chr_0, unsigned char chr_1)
+float msg_char_to_float(unsigned char chr_1, unsigned char chr_0)
 {
     short int num_int;
     
@@ -37,11 +37,11 @@ void msg_float_to_char(float num, unsigned char *pdst)
 int main()
 {
     // CodecTypedef codec;
-    float a = -45.02f;
+    float a = -12.23f;
     float r = 0;
     unsigned char b[2];
     msg_float_to_char(a, b);
-    printf("chr[1]: %x, chr[0]: %x\n", b[1], b[0]);
+    printf("chr[1]: %d, chr[0]: %d\n", b[1], b[0]);
     r = msg_char_to_float(b[1], b[0]);
 
     printf("Org: %f, Trans: %f\n", a, r);
