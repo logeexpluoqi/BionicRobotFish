@@ -8,7 +8,9 @@
 #include "ak_motor.h"
 #include "ak80_9.h"
 #include "ak10_9.h"
+#include "msg_codec.h"
 #include "can.h"
+#include "usart.h"
 
 CanMsgTypedef can1_msg;
 AkMotorCtrl ak_motor_ctrl_data;
@@ -32,6 +34,8 @@ void ak_motor_ctrl_init()
 unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
 {
     AkMotorType motor_type;
+    unsigned char err_cnt = 3;
+    unsigned char err_state = 0;
     unsigned int p_dst, v_dst, t_dst;
     unsigned int kp, kd;
     float p_min, p_max;
@@ -81,10 +85,14 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
     can1_msg.send_data[6] = ((kd & 0x0f) << 4) | (t_dst >> 8);
     can1_msg.send_data[7] = t_dst & 0xff;
 
-    if(can_send_msg(can1_msg)) 
-        return 1;
-    else
-        return 0;
+    while(can_send_msg(can1_msg))
+    {
+        if(err_cnt == 0)
+            err_state = 1;
+        err_cnt --;
+    }
+    ak_motor_info_receive(ak_motor_info);
+    return err_state;
 }
 
 unsigned char ak_motor_mode_set(AkMotorCmd cmd)
@@ -153,6 +161,8 @@ void clear_send_data()
 
 unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
 {
+    unsigned char chr[2];
+    unsigned char msg_upload[7]; // float to char, up to usart transmmit
     unsigned char motor_type;
 	unsigned char len;
     unsigned int position, velocity, torque;
@@ -188,8 +198,19 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     }
     ak_motor_info[can1_msg.receive_data[0]].position = unit2float(position, p_min, p_max, 16);
     ak_motor_info[can1_msg.receive_data[0]].velocity = unit2float(velocity, v_min, v_max, 12);
-    ak_motor_info[can1_msg.receive_data[0]].current = unit2float(torque, t_min, t_max, 12);
+    ak_motor_info[can1_msg.receive_data[0]].torque = unit2float(torque, t_min, t_max, 12);
+    msg_upload[0] = can1_msg.receive_data[0];
+    msg_float_to_char(ak_motor_info[can1_msg.receive_data[0]].position, chr);
+    msg_upload[1] = chr[1];
+    msg_upload[2] = chr[0];
+    msg_float_to_char(ak_motor_info[can1_msg.receive_data[0]].velocity, chr);
+    msg_upload[3] = chr[1];
+    msg_upload[4] = chr[0];
+    msg_float_to_char(ak_motor_info[can1_msg.receive_data[0]].torque, chr);
+    msg_upload[5] = chr[1];
+    msg_upload[6] = chr[0];
 
+    usart1_dma_tx_data(msg_upload, 7);
 
     return 0;
 }

@@ -7,8 +7,10 @@
 
 #include "ak_motor_ctrl_task.h"
 #include "ak_motor.h"
+#include "usart.h"
 
 extern AkMotorCtrl ak_motor_ctrl_data;
+extern AkMotorInfo ak_motor_info[20];
 
 void ak_motor_ctrl_task()
 {

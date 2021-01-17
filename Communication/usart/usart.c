@@ -141,7 +141,7 @@ void USART1_IRQHandler(void)
 					usart1_msg.rx_data[i] = rx_frame[i];
 				}
 				msg_distribute(usart1_msg.rx_data);
-				usart1_dma_tx_data(usart1_msg.rx_data, USART_RX_LEN);
+				// usart1_dma_tx_data(usart1_msg.rx_data, USART_RX_LEN);
 			}
 			sof = 0;
 			rx_byte_cnt = 0;

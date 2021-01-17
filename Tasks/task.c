@@ -11,10 +11,6 @@
 #include "keyboard_task.h"
 #include "ak_motor_ctrl_task.h"
 
-#include "usart.h"
-
-extern UsartMsgTypedef usart1_msg;
-
 TimeSliceInitTypedef Tasks[TASK_NUM] = 
 {
     { 0, 1,    1,    task_1ms   },

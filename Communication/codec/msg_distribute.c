@@ -15,8 +15,6 @@ extern AkMotorCtrl ak_motor_ctrl_data;
 
 void msg_distribute(unsigned char *msg)
 {
-    // unsigned char distr[] = "msg_distri";
-    // usart1_dma_tx_data(distr, 10);
     ak_motor_ctrl_data.id = msg[1];
     switch (msg[0])
     {
@@ -36,6 +34,4 @@ void msg_distribute(unsigned char *msg)
     default:
         break;
     }
-
-    ak_motor_ctrl_data.ctrl_en_flag = 1;
 }

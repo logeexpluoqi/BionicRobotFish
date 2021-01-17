@@ -37,7 +37,6 @@ typedef struct
     float position;
     float velocity;
     float torque;
-    float current;
 } AkMotorInfo;
 
 float p_limit(float p, AkMotorType m_type);
