@@ -8,8 +8,9 @@
 #ifndef _TASK_H
 #define _TASK_H
 
-#define TASK_NUM 9
+#define TASK_NUM 10
 
+void task_1ms(void);
 void task_5ms(void);
 void task_10ms(void);
 void task_20ms(void);

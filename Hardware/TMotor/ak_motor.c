@@ -155,7 +155,7 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
 {
     unsigned char motor_type;
 	unsigned char len;
-    unsigned int position, velocity, current;
+    unsigned int position, velocity, torque;
     float p_min, p_max;
     float v_min, v_max;
     float t_min, t_max;
@@ -184,11 +184,11 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     {
         position = (can1_msg.receive_data[1] << 8) | can1_msg.receive_data[2];
         velocity = (can1_msg.receive_data[3] << 4) | (can1_msg.receive_data[4] >> 4);
-        current = ((can1_msg.receive_data[4] & 0x0f) << 8) | can1_msg.receive_data[5];
+        torque = ((can1_msg.receive_data[4] & 0x0f) << 8) | can1_msg.receive_data[5];
     }
     ak_motor_info[can1_msg.receive_data[0]].position = unit2float(position, p_min, p_max, 16);
     ak_motor_info[can1_msg.receive_data[0]].velocity = unit2float(velocity, v_min, v_max, 12);
-    ak_motor_info[can1_msg.receive_data[0]].current = unit2float(current, t_min, t_max, 12);
+    ak_motor_info[can1_msg.receive_data[0]].current = unit2float(torque, t_min, t_max, 12);
 
 
     return 0;
@@ -215,7 +215,7 @@ AkMotorType motor_type_detect(unsigned char id)
 	AkMotorType type;
     if(id == 1)
         type = AK10_9;
-    else if(id == 2)
+    else if(id == 4)
         type = AK80_9;
 	
 	return type;
