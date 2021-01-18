@@ -76,13 +76,13 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
     kp = float2uint(ctrl_data.kp, kp_min, kp_max, 12);
     kd = float2uint(ctrl_data.kd, kd_min, kd_max, 12);
 
-    can1_msg.send_data[0] = p_dst >> 8;
+    can1_msg.send_data[0] = (p_dst >> 8) & 0xff;
     can1_msg.send_data[1] = p_dst & 0xff;
-    can1_msg.send_data[2] = v_dst >> 4;
-    can1_msg.send_data[3] = ((v_dst & 0x0f) << 4) | (kp >> 8);
+    can1_msg.send_data[2] = (v_dst >> 4) & 0xff;
+    can1_msg.send_data[3] = ((v_dst & 0x0f) << 4) | ((kp >> 8) & 0x0f);
     can1_msg.send_data[4] = kp & 0xff;
-    can1_msg.send_data[5] = kd >> 4;
-    can1_msg.send_data[6] = ((kd & 0x0f) << 4) | (t_dst >> 8);
+    can1_msg.send_data[5] = (kd >> 4) & 0xff;
+    can1_msg.send_data[6] = ((kd & 0x0f) << 4) | ((t_dst >> 8) & 0x0f);
     can1_msg.send_data[7] = t_dst & 0xff;
 
     while(can_send_msg(can1_msg))
@@ -142,21 +142,8 @@ unsigned char ak_motor_mode_set(AkMotorCmd cmd)
     }
 
     ret = can_send_msg(can1_msg);
-    clear_send_data();
 
     return ret;
-}
-
-void clear_send_data()
-{
-    can1_msg.send_data[0] = 0x7f;
-    can1_msg.send_data[1] = 0xff;
-    can1_msg.send_data[2] = 0x7f;
-    can1_msg.send_data[3] = 0xf0;
-    can1_msg.send_data[4] = 0x00;
-    can1_msg.send_data[5] = 0x33;
-    can1_msg.send_data[6] = 0x37;
-    can1_msg.send_data[7] = 0xff;
 }
 
 unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
@@ -234,9 +221,9 @@ unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits)
 AkMotorType motor_type_detect(unsigned char id)
 {
 	AkMotorType type;
-    if(id == 1)
+    if(id == 18)
         type = AK10_9;
-    else if(id == 4)
+    else if(id == 1 || id == 4)
         type = AK80_9;
 	
 	return type;

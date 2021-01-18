@@ -20,7 +20,7 @@ float msg_char_to_float(unsigned char chr_1, unsigned char chr_0)
         num_int = -(((chr_1 & 0x7f) << 8) | chr_0);
     else
         num_int = ((chr_1 & 0x7f) << 8) | chr_0;
-    return (float)num_int / 100;
+    return (float)num_int / 100.0f;
 }
 
 /*  
@@ -36,7 +36,7 @@ void msg_float_to_char(float num, unsigned char *pdst)
     {   
         num_int = -num_int;
         *(pdst + 1) = (num_int >> 8) | 0x80;
-        *pdst = num_int & 0x00ff;
+        *pdst = num_int & 0xff;
     }
     else
     {
