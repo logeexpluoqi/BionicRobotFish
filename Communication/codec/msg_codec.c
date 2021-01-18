@@ -10,6 +10,7 @@
 
 /* Receive data decode 
  * a float data use 2byte, 
+ * chr_1: higher 8bit, chr_0: lower 8bit
  */
 float msg_char_to_float(unsigned char chr_1, unsigned char chr_0)
 {
@@ -22,6 +23,10 @@ float msg_char_to_float(unsigned char chr_1, unsigned char chr_0)
     return (float)num_int / 100;
 }
 
+/*  
+ * pdst[0]: lower 8bit
+ * pdst[1]: higher 8bit
+ */
 void msg_float_to_char(float num, unsigned char *pdst)
 {
     short int num_int;
