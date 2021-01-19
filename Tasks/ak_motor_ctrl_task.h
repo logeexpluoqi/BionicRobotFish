@@ -9,5 +9,4 @@
 #define _AK_MOTOR_CTRL_TASK_H
 
 void ak_motor_ctrl_task(void);
-void ak_motor_receive_data_task(void);
 #endif

@@ -16,8 +16,3 @@ void ak_motor_ctrl_task()
 {
     ak_motor_ctrl(ak_motor_ctrl_data);  
 }
-
-void ak_motor_receive_data_task()
-{
-    
-}

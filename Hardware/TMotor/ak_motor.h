@@ -23,7 +23,7 @@ typedef enum
 
 typedef struct
 {
-    unsigned char ctrl_en_flag;
+    unsigned char ctrl_en;
     unsigned char id;
     float p_dst;
     float v_dst;

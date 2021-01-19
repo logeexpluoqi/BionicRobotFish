@@ -23,7 +23,7 @@ void ak_motor_ctrl_init()
     can1_msg.ide = 0;
     can1_msg.dlc = 8; // a frame 8 byte data
 
-    ak_motor_ctrl_data.ctrl_en_flag = 0;
+    ak_motor_ctrl_data.ctrl_en = 0;
     ak_motor_ctrl_data.p_dst = 0;
     ak_motor_ctrl_data.v_dst = 0;
     ak_motor_ctrl_data.t_dst = 0;

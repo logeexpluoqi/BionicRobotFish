@@ -66,13 +66,13 @@ int main()
     printf("num: %.2f, num_t: %.2f\n", num, num_t);
 
 
-    // printf("%.2f\n", num_t);
+    printf("%.2f\n", num_t);
 
-    // for(i = 0; i < 500; i++)
-    // {
-    //     num_t = uint2float(float2uint(num + i*0.1, x_min, x_max, bits), -30, 30, bits);
-    //     printf("org: %.2f, trans: %.2f\n", num + i*0.1, num_t);
-    // }
+    for(i = 0; i < 500; i++)
+    {
+        num_t = uint2float(float2uint(num + i*0.1, x_min, x_max, bits), x_min, x_max, bits);
+        printf("org: %.2f, trans: %.2f\n", num + i*0.1, num_t);
+    }
 
     return 0;
 }
