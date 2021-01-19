@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-06 20:20:08 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-07 14:28:06
+ * @Last Modified time: 2021-01-19 20:44:59
  */
 
 #include "keyboard_task.h"
@@ -32,4 +32,30 @@ void key_scan()
     {
         sys_disp_char(8, 7, 'L', SMALL);
     }
+}
+
+void key_edge_action()
+{
+	static unsigned char flag = 0;
+
+    /* rising edge action */
+	if(key.key_1 == KEY_H && flag == 0)
+	{
+		flag = 1;
+	}
+    /* falling edge action */
+	if(key.key_1 == KEY_NULL && flag == 1)
+	{
+		flag = 2;
+	}
+    /* rising edge action */
+	if(key.key_1 == KEY_H && flag == 2)
+	{
+		flag = 3;
+	}
+    /* falling edge action */
+	if(key.key_1 == KEY_NULL && flag == 3)
+	{
+		flag = 0;
+	}
 }
