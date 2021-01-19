@@ -218,12 +218,15 @@ unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits)
     return (unsigned int)((x - offset) * ((float)((1 << bits) - 1)) / span); 
 }
 
+/* 
+ * If motor id changed, there also need to change
+ */
 AkMotorType motor_type_detect(unsigned char id)
 {
 	AkMotorType type;
-    if(id == 18)
+    if(id == 9 || id == 16 || id == 17 || id == 18)
         type = AK10_9;
-    else if(id == 1 || id == 4)
+    else if(id == 1 || id == 2 || id == 4 || id == 5)
         type = AK80_9;
 	
 	return type;
