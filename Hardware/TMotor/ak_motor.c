@@ -2,10 +2,11 @@
  * @Author: luoqi 
  * @Date: 2021-01-08 09:16:00 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-09 09:37:35
+ * @Last Modified time: 2021-01-19 20:51:22
  */
 
 #include "ak_motor.h"
+#include "config.h"
 #include "ak80_9.h"
 #include "ak10_9.h"
 #include "msg_codec.h"
@@ -151,7 +152,7 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     unsigned char chr[2];
     unsigned char msg_upload[7]; // float to char, up to usart transmmit
     unsigned char motor_type;
-	unsigned char len;
+    unsigned char len;
     unsigned int position, velocity, torque;
     float p_min, p_max;
     float v_min, v_max;

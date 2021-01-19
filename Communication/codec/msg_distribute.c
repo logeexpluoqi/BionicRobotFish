@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-14 08:29:43 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-14 08:40:58
+ * @Last Modified time: 2021-01-19 20:41:04
  */
 
 #include "msg_distribute.h"
@@ -30,6 +30,9 @@ void msg_distribute(unsigned char *msg)
     case EN_MOTOR_MODE: ak_motor_mode_set(ENTER_MOTOR_CTRL); break;
     case EX_MOTOR_MODE: ak_motor_mode_set(QUIT_MOTOR_CTRL); break;
     case SET_MOTOR_ZERO: ak_motor_mode_set(SET_ZERO_POS); break;
+    case 255: 
+    {
+    }
 
     default:
         break;

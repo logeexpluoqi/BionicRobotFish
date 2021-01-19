@@ -2,9 +2,10 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 09:54:11 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-14 08:39:54
+ * @Last Modified time: 2021-01-19 20:52:56
  */
 #include "usart.h"
+#include "config.h"
 #include "stdio.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_rcc.h"
@@ -14,7 +15,15 @@
 #include "dma.h"
 #include "msg_distribute.h"
 
+#if CTRL_MODE_ONCE
+#include "ak_motor.h"
+#endif
+
 UsartMsgTypedef usart1_msg;
+
+#if CTRL_MODE_ONCE
+extern AkMotorCtrl ak_motor_ctrl_data;
+#endif
 
 /* ****************************start**************************** */
 #if 1
@@ -117,8 +126,9 @@ void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
 
 
 /* UART data receive interrupt function
- * data must start of 0x0d and end of 0x0a
- * example: 0x0d | data_0 | data_1 | .... | 0x0a
+ * data must start of '{' and end of '}'
+ * and mast confirm the data length
+ * example: '{' | data_0 | data_1 | .... | '}'
  */
 void USART1_IRQHandler(void)
 {
@@ -141,7 +151,9 @@ void USART1_IRQHandler(void)
 					usart1_msg.rx_data[i] = rx_frame[i];
 				}
 				msg_distribute(usart1_msg.rx_data);
-				// usart1_dma_tx_data(usart1_msg.rx_data, USART_RX_LEN);
+#if CTRL_MODE_ONCE
+				ak_motor_ctrl(ak_motor_ctrl_data);
+#endif
 			}
 			sof = 0;
 			rx_byte_cnt = 0;
