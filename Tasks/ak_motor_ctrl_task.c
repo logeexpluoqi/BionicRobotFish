@@ -14,5 +14,8 @@ extern AkMotorInfo ak_motor_info[20];
 
 void ak_motor_ctrl_task()
 {
+    unsigned char i;
+
+    for(i = 0)
     ak_motor_ctrl(ak_motor_ctrl_data);  
 }
