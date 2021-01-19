@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-19 14:10:53 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-19 20:02:34
+ * @Last Modified time: 2021-01-19 21:07:44
  */
 
 #ifndef _CONFIG_H
@@ -12,8 +12,10 @@
 */
 #define AK_MOTOR_NUM            8
 
-/* 
- *
+/* When mcu received all motor control data, then 
+ * control all the data at same time. (in practice, 
+ * these motors are controlled one by one in a short 
+ * time)
  */
 #define AK_MOTOR_GROUP_CTRL     0
 
@@ -27,6 +29,6 @@
  * @param: *p_s, structure position;
  * @param: s_size, the structure size, use sizeof(s_name).
  */
-void struct_clear(void* p_s, unsigned int s_size);
+void mem_set(void* mem, unsigned char c);
 
 #endif
