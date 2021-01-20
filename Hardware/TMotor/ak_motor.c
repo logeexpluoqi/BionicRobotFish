@@ -150,7 +150,7 @@ unsigned char ak_motor_mode_set(AkMotorCmd cmd)
 unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
 {
     unsigned char chr[2];
-    unsigned char msg_upload[7]; // float to char, up to usart transmmit
+    unsigned char msg_upload[9]; // float to char, up to usart transmmit
     unsigned char motor_type;
     unsigned char len;
     unsigned int position, velocity, torque;
@@ -187,18 +187,20 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     ak_motor_info[can1_msg.receive_data[0]].position = unit2float(position, p_min, p_max, 16);
     ak_motor_info[can1_msg.receive_data[0]].velocity = unit2float(velocity, v_min, v_max, 12);
     ak_motor_info[can1_msg.receive_data[0]].torque = unit2float(torque, t_min, t_max, 12);
-    msg_upload[0] = can1_msg.receive_data[0];
+    msg_upload[1] = can1_msg.receive_data[0];
     msg_float_to_char(ak_motor_info[can1_msg.receive_data[0]].position, chr);
-    msg_upload[1] = chr[1];
-    msg_upload[2] = chr[0];
+    msg_upload[2] = chr[1];
+    msg_upload[3] = chr[0];
     msg_float_to_char(ak_motor_info[can1_msg.receive_data[0]].velocity, chr);
-    msg_upload[3] = chr[1];
-    msg_upload[4] = chr[0];
+    msg_upload[4] = chr[1];
+    msg_upload[5] = chr[0];
     msg_float_to_char(ak_motor_info[can1_msg.receive_data[0]].torque, chr);
-    msg_upload[5] = chr[1];
-    msg_upload[6] = chr[0];
+    msg_upload[6] = chr[1];
+    msg_upload[7] = chr[0];
+    msg_upload[0] = '{';
+    msg_upload[8] = '}';
 
-    usart1_dma_tx_data(msg_upload, 7);
+    usart1_dma_tx_data(msg_upload, 9);
 
     return 0;
 }
@@ -219,8 +221,8 @@ unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits)
     return (unsigned int)((x - offset) * ((float)((1 << bits) - 1)) / span); 
 }
 
-/* 
- * If motor id changed, there also need to change
+/* @Notation:
+ * If motor id changed, there also need to change !!!
  */
 AkMotorType motor_type_detect(unsigned char id)
 {
