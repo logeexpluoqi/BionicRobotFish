@@ -23,7 +23,7 @@
  * 0: control in time_slice process;
  * 1: control once when receive a control command from pc;
  */
-#define CTRL_MODE_ONCE          0
+#define CTRL_MODE_ONCE          1
 
 /* @breif: This function is used to clear structures.
  * @param: *p_s, structure position;

@@ -135,9 +135,9 @@ void USART1_IRQHandler(void)
 					usart1_msg.rx_data[i] = rx_frame[i];
 				}
 				msg_distribute(usart1_msg.rx_data);
-#if CTRL_MODE_ONCE
+			#if CTRL_MODE_ONCE
 				ak_motor_ctrl(ak_motor_ctrl_data);
-#endif
+			#endif
 			}
 			sof = 0;
 			rx_byte_cnt = 0;

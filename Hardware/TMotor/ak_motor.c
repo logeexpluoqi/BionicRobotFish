@@ -197,8 +197,8 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     msg_float_to_char(ak_motor_info[can1_msg.receive_data[0]].torque, chr);
     msg_upload[6] = chr[1];
     msg_upload[7] = chr[0];
-    msg_upload[0] = '{';
-    msg_upload[8] = '}';
+    msg_upload[0] = '{'; // SOF
+    msg_upload[8] = '}'; // EOF
 
     usart1_dma_tx_data(msg_upload, 9);
 

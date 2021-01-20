@@ -8,7 +8,7 @@
 #include "time_slice.h"
  
 int main(void)
-{ 		
+{
 	sys_init();
 	while(1)
 	{	
