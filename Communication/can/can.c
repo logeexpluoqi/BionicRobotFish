@@ -120,11 +120,11 @@ unsigned char can_send_msg(CanMsgTypedef msg)
     }
     mbox = CAN_Transmit(CAN1, &TxMessage);
     i = 0;
-    while ((CAN_TransmitStatus(CAN1, mbox) == CAN_TxStatus_Failed) && (i < 0XFFF))
+    while ((CAN_TransmitStatus(CAN1, mbox) == CAN_TxStatus_Failed) && (i < 0x7ff))
     {
         i++; // wait for send finish
     }
-    if (i >= 0XFFF)
+    if (i >= 0x7ff)
     {
         return 1;
     }
