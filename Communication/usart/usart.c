@@ -17,13 +17,10 @@
 
 #if CTRL_MODE_ONCE
 #include "ak_motor.h"
+extern AkMotorCtrl ak_motor_ctrl_data;
 #endif
 
 UsartMsgTypedef usart1_msg;
-
-#if CTRL_MODE_ONCE
-extern AkMotorCtrl ak_motor_ctrl_data;
-#endif
 
 /* ****************************start**************************** */
 #if 1
@@ -66,11 +63,11 @@ void usart1_init(unsigned int bound)
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9 | GPIO_Pin_10;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_9 | GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_OType 	= GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd 	= GPIO_PuPd_UP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	USART_InitStructure.USART_BaudRate = bound;
@@ -91,11 +88,6 @@ void usart1_init(unsigned int bound)
 
 	USART_Cmd(USART1, ENABLE);
 	usart1_msg.rx_cnt = 0;
-}
-
-void usart1_init_dma()
-{
-	dma_config(DMA2_Stream7, DMA_Channel_4, (u32)&USART1->DR, (u32)usart1_msg.tx_data, USART_TX_LEN);
 }
 
 void usart1_tx_data(unsigned char *tx_data)

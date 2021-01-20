@@ -28,7 +28,6 @@ void sys_init()
 	keyboard_init();
     dma_init();
     usart1_init(115200);
-    usart1_init_dma();
     can_init();
     ak_motor_ctrl_init();
 
