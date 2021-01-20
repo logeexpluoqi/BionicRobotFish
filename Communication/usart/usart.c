@@ -10,10 +10,10 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_gpio.h"
-#include "stm32f4xx_dma.h"
 #include "stm32f4xx_usart.h"
-#include "dma.h"
 #include "msg_distribute.h"
+#include "dma.h"
+#include "misc.h"
 
 #if CTRL_MODE_ONCE
 #include "ak_motor.h"
@@ -80,14 +80,6 @@ void usart1_init(unsigned int bound)
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
  	USART_Init(USART1, &USART_InitStructure);
-
-	DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
-	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream7_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-	DMA_ITConfig(DMA2_Stream7, DMA_IT_TC, ENABLE);
 
 	USART_ClearFlag(USART1, USART_FLAG_RXNE);
 	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
@@ -168,10 +160,3 @@ void USART1_IRQHandler(void)
 	}
 }
 
-void DMA2_Stream7_IRQHandler(void)
-{
-	if(DMA_GetFlagStatus(DMA2_Stream7, DMA_FLAG_TCIF7) == SET)
-	{
-		DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
-	}
-}

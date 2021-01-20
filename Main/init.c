@@ -17,6 +17,7 @@
 #include "keyboard.h"
 #include "ak_motor.h"
 #include "usart.h"
+#include "dma.h"
 
 void sys_init()
 {
@@ -25,6 +26,7 @@ void sys_init()
     sys_disp_init();
     led_init();
 	keyboard_init();
+    dma_init();
     usart1_init(115200);
     usart1_init_dma();
     can_init();
