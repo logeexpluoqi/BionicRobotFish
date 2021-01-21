@@ -96,7 +96,7 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
     return err_state;
 }
 
-unsigned char ak_motor_mode_set(AkMotorCmd cmd)
+unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
 {
     unsigned char ret;
 
