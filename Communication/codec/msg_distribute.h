@@ -10,10 +10,10 @@
 
 typedef enum cmd 
 {
-    NORMAL          = 0,
     EN_MOTOR_MODE   = 1,
     EX_MOTOR_MODE   = 2,
-    SET_MOTOR_ZERO  = 3
+    SET_MOTOR_ZERO  = 3,
+    CTRL_MOTOR      = 4
 } MsgCmd;
 
 void msg_distribute(unsigned char *msg);

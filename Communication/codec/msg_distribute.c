@@ -9,17 +9,19 @@
 #include "ak_motor.h"
 #include "msg_codec.h"
 #include "usart.h"
-#include "usart.h"
 
 extern AkMotorCtrl ak_motor_ctrl_data;
 
 void msg_distribute(unsigned char *msg)
 {
-    ak_motor_ctrl_data.id = msg[1];
     switch (msg[0])
     {
-    case NORMAL:
+    case EN_MOTOR_MODE: ak_motor_mode_set(msg[1], ENTER_MOTOR_CTRL); break;
+    case EX_MOTOR_MODE: ak_motor_mode_set(msg[1], QUIT_MOTOR_CTRL); break;
+    case SET_MOTOR_ZERO: ak_motor_mode_set(msg[1], SET_ZERO_POS); break;
+    case CTRL_MOTOR:
     {
+        ak_motor_ctrl_data.id = msg[1];
         ak_motor_ctrl_data.p_dst = msg_char_to_float(msg[2], msg[3]);
         ak_motor_ctrl_data.v_dst = msg_char_to_float(msg[4], msg[5]);
         ak_motor_ctrl_data.t_dst = msg_char_to_float(msg[6], msg[7]);
@@ -27,9 +29,6 @@ void msg_distribute(unsigned char *msg)
         ak_motor_ctrl_data.kd    = msg_char_to_float(msg[10], msg[11]);
         break;
     }
-    case EN_MOTOR_MODE: ak_motor_mode_set(ENTER_MOTOR_CTRL); break;
-    case EX_MOTOR_MODE: ak_motor_mode_set(QUIT_MOTOR_CTRL); break;
-    case SET_MOTOR_ZERO: ak_motor_mode_set(SET_ZERO_POS); break;
     case 255: 
     {
     }
