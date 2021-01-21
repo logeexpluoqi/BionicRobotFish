@@ -103,13 +103,7 @@ void usart1_tx_data(unsigned char *tx_data)
 
 void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
 {
-	static unsigned char tx_len = 0;
-	
-	if(tx_len != len)
-	{
-		tx_len = len;
-		dma_config(DMA2_Stream7, DMA_Channel_4, (u32)&USART1->DR, (u32)msg, len);
-	}
+	dma_config(DMA2_Stream7, DMA_Channel_4, (u32)&USART1->DR, (u32)msg, len);
 	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
 	dma_tx_data(DMA2_Stream7, len);
 }

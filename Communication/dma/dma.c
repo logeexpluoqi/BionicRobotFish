@@ -76,11 +76,8 @@ void dma_tx_data(DMA_Stream_TypeDef *DMA_Streamx, u16 ndtr)
 {
 
     DMA_Cmd(DMA_Streamx, DISABLE); // cloese dma transferd
-
     while (DMA_GetCmdStatus(DMA_Streamx) != DISABLE);
-    
     DMA_SetCurrDataCounter(DMA_Streamx, ndtr); // datatramsfer counter
-
     DMA_Cmd(DMA_Streamx, ENABLE); //start dma transfer
 }
 
