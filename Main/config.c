@@ -37,8 +37,8 @@ void sys_config_display()
         sys_disp_char(64, 3, 'N', SMALL);
     #endif
 
-    sys_disp_str(0, 4, "C_Once: ", SMALL);
-    #if CTRL_MODE_ONCE
+    sys_disp_str(0, 4, "StrokeCtrl: ", SMALL);
+    #if CTRL_MODE_STROKE
         sys_disp_char(64, 4, 'Y', SMALL);
     #else
         sys_disp_char(64, 4, 'N', SMALL);
@@ -48,6 +48,6 @@ void sys_config_display()
     #if CONTINUOUS_UPLOAD
         sys_disp_char(64, 5, 'C', SMALL);
     #else
-        sys_disp_char(64, 5, 'D', SMALL);
+        sys_disp_char(64, 5, 'S', SMALL);
     #endif
 }
