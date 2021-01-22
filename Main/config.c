@@ -26,20 +26,20 @@ void mem_set(void* mem, unsigned char c)
 
 void sys_config_display()
 {
-    sys_disp_str(0, 0, "Config: ", LARGE);
-    sys_disp_str(0, 3, "M_Num: ", SMALL);
-    sys_disp_num(64, 3, AK_MOTOR_NUM, 1, SMALL);
-    sys_disp_str(0, 4, "Grp_Ctrl: ", SMALL);
+    sys_disp_str(0, 0, "SysInfo: ", SMALL);
+    sys_disp_str(0, 2, "M_Num: ", SMALL);
+    sys_disp_num(64, 2, AK_MOTOR_NUM, 1, SMALL);
+    sys_disp_str(0, 3, "Grp_Ctrl: ", SMALL);
     #if AK_MOTOR_GROUP_CTRL
-        sys_disp_char(64, 4, 'Y', SMALL);
+        sys_disp_char(64, 3, 'Y', SMALL);
     #else 
-        sys_disp_char(64, 4, 'N', SMALL);
+        sys_disp_char(64, 3, 'N', SMALL);
     #endif
 
-    sys_disp_str(0, 5, "C_Once: ", SMALL);
+    sys_disp_str(0, 4, "C_Once: ", SMALL);
     #if CTRL_MODE_ONCE
-        sys_disp_char(64, 5, 'Y', SMALL);
+        sys_disp_char(64, 4, 'Y', SMALL);
     #else
-        sys_disp_char(64, 5, 'N', SMALL);
+        sys_disp_char(64, 4, 'N', SMALL);
     #endif
 }
