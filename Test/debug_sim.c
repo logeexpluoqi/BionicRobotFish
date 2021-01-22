@@ -29,8 +29,6 @@ void msg_float_to_char(float num, unsigned char *pdst)
         *(pdst + 1) = num_int >> 8;
         *pdst = num_int & 0xff;
     }
-    
-    // printf(">> %x, %x\n", codec.chr[1], codec.chr[0]);
 }
 
 unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits)

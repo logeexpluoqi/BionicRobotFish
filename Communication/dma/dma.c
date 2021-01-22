@@ -69,9 +69,10 @@ void dma_config(DMA_Stream_TypeDef *DMA_Streamx, u32 chx, u32 par, u32 mar, u16 
     DMA_Init(DMA_Streamx, &DMA_InitStructure); // Stream initialize DMA_Stream
 }
 
-/* DMA transfer once */
-//DMA_Streamx:DMA data flow, DMA1_Stream0~7 / DMA2_Stream0~7
-//ndtr: data transfer
+/* DMA transfer once
+ * @param DMA_Streamx:DMA data flow, DMA1_Stream0~7 / DMA2_Stream0~7
+ * @param ndtr: data transfer 
+ */
 void dma_tx_data(DMA_Stream_TypeDef *DMA_Streamx, u16 ndtr)
 {
 
