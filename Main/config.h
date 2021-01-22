@@ -30,5 +30,6 @@
  * @param: s_size, the structure size, use sizeof(s_name).
  */
 void mem_set(void* mem, unsigned char c);
+void sys_config_display(void);
 
 #endif

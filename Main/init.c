@@ -7,6 +7,7 @@
 
 #include "stdio.h"
 #include "init.h"
+#include "config.h"
 #include "misc.h"
 #include "delay.h"
 #include "time_slice.h"
@@ -24,6 +25,7 @@ void sys_init()
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     delay_init(168);
     sys_disp_init();
+    sys_config_display();
     led_init();
 	keyboard_init();
     dma_init();
@@ -32,11 +34,11 @@ void sys_init()
     ak_motor_ctrl_init();
 
     time_slice_init();
-    printf("Initialize complete!");
-    sys_disp_str(0, 0, "Initialize complete!", SMALL);
-    // delay_ms(1000);
-    sys_disp_str(0, 0, "                    ", SMALL);
+    // printf("Initialize complete!");
+    // sys_disp_str(0, 0, "Initialize complete!", SMALL);
+    // // delay_ms(1000);
+    // sys_disp_str(0, 0, "                    ", SMALL);
     sys_disp_str(72, 7, "by luoqi", SMALL);
-    sys_disp_str(0, 2, "S:", LARGE);
-    sys_disp_str(0, 4, "R:", LARGE);
+    // sys_disp_str(0, 2, "S:", LARGE);
+    // sys_disp_str(0, 4, "R:", LARGE);
 }
