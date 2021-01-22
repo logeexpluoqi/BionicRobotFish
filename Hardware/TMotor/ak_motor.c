@@ -102,10 +102,12 @@ unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
 {
     unsigned char ret;
     unsigned char start[] = "{START  }";
-    unsigned char exit[]  = "{EXIT   }";
+    unsigned char exit[]  = "{STOP   }";
     unsigned char zero[]  = "{ZERO   }";
     unsigned char error[] = "{CAN ERR}";
     unsigned char *upload;
+
+    can1_msg.std_id = id;
 
     switch(cmd)
     {
