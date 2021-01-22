@@ -7,13 +7,17 @@
 
 #include "msg_distribute.h"
 #include "ak_motor.h"
+#include "control_info.h"
+#include "config.h"
 #include "msg_codec.h"
 #include "usart.h"
 
 extern AkMotorCtrl ak_motor_ctrl_data;
+extern AkMotorCtrlInfoTypedef ak_motor_ctrl_cache[AK_MOTOR_NUM];
 
 void msg_distribute(unsigned char *msg)
 {
+#if ! AK_MOTOR_GROUP_CTRL
     switch (msg[0])
     {
     case EN_MOTOR_MODE: ak_motor_mode_set(msg[1], ENTER_MOTOR_CTRL); break;
@@ -27,6 +31,10 @@ void msg_distribute(unsigned char *msg)
         ak_motor_ctrl_data.t_dst = msg_char_to_float(msg[6], msg[7]);
         ak_motor_ctrl_data.kp    = msg_char_to_float(msg[8], msg[9]);
         ak_motor_ctrl_data.kd    = msg_char_to_float(msg[10], msg[11]);
+
+        #if CTRL_MODE_STROKE
+			ak_motor_ctrl(ak_motor_ctrl_data);
+		#endif
         break;
     }
     case 255: 
@@ -36,4 +44,8 @@ void msg_distribute(unsigned char *msg)
     default:
         break;
     }
+#else
+
+
+#endif
 }

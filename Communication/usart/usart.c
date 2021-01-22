@@ -132,10 +132,9 @@ void USART1_IRQHandler(void)
 				{
 					usart1_msg.rx_data[i] = rx_frame[i];
 				}
-				msg_distribute(usart1_msg.rx_data);
 				usart1_msg.tx_en = 1;
-			#if CTRL_MODE_STROKE
-				ak_motor_ctrl(ak_motor_ctrl_data);
+			#if ! AK_MOTOR_GROUP_CTRL
+				msg_distribute(usart1_msg.rx_data);
 			#endif
 			}
 			sof = 0;
