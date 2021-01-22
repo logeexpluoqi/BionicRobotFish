@@ -15,4 +15,3 @@ int main(void)
 		time_slice_process();
 	}
 }
- 

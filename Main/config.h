@@ -23,7 +23,7 @@
  * 0: control in time_slice process;
  * 1: control once when receive a control command from pc;
  */
-#define CTRL_MODE_STROKE         0
+#define CTRL_MODE_STROKE        1
 
 /* Data upload mode.
  * 1: continuous mode, upload data every control period;

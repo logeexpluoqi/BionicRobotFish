@@ -29,15 +29,15 @@ void sys_config_display()
     sys_disp_str(0, 0, "SysInfo: ", SMALL);
     sys_disp_str(0, 2, "M_Num: ", SMALL);
     sys_disp_num(64, 2, AK_MOTOR_NUM, 1, SMALL);
+    
     sys_disp_str(0, 3, "GrpCtrl: ", SMALL);
-
     #if AK_MOTOR_GROUP_CTRL
         sys_disp_char(64, 3, 'Y', SMALL);
     #else 
         sys_disp_char(64, 3, 'N', SMALL);
     #endif
 
-    sys_disp_str(0, 4, "StrokeCtrl: ", SMALL);
+    sys_disp_str(0, 4, "StrkCtrl: ", SMALL); // strock control
     #if CTRL_MODE_STROKE
         sys_disp_char(64, 4, 'Y', SMALL);
     #else
