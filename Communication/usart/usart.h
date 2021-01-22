@@ -12,6 +12,8 @@
 
 typedef struct 
 {
+    unsigned char tx_en; // 1: enable, 0: disable
+    unsigned char rx_en; // 1: enable, 0: disable
     unsigned char tx_data[USART_TX_LEN];
     unsigned char rx_data[USART_RX_LEN];
     unsigned char rx_cnt;

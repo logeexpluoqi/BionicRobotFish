@@ -14,11 +14,9 @@
 #include "msg_distribute.h"
 #include "dma.h"
 #include "misc.h"
-
-#if CTRL_MODE_ONCE
 #include "ak_motor.h"
+
 extern AkMotorCtrl ak_motor_ctrl_data;
-#endif
 
 UsartMsgTypedef usart1_msg;
 
@@ -135,6 +133,7 @@ void USART1_IRQHandler(void)
 					usart1_msg.rx_data[i] = rx_frame[i];
 				}
 				msg_distribute(usart1_msg.rx_data);
+				usart1_msg.tx_en = 1;
 			#if CTRL_MODE_ONCE
 				ak_motor_ctrl(ak_motor_ctrl_data);
 			#endif

@@ -23,11 +23,17 @@
  * 0: control in time_slice process;
  * 1: control once when receive a control command from pc;
  */
-#define CTRL_MODE_ONCE          1
+#define CTRL_MODE_ONCE          0
+
+/* Data upload mode.
+ * 1: continuous mode, upload data every control period;
+ * 0: discrete mode, upload data while receive a control command.
+ */
+#define CONTINUOUS_UPLOAD       0
 
 /* @breif: This function is used to clear structures.
- * @param: *p_s, structure position;
- * @param: s_size, the structure size, use sizeof(s_name).
+ * @param: *mem, structure position;
+ * @param: c, fill number.
  */
 void mem_set(void* mem, unsigned char c);
 void sys_config_display(void);

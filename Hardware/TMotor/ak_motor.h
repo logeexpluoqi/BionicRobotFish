@@ -23,7 +23,7 @@ typedef enum
 
 typedef struct
 {
-    unsigned char ctrl_en;
+    unsigned char ctrl_en; // 1: enable, 0: disable
     unsigned char id;
     float p_dst;
     float v_dst;

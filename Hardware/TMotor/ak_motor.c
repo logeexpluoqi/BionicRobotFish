@@ -13,6 +13,8 @@
 #include "can.h"
 #include "usart.h"
 
+extern UsartMsgTypedef usart1_msg;
+
 CanMsgTypedef can1_msg;
 AkMotorCtrl ak_motor_ctrl_data;
 AkMotorInfo ak_motor_info[20];
@@ -92,7 +94,7 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
             err_state = 1;
         err_cnt --;
     }
-    ak_motor_info_receive(ak_motor_info);
+    ak_motor_info_receive(ak_motor_info);  
     return err_state;
 }
 
@@ -200,7 +202,15 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     msg_upload[0] = '{'; // SOF
     msg_upload[8] = '}'; // EOF
 
-    usart1_dma_tx_data(msg_upload, 9);
+#if ! CONTINUOUS_UPLOAD
+    if(usart1_msg.tx_en == 1)
+    {
+#endif
+        usart1_dma_tx_data(msg_upload, 9);
+        usart1_msg.tx_en = 0;
+#if ! CONTINUOUS_UPLOAD
+    }
+#endif
 
     return 0;
 }
