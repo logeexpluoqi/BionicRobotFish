@@ -101,6 +101,11 @@ unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
 unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
 {
     unsigned char ret;
+    unsigned char start[] = "{START  }";
+    unsigned char exit[]  = "{EXIT   }";
+    unsigned char zero[]  = "{ZERO   }";
+    unsigned char error[] = "{CAN ERR}";
+    unsigned char *upload;
 
     switch(cmd)
     {
@@ -114,6 +119,7 @@ unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfc;
+        upload = start;
         break;
     }
     case QUIT_MOTOR_CTRL:
@@ -126,6 +132,7 @@ unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfd;
+        upload = exit;
         break;
     }
     case SET_ZERO_POS:
@@ -138,6 +145,7 @@ unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfe;
+        upload = zero;
         break;
     }
     default:
@@ -145,6 +153,13 @@ unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
     }
 
     ret = can_send_msg(can1_msg);
+    if(ret == 1)
+    {
+        upload = error;
+        usart1_dma_tx_data(upload, 9);
+    }
+    else
+        usart1_dma_tx_data(upload, 9);
 
     return ret;
 }
