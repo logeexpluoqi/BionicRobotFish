@@ -32,9 +32,9 @@ void msg_distribute(unsigned char *msg)
         ak_motor_ctrl_data.kp    = msg_char_to_float(msg[8], msg[9]);
         ak_motor_ctrl_data.kd    = msg_char_to_float(msg[10], msg[11]);
 
-        #if CTRL_MODE_STROKE
-			ak_motor_ctrl(ak_motor_ctrl_data);
-		#endif
+    #if CTRL_MODE_STROKE
+		ak_motor_ctrl(ak_motor_ctrl_data);
+	#endif
         break;
     }
     case 255: 
