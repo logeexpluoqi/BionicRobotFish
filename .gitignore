@@ -5,3 +5,5 @@
 *.exe
 /Test/temp.c
 keilkilll.bat
+*.png
+.gitignore
