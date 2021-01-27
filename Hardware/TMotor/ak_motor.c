@@ -16,7 +16,7 @@
 extern UsartMsgTypedef usart1_msg;
 
 CanMsgTypedef can1_msg;
-AkMotorCtrl ak_motor_ctrl_data;
+AkMotorCtrlTypedef ak_motor_ctrl_data;
 AkMotorInfo ak_motor_info[20];
 
 void ak_motor_ctrl_init()
@@ -34,7 +34,7 @@ void ak_motor_ctrl_init()
     ak_motor_ctrl_data.kd = 0;
 }
 
-unsigned char ak_motor_ctrl(AkMotorCtrl ctrl_data)
+unsigned char ak_motor_ctrl(AkMotorCtrlTypedef ctrl_data)
 {
     AkMotorType motor_type;
     unsigned char err_cnt = 3;

@@ -12,7 +12,7 @@
 #include "msg_codec.h"
 #include "usart.h"
 
-extern AkMotorCtrl ak_motor_ctrl_data;
+extern AkMotorCtrlTypedef ak_motor_ctrl_data;
 extern AkMotorCtrlInfoTypedef ak_motor_ctrl_cache[AK_MOTOR_NUM];
 
 void msg_distribute(unsigned char *msg)

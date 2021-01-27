@@ -16,7 +16,7 @@
 #include "misc.h"
 #include "ak_motor.h"
 
-extern AkMotorCtrl ak_motor_ctrl_data;
+extern AkMotorCtrlTypedef ak_motor_ctrl_data;
 
 UsartMsgTypedef usart1_msg;
 

@@ -10,7 +10,7 @@
 #include "ak_motor.h"
 #include "usart.h"
 
-extern AkMotorCtrl ak_motor_ctrl_data;
+extern AkMotorCtrlTypedef ak_motor_ctrl_data;
 
 void ak_motor_ctrl_task()
 {
