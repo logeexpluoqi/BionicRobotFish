@@ -44,7 +44,7 @@ void msg_distribute(unsigned char *msg)
     default:
         break;
     }
-#else
+#else // AK_MOTOR_GROUP_CCTRL
 
 
 #endif

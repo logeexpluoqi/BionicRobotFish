@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 09:54:11 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-19 20:52:56
+ * @Last Modified time: 2021-01-27 13:13:34
  */
 #include "usart.h"
 #include "config.h"
@@ -41,8 +41,7 @@ _sys_exit(int x)
 /* Redefine fputc function */
 int fputc(int ch, FILE *f)
 {
-	while ((USART1->SR & 0X40) == 0)
-		; // until send over
+	while ((USART1->SR & 0X40) == 0); // until send over
 	USART1->DR = (u8)ch;
 	return ch;
 }
