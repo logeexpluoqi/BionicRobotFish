@@ -69,7 +69,7 @@ unsigned char can1_mode_init(CanInitTypedef* can_init_data)
     CAN_InitStructure.CAN_ABOM = DISABLE;  // 软件自动离线管理
     CAN_InitStructure.CAN_AWUM = DISABLE;  // 睡眠模式通过软件唤醒(清除CAN->MCR的SLEEP位)
     CAN_InitStructure.CAN_NART = ENABLE;   // 禁止报文自动传送
-    CAN_InitStructure.CAN_RFLM = DISABLE;  // 报文不锁定,新的覆盖旧的
+    CAN_InitStructure.CAN_RFLM = ENABLE;  // 报文不锁定,新的覆盖旧的
     CAN_InitStructure.CAN_TXFP = DISABLE;  // 优先级由报文标识符决定
     CAN_InitStructure.CAN_Mode = can_init_data->mode;
     CAN_InitStructure.CAN_SJW = can_init_data->tsjw;      // Tsjw = tsjw+1, CAN_SJW_1tq~CAN_SJW_4tq
