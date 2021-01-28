@@ -31,6 +31,12 @@
  */
 #define CONTINUOUS_UPLOAD       0
 
+/* Use usart rx dma receive data 
+ * 1: use usart rx dma ;
+ * 0: use usart interrupt rx.
+ */
+#define USING_USART_DMA_RX      0
+
 /* @breif: This function is used to clear structures.
  * @param: *mem, structure position;
  * @param: c, fill number.
