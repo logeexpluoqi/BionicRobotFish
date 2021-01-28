@@ -11,7 +11,7 @@ int main(void)
 {
 	sys_init();
 	while(1)
-	{	
+	{
 		time_slice_process();
 	}
 }

@@ -22,13 +22,12 @@
 
 void sys_init()
 {
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
     delay_init(168);
     sys_disp_init();
     sys_config_display();
     led_init();
 	keyboard_init();
-    usart_dma_init();
     usart1_init(921600);
     can_init();
     ak_motor_ctrl_init();
