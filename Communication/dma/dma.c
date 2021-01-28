@@ -10,7 +10,7 @@
 #include "stm32f4xx_dma.h"
 #include "stm32f4xx_rcc.h"
 
-void dma_init()
+void usart_dma_init()
 {
     NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -33,7 +33,7 @@ void dma_init()
  * mar: memory address
  * ndtr: data transfer num
  */
-void dma_config(DMA_Stream_TypeDef *DMA_Streamx, u32 chx, u32 par, u32 mar, u16 ndtr)
+void usart_dma_tx_config(DMA_Stream_TypeDef *DMA_Streamx, u32 chx, u32 par, u32 mar, u16 ndtr)
 {
 
     DMA_InitTypeDef DMA_InitStructure;
@@ -69,11 +69,13 @@ void dma_config(DMA_Stream_TypeDef *DMA_Streamx, u32 chx, u32 par, u32 mar, u16 
     DMA_Init(DMA_Streamx, &DMA_InitStructure); // Stream initialize DMA_Stream
 }
 
+// void usart_dma_rx_config(DMA_Stream_TypeDef *DMA_Streamx, u32 chx, u32 par, u32 mar, u16 ndtr)
+
 /* DMA transfer once
  * @param DMA_Streamx:DMA data flow, DMA1_Stream0~7 / DMA2_Stream0~7
  * @param ndtr: data transfer 
  */
-void dma_tx_data(DMA_Stream_TypeDef *DMA_Streamx, u16 ndtr)
+void usart_dma_tx_data(DMA_Stream_TypeDef *DMA_Streamx, u16 ndtr)
 {
 
     DMA_Cmd(DMA_Streamx, DISABLE); // cloese dma transferd

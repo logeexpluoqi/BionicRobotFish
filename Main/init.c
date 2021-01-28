@@ -28,8 +28,8 @@ void sys_init()
     sys_config_display();
     led_init();
 	keyboard_init();
-    dma_init();
-    usart1_init(115200);
+    usart_dma_init();
+    usart1_init(921600);
     can_init();
     ak_motor_ctrl_init();
 

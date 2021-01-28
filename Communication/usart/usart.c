@@ -83,6 +83,9 @@ void usart1_init(unsigned int bound)
 	NVIC_Init(&NVIC_InitStructure);
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 
+	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+	// USART_DMACmd(USART1, USART_DMAReq_Rx, ENABLE);
+
 	USART_Cmd(USART1, ENABLE);
 	usart1_msg.rx_cnt = 0;
 }
@@ -100,9 +103,8 @@ void usart1_tx_data(unsigned char *tx_data)
 
 void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
 {
-	dma_config(DMA2_Stream7, DMA_Channel_4, (u32)&USART1->DR, (u32)msg, len);
-	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
-	dma_tx_data(DMA2_Stream7, len);
+	usart_dma_tx_config(DMA2_Stream7, DMA_Channel_4, (u32)&USART1->DR, (u32)msg, len);
+	usart_dma_tx_data(DMA2_Stream7, len);
 }
 
 
