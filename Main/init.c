@@ -32,13 +32,7 @@ void sys_init()
     usart1_init(921600);
     can_init();
     ak_motor_ctrl_init();
-
     time_slice_init();
-    // printf("Initialize complete!");
-    // sys_disp_str(0, 0, "Initialize complete!", SMALL);
-    // // delay_ms(1000);
-    // sys_disp_str(0, 0, "                    ", SMALL);
+
     sys_disp_str(72, 7, "by luoqi", SMALL);
-    // sys_disp_str(0, 2, "S:", LARGE);
-    // sys_disp_str(0, 4, "R:", LARGE);
 }
