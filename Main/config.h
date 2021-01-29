@@ -31,17 +31,24 @@
  */
 #define CONTINUOUS_UPLOAD       0
 
+/* Use usart tx dma send data 
+ * 1: use usart tx dma
+ * 0: use usart tx normal
+ */
+#define USING_USART_DMA_TX      1
+
 /* Use usart rx dma receive data 
  * 1: use usart rx dma ;
  * 0: use usart interrupt rx.
  */
-#define USING_USART_DMA_RX      0
+#define USING_USART_DMA_RX      1
 
 /* @breif: This function is used to clear structures.
  * @param: *mem, structure position;
  * @param: c, fill number.
  */
 void mem_set(void* mem, unsigned char c);
+void sys_reset(void);
 void sys_config_display(void);
 
 #endif

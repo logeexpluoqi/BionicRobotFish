@@ -39,6 +39,7 @@ void msg_distribute(unsigned char *msg)
     }
     case 255: 
     {
+        sys_reset();
     }
 
     default:

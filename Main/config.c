@@ -24,6 +24,11 @@ void mem_set(void* mem, unsigned char c)
     }
 }
 
+void sys_reset()
+{
+    
+}
+
 void sys_config_display()
 {
     sys_disp_str(0, 0, "SysInfo: ", SMALL);
