@@ -223,7 +223,11 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     if(usart1_msg.tx_en == 1)
     {
 #endif
+    #if USING_USART_DMA_TX
         usart1_dma_tx_data(msg_upload, 9);
+    #else
+        usart1_tx_data(msg_upload, 9);
+    #endif
         usart1_msg.tx_en = 0;
 #if ! CONTINUOUS_UPLOAD
     }
@@ -256,7 +260,7 @@ AkMotorType motor_type_detect(unsigned char id)
 	AkMotorType type;
     if(id == 9 || id == 16 || id == 17 || id == 18)
         type = AK10_9;
-    else if(id == 1 || id == 2 || id == 4 || id == 5)
+    else if(id == 1 || id == 2 || id == 3 || id == 4 || id == 5)
         type = AK80_9;
 	
 	return type;
