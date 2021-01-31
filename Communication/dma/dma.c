@@ -53,14 +53,6 @@ void usart_dma_rx_init(u8* mem_addr, u32 mem_size)
 
 	DMA_Cmd(DMA2_Stream5, ENABLE); 
 
-	// NVIC_InitStructure.NVIC_IRQChannel                   = DMA2_Stream5_IRQn;  
-	// NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  
-	// NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 0;  
-	// NVIC_InitStructure.NVIC_IRQChannelCmd                = ENABLE;  
-	// NVIC_Init(&NVIC_InitStructure);  
-	
-	// DMA_ITConfig(DMA2_Stream5, DMA_IT_TC, ENABLE);
-
 }
 
 
@@ -123,22 +115,3 @@ void DMA2_Stream7_IRQHandler(void)
 		DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
 	}
 }
-
-// void DMA2_Stream5_IRQHandler(void)
-// {
-//     unsigned char rx_len;
-
-//     DMA_Cmd(DMA2_Stream5, DISABLE); 
-//     if(DMA_GetFlagStatus(DMA2_Stream5,DMA_FLAG_TCIF5)!=RESET) 
-//     {   
-//         rx_len =USART_DMA_RCV_BUF_SIZE - DMA_GetCurrDataCounter(DMA2_Stream5);  
-//         if(rx_len !=0)  
-//         {  
-            
-//         }  
-          
-//     }   
-//     DMA_ClearFlag(DMA2_Stream5,DMA_FLAG_TCIF5 | DMA_FLAG_FEIF5 | DMA_FLAG_DMEIF5 | DMA_FLAG_TEIF5 | DMA_FLAG_HTIF5); 
-//     DMA_SetCurrDataCounter(DMA2_Stream5, USART_DMA_RCV_BUF_SIZE);  
-//     DMA_Cmd(DMA2_Stream5, ENABLE);
-// }
