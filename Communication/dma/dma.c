@@ -9,18 +9,58 @@
 #include "misc.h"
 #include "stm32f4xx_dma.h"
 #include "stm32f4xx_rcc.h"
+#include "usart.h"
 
-void usart_dma_init()
+void usart_dma_tx_init()
 {
     NVIC_InitTypeDef NVIC_InitStructure;
 
     DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
-	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream7_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannel                   = DMA2_Stream7_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd                = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 	DMA_ITConfig(DMA2_Stream7, DMA_IT_TC, ENABLE);
+}
+
+void usart_dma_rx_init(u8* mem_addr, u32 mem_size)
+{
+    DMA_InitTypeDef DMA_InitStructure;
+    // NVIC_InitTypeDef NVIC_InitStructure;
+
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE); 
+
+    DMA_DeInit(DMA2_Stream5);
+	while (DMA_GetCmdStatus(DMA2_Stream5) != DISABLE);
+
+	DMA_InitStructure.DMA_Channel               = DMA_Channel_4;
+	DMA_InitStructure.DMA_PeripheralBaseAddr    = (u32)&USART1->DR; 
+	DMA_InitStructure.DMA_Memory0BaseAddr       = (u32)mem_addr;
+	DMA_InitStructure.DMA_DIR                   = DMA_DIR_PeripheralToMemory;
+	DMA_InitStructure.DMA_BufferSize            = USART_DMA_RCV_BUF_SIZE;
+	DMA_InitStructure.DMA_PeripheralInc         = DMA_PeripheralInc_Disable;
+	DMA_InitStructure.DMA_MemoryInc             = DMA_MemoryInc_Enable;
+	DMA_InitStructure.DMA_PeripheralDataSize    = DMA_PeripheralDataSize_Byte;
+	DMA_InitStructure.DMA_MemoryDataSize        = DMA_MemoryDataSize_Byte;
+	DMA_InitStructure.DMA_Mode                  = DMA_Mode_Normal;
+	DMA_InitStructure.DMA_Priority              = DMA_Priority_High;
+	DMA_InitStructure.DMA_FIFOMode              = DMA_FIFOMode_Disable;  
+	DMA_InitStructure.DMA_FIFOThreshold         = DMA_FIFOThreshold_Full;
+	DMA_InitStructure.DMA_MemoryBurst           = DMA_MemoryBurst_Single; 
+	DMA_InitStructure.DMA_PeripheralBurst       = DMA_PeripheralBurst_Single; 
+	DMA_Init(DMA2_Stream5, &DMA_InitStructure);
+
+	DMA_Cmd(DMA2_Stream5, ENABLE); 
+
+	// NVIC_InitStructure.NVIC_IRQChannel                   = DMA2_Stream5_IRQn;  
+	// NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  
+	// NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 0;  
+	// NVIC_InitStructure.NVIC_IRQChannelCmd                = ENABLE;  
+	// NVIC_Init(&NVIC_InitStructure);  
+	
+	// DMA_ITConfig(DMA2_Stream5, DMA_IT_TC, ENABLE);
+
 }
 
 
@@ -33,54 +73,45 @@ void usart_dma_init()
  * mar: memory address
  * ndtr: data transfer num
  */
-void usart_dma_tx_config(DMA_Stream_TypeDef *DMA_Streamx, u32 chx, u32 par, u32 mar, u16 ndtr)
+void usart_dma_tx_config(u8* mem_addr, u32 mem_size)
 {
 
     DMA_InitTypeDef DMA_InitStructure;
 
-    if ((u32)DMA_Streamx > (u32)DMA2) 
-    {
-        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE); 
-    }
-    else
-    {
-        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE); 
-    }
-    DMA_DeInit(DMA_Streamx);
+    DMA_DeInit(DMA2_Stream7);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE); 
 
-    while (DMA_GetCmdStatus(DMA_Streamx) != DISABLE); // wait for dma configuration
+    while (DMA_GetCmdStatus(DMA2_Stream7) != DISABLE); // wait for dma configuration
 
     /* DMA Stream */
-    DMA_InitStructure.DMA_Channel               = chx;
-    DMA_InitStructure.DMA_PeripheralBaseAddr    = par;
-    DMA_InitStructure.DMA_Memory0BaseAddr       = mar;
+    DMA_InitStructure.DMA_Channel               = DMA_Channel_4;
+    DMA_InitStructure.DMA_PeripheralBaseAddr    = (u32)&USART1->DR;
+    DMA_InitStructure.DMA_Memory0BaseAddr       = (u32)mem_addr;
     DMA_InitStructure.DMA_DIR                   = DMA_DIR_MemoryToPeripheral;
-    DMA_InitStructure.DMA_BufferSize            = ndtr;
+    DMA_InitStructure.DMA_BufferSize            = mem_size;
     DMA_InitStructure.DMA_PeripheralInc         = DMA_PeripheralInc_Disable;
     DMA_InitStructure.DMA_MemoryInc             = DMA_MemoryInc_Enable;
     DMA_InitStructure.DMA_PeripheralDataSize    = DMA_PeripheralDataSize_Byte; 
     DMA_InitStructure.DMA_MemoryDataSize        = DMA_MemoryDataSize_Byte;
     DMA_InitStructure.DMA_Mode                  = DMA_Mode_Normal;
-    DMA_InitStructure.DMA_Priority              = DMA_Priority_High;
+    DMA_InitStructure.DMA_Priority              = DMA_Priority_Medium;
     DMA_InitStructure.DMA_FIFOMode              = DMA_FIFOMode_Disable;
     DMA_InitStructure.DMA_FIFOThreshold         = DMA_FIFOThreshold_Full;
     DMA_InitStructure.DMA_MemoryBurst           = DMA_MemoryBurst_Single;       // memory burst single transfer
     DMA_InitStructure.DMA_PeripheralBurst       = DMA_PeripheralBurst_Single;   // peripheral burst single transfer
-    DMA_Init(DMA_Streamx, &DMA_InitStructure); // Stream initialize DMA_Stream
+    DMA_Init(DMA2_Stream7, &DMA_InitStructure); // Stream initialize DMA_Stream
 }
-
-// void usart_dma_rx_config(DMA_Stream_TypeDef *DMA_Streamx, u32 chx, u32 par, u32 mar, u16 ndtr)
 
 /* DMA transfer once
  * @param DMA_Streamx:DMA data flow, DMA1_Stream0~7 / DMA2_Stream0~7
  * @param ndtr: data transfer 
  */
-void usart_dma_tx_data(DMA_Stream_TypeDef *DMA_Streamx, u16 ndtr)
+void usart_dma_tx_data(DMA_Stream_TypeDef *DMA_Streamx, u16 mem_size)
 {
 
     DMA_Cmd(DMA_Streamx, DISABLE); // cloese dma transferd
     while (DMA_GetCmdStatus(DMA_Streamx) != DISABLE);
-    DMA_SetCurrDataCounter(DMA_Streamx, ndtr); // datatramsfer counter
+    DMA_SetCurrDataCounter(DMA_Streamx, mem_size); // datatramsfer counter
     DMA_Cmd(DMA_Streamx, ENABLE); //start dma transfer
 }
 
@@ -92,3 +123,22 @@ void DMA2_Stream7_IRQHandler(void)
 		DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
 	}
 }
+
+// void DMA2_Stream5_IRQHandler(void)
+// {
+//     unsigned char rx_len;
+
+//     DMA_Cmd(DMA2_Stream5, DISABLE); 
+//     if(DMA_GetFlagStatus(DMA2_Stream5,DMA_FLAG_TCIF5)!=RESET) 
+//     {   
+//         rx_len =USART_DMA_RCV_BUF_SIZE - DMA_GetCurrDataCounter(DMA2_Stream5);  
+//         if(rx_len !=0)  
+//         {  
+            
+//         }  
+          
+//     }   
+//     DMA_ClearFlag(DMA2_Stream5,DMA_FLAG_TCIF5 | DMA_FLAG_FEIF5 | DMA_FLAG_DMEIF5 | DMA_FLAG_TEIF5 | DMA_FLAG_HTIF5); 
+//     DMA_SetCurrDataCounter(DMA2_Stream5, USART_DMA_RCV_BUF_SIZE);  
+//     DMA_Cmd(DMA2_Stream5, ENABLE);
+// }
