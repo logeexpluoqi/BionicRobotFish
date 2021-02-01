@@ -8,9 +8,9 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
-/* The quantity of motor we want to control 
+/* The maximal quantity of motor we can control
 */
-#define AK_MOTOR_NUM            8
+#define AK_MOTOR_NUM_MAX        8
 
 /* When mcu received all motor control data, then 
  * control all the data at same time. (in practice, 

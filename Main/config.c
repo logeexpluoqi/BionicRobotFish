@@ -44,7 +44,7 @@ void sys_config_display()
 {
     sys_disp_str(0, 0, "SysInfo: ", SMALL);
     sys_disp_str(0, 2, "M_Num: ", SMALL);
-    sys_disp_num(64, 2, AK_MOTOR_NUM, 1, SMALL);
+    sys_disp_num(64, 2, AK_MOTOR_NUM_MAX, 1, SMALL);
     
     sys_disp_str(0, 3, "GrpCtrl: ", SMALL);
     #if AK_MOTOR_GROUP_CTRL
