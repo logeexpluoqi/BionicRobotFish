@@ -8,17 +8,19 @@
 #include "config.h"
 #include "oled_task.h"
 
-/* @breif: clear memery, after clear, the value is c 
+#define NULL (void*) 0
+
+/* @breif: clear memery, after clear, the value is mem_val 
  * @param: *mem, memery position, &s_structure or array;
- * @param: c, set the memery value, unsigned char type.
+ * @param: mem_val, set the memery value, unsigned char type.
  */
-void mem_set(void* mem, unsigned char c)
+void mem_set(void* mem, unsigned char mem_val)
 {
     unsigned char *p = mem;
     unsigned int m_size = sizeof(p);
     while(m_size > 0)
     {
-        *p = c;
+        *p = mem_val;
         p ++;
         m_size --;
     }
@@ -26,7 +28,10 @@ void mem_set(void* mem, unsigned char c)
 
 void mem_cpy(void* mem_src, void* mem_dst, unsigned int m_size)
 {
-
+    char* p_src = (char*)mem_src;
+    char* p_dst = (char*)mem_dst;
+    while(m_size --)
+        *p_dst++ = *p_src++;
 }
 
 

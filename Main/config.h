@@ -35,7 +35,8 @@
  * @param: *mem, structure position;
  * @param: c, fill number.
  */
-void mem_set(void* mem, unsigned char c);
+void mem_set(void* mem, unsigned char mem_val);
+void mem_cpy(void* mem_src, void* mem_dst, unsigned int m_size);
 void sys_reset(void);
 void sys_config_display(void);
 
