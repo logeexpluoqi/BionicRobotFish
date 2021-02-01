@@ -24,6 +24,12 @@ void mem_set(void* mem, unsigned char c)
     }
 }
 
+void mem_cpy(void* mem_src, void* mem_dst, unsigned int m_size)
+{
+
+}
+
+
 void sys_reset()
 {
     

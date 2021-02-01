@@ -21,9 +21,7 @@ extern AkMotorCtrlTypedef ak_motor_ctrl_data;
 
 UsartMsgTypedef usart1_msg;
 
-#if USING_USART_DMA_RX
 static unsigned char usart_dma_rx_buf[USART_RX_LEN + 2]; // 2 byte is SOF and EOF
-#endif
 
 /* ****************************start**************************** */
 #if 1
@@ -90,15 +88,10 @@ void usart1_init(unsigned int bound)
 	NVIC_InitStructure.NVIC_IRQChannelCmd 				 = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-#if USING_USART_DMA_RX
 	USART_ClearFlag(USART1, USART_FLAG_IDLE);
 	USART_ITConfig(USART1, USART_IT_IDLE, ENABLE);
 	usart_dma_rx_init(usart_dma_rx_buf, 30);
 	USART_DMACmd(USART1, USART_DMAReq_Rx, ENABLE);
-#else 
-	USART_ClearFlag(USART1, USART_FLAG_RXNE);
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-#endif
 
 	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
 	usart_dma_tx_init();
@@ -106,25 +99,11 @@ void usart1_init(unsigned int bound)
 	usart1_msg.rx_cnt = 0;
 }
 
-#if USING_USART_DMA_TX
 void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
 {
 	usart_dma_tx_config(msg, len);
 	usart_dma_tx_data(DMA2_Stream7, len);
 }
-#else
-void usart1_tx_data(unsigned char *tx_data)
-{
-	unsigned char i;
-
-	for (i = 0; i < USART_TX_LEN; i++)
-	{
-		USART_SendData(USART1, tx_data[i]);
-		while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-	}
-}
-#endif
-
 
 /* UART data receive interrupt function
  * data must start of '{' and end of '}'
@@ -133,7 +112,6 @@ void usart1_tx_data(unsigned char *tx_data)
  */
 void USART1_IRQHandler(void)
 {
-#if USING_USART_DMA_RX
 	unsigned char i;
 	unsigned char rx_len;
 
@@ -160,41 +138,5 @@ void USART1_IRQHandler(void)
 		USART_ClearITPendingBit(USART1, USART_IT_TC); 
     	DMA_Cmd(DMA2_Stream5, ENABLE);
 	}
-#else
-	unsigned char i;
-	unsigned char usart_rx_byte;
-	static unsigned char rx_byte_cnt = 0;
-	static unsigned char sof = 0; // start of frame
-	static unsigned char rx_buf[USART_RX_LEN];
-	
-	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
-	{
-		usart_rx_byte = USART_ReceiveData(USART1); // (USART1->DR), read usart receive register
-		
-		if(rx_byte_cnt == USART_RX_LEN)
-		{
-			if(usart_rx_byte == '}')
-			{
-				for(i=0; i< USART_RX_LEN; i++)
-				{
-					usart1_msg.rx_data[i] = rx_buf[i];
-				}
-				usart1_msg.tx_en = 1;
-			#if ! AK_MOTOR_GROUP_CTRL
-				msg_distribute(usart1_msg.rx_data);
-			#endif
-			}
-			sof = 0;
-			rx_byte_cnt = 0;
-		}
-		else if((sof == 1) && (rx_byte_cnt != USART_RX_LEN))
-		{
-			rx_buf[rx_byte_cnt] = usart_rx_byte;
-			rx_byte_cnt ++;
-		}
-		if((usart_rx_byte == '{') && (sof == 0))
-			sof = 1;
-	}
-#endif
 }
 

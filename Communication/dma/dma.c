@@ -27,7 +27,6 @@ void usart_dma_tx_init()
 void usart_dma_rx_init(u8* mem_addr, u32 mem_size)
 {
     DMA_InitTypeDef DMA_InitStructure;
-    // NVIC_InitTypeDef NVIC_InitStructure;
 
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE); 
 
@@ -111,7 +110,7 @@ void DMA2_Stream7_IRQHandler(void)
 {
 	if(DMA_GetFlagStatus(DMA2_Stream7, DMA_FLAG_TCIF7) != RESET)
 	{
-		DMA_ClearITPendingBit(DMA2_Stream7, DMA_IT_FEIF7);
 		DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
+		DMA_ClearITPendingBit(DMA2_Stream7, DMA_IT_FEIF7);
 	}
 }

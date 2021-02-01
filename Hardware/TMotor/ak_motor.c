@@ -223,12 +223,9 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     if(usart1_msg.tx_en == 1)
     {
 #endif
-    #if USING_USART_DMA_TX
         usart1_dma_tx_data(msg_upload, 9);
-    #else
-        usart1_tx_data(msg_upload, 9);
-    #endif
         usart1_msg.tx_en = 0;
+        
 #if ! CONTINUOUS_UPLOAD
     }
 #endif
