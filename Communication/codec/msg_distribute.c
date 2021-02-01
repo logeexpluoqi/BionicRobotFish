@@ -6,18 +6,19 @@
  */
 
 #include "msg_distribute.h"
-#include "ak_motor.h"
 #include "control_info.h"
-#include "config.h"
 #include "msg_codec.h"
-#include "usart.h"
+#include "ak_motor.h"
+#include "config.h"
 
 extern AkMotorCtrlTypedef ak_motor_ctrl_data;
-extern AkMotorCtrlInfoTypedef ak_motor_ctrl_cache[AK_MOTOR_NUM];
+extern AkMotorCtrlInfoTypedef ak_motor_ctrl_cache[AK_MOTOR_NUM_MAX];
 
 void msg_distribute(unsigned char *msg)
 {
-#if ! AK_MOTOR_GROUP_CTRL
+#if AK_MOTOR_GROUP_CTRL
+    
+#else // AK_MOTOR_GROUP_CCTRL
     switch (msg[0])
     {
     case EN_MOTOR_MODE: ak_motor_mode_set(msg[1], ENTER_MOTOR_CTRL); break;
@@ -25,7 +26,7 @@ void msg_distribute(unsigned char *msg)
     case SET_MOTOR_ZERO: ak_motor_mode_set(msg[1], SET_ZERO_POS); break;
     case CTRL_MOTOR:
     {
-        ak_motor_ctrl_data.id = msg[1];
+        ak_motor_ctrl_data.id    = msg[1];
         ak_motor_ctrl_data.p_dst = msg_char_to_float(msg[2], msg[3]);
         ak_motor_ctrl_data.v_dst = msg_char_to_float(msg[4], msg[5]);
         ak_motor_ctrl_data.t_dst = msg_char_to_float(msg[6], msg[7]);
@@ -45,8 +46,5 @@ void msg_distribute(unsigned char *msg)
     default:
         break;
     }
-#else // AK_MOTOR_GROUP_CCTRL
-
-
 #endif
 }
