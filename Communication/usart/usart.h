@@ -7,15 +7,19 @@
 #ifndef _USART_H
 #define _USART_H
 
-#define USART_TX_LEN 112
-#define USART_RX_LEN 28
+#define USART_TX_LEN_MAX 300
+#define USART_RX_LEN_MAX 300
 
+typedef enum 
+{
+    USART_1
+} UsartType;
 typedef struct 
 {
     unsigned char tx_en; // 1: enable, 0: disable
     unsigned char rx_en; // 1: enable, 0: disable
-    unsigned char tx_data[USART_TX_LEN];
-    unsigned char rx_data[USART_RX_LEN];
+    unsigned char tx_data[USART_TX_LEN_MAX];
+    unsigned char rx_data[USART_RX_LEN_MAX];
     unsigned char rx_cnt;
 } UsartMsgTypedef;
 
@@ -23,5 +27,10 @@ typedef struct
 void usart1_init(unsigned int bound);
 void usart1_init_dma(void);
 void usart1_tx_data(unsigned char *tx_data);
-void usart1_dma_tx_data(unsigned char msg[USART_TX_LEN], unsigned char len);
+void usart1_dma_tx_data(unsigned char *msg, unsigned char len);
+
+unsigned char get_usart_tx_state(UsartType port);
+void usart_clear_tx_flag(UsartType port);
+void usart_set_tx_flag(UsartType port);
+
 #endif

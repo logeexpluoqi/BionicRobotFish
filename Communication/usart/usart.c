@@ -16,9 +16,8 @@
 #include "dma.h"
 #include "misc.h"
 
-
-static unsigned char usart_dma_rx_buf[USART_RX_LEN + 2]; // 2 byte is SOF and EOF
-UsartMsgTypedef usart1_msg;
+static unsigned char usart_dma_rx_buf[USART_RX_LEN_MAX];
+static UsartMsgTypedef usart1_msg;
 
 /* ****************************start**************************** */
 #if 1
@@ -85,7 +84,7 @@ void usart1_init(unsigned int bound)
 	NVIC_InitStructure.NVIC_IRQChannelCmd 				 = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	usart_dma_rx_init(usart_dma_rx_buf, 30);
+	usart_dma_rx_init(usart_dma_rx_buf, USART_RX_LEN_MAX);
 	usart_dma_tx_init();
 
 	USART_ClearFlag(USART1, USART_FLAG_IDLE);
@@ -100,6 +99,27 @@ void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
 {
 	usart_dma_tx_config(msg, len);
 	usart_dma_tx_data(DMA2_Stream7, len);
+}
+
+unsigned char get_usart_tx_state(UsartType port)
+{
+	unsigned char state;
+	if(port == USART_1)
+		state = usart1_msg.tx_en;
+		
+	return state;
+}
+
+void usart_clear_tx_flag(UsartType port)
+{
+	if(port == USART_1)
+		usart1_msg.tx_en = 0;
+}
+
+void usart_set_tx_flag(UsartType port)
+{
+	if(port == USART_1)
+		usart1_msg.tx_en = 1;
 }
 
 /* UART data receive interrupt function.
@@ -120,9 +140,9 @@ void USART1_IRQHandler(void)
 		/* Receive a frame of data */
 		if((rx_len != 0) && (usart_dma_rx_buf[0] == '{') && (usart_dma_rx_buf[rx_len - 1] == '}'))
 		{
-			mem_cpy(usart_dma_rx_buf + 1, usart1_msg.rx_data, USART_RX_LEN);
-			usart1_msg.tx_en = 1;
-			#if ! AK_MOTOR_GROUP_CTRL
+			mem_cpy(usart_dma_rx_buf + 1, usart1_msg.rx_data, rx_len);
+			usart_set_tx_flag(USART_1);
+			#if CTRL_MODE_STROKE
 				msg_distribute(usart1_msg.rx_data);
 			#endif
 		}

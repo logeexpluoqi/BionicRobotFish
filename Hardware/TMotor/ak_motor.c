@@ -13,8 +13,6 @@
 #include "can.h"
 #include "usart.h"
 
-extern UsartMsgTypedef usart1_msg;
-
 CanMsgTypedef can1_msg;
 AkMotorCtrlTypedef ak_motor_ctrl_data;
 AkMotorInfo ak_motor_info[20];
@@ -166,11 +164,11 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     msg_upload[8] = '}'; // EOF
 
 #if ! CONTINUOUS_UPLOAD
-    if(usart1_msg.tx_en == 1)
+    if(get_usart_tx_state(USART_1) == 1)
     {
 #endif
         usart1_dma_tx_data(msg_upload, 9);
-        usart1_msg.tx_en = 0;
+        usart_clear_tx_flag(USART_1);
         
 #if ! CONTINUOUS_UPLOAD
     }
