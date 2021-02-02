@@ -15,13 +15,10 @@
 #include "msg_distribute.h"
 #include "dma.h"
 #include "misc.h"
-#include "ak_motor.h"
 
-extern AkMotorCtrlTypedef ak_motor_ctrl_data;
-
-UsartMsgTypedef usart1_msg;
 
 static unsigned char usart_dma_rx_buf[USART_RX_LEN + 2]; // 2 byte is SOF and EOF
+UsartMsgTypedef usart1_msg;
 
 /* ****************************start**************************** */
 #if 1
@@ -105,9 +102,8 @@ void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
 	usart_dma_tx_data(DMA2_Stream7, len);
 }
 
-/* UART data receive interrupt function
- * data must start of '{' and end of '}'
- * and mast confirm the data length
+/* UART data receive interrupt function.
+ * Data must start of '{' and end of '}' and must confirm the data length.
  * example: '{' | data_0 | data_1 | .... | '}'
  */
 void USART1_IRQHandler(void)
@@ -120,7 +116,9 @@ void USART1_IRQHandler(void)
 		USART1 -> SR; // clear flag
 		USART1 -> DR; // clear flag
 		rx_len = USART_DMA_RCV_BUF_SIZE - DMA_GetCurrDataCounter(DMA2_Stream5);
-		if((rx_len != 0) && (usart_dma_rx_buf[0] == '{') && (usart_dma_rx_buf[USART_RX_LEN + 1] == '}'))
+
+		/* Receive a frame of data */
+		if((rx_len != 0) && (usart_dma_rx_buf[0] == '{') && (usart_dma_rx_buf[rx_len - 1] == '}'))
 		{
 			mem_cpy(usart_dma_rx_buf + 1, usart1_msg.rx_data, USART_RX_LEN);
 			usart1_msg.tx_en = 1;
@@ -128,6 +126,7 @@ void USART1_IRQHandler(void)
 				msg_distribute(usart1_msg.rx_data);
 			#endif
 		}
+		/* Reset DMA receive configuration */
     	DMA_SetCurrDataCounter(DMA2_Stream5, USART_DMA_RCV_BUF_SIZE);
 		DMA_ClearFlag(DMA2_Stream5, DMA_FLAG_TCIF5 | DMA_FLAG_FEIF5 | DMA_FLAG_DMEIF5 | DMA_FLAG_TEIF5 | DMA_FLAG_HTIF5);
 		USART_ClearITPendingBit(USART1, USART_IT_TC); 

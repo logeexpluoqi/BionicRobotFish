@@ -51,7 +51,6 @@ void usart_dma_rx_init(u8* mem_addr, u32 mem_size)
 	DMA_Init(DMA2_Stream5, &DMA_InitStructure);
 
 	DMA_Cmd(DMA2_Stream5, ENABLE); 
-
 }
 
 

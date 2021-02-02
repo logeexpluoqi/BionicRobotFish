@@ -18,7 +18,6 @@
 #include "keyboard.h"
 #include "ak_motor.h"
 #include "usart.h"
-#include "dma.h"
 
 void sys_init()
 {

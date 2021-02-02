@@ -6,9 +6,7 @@
  */
 #ifndef _TIMER_H
 #define _TIMER_H
-// #include "sys.h"
 
 void tim3_int_init(unsigned short arr, unsigned short psc);
-void tim4_int_init(unsigned short arr, unsigned short psc);
-void tim5_int_init(unsigned short arr, unsigned short psc);
+
 #endif

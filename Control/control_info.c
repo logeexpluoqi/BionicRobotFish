@@ -9,5 +9,5 @@
 #include "config.h"
 #include "ak_motor.h"
 
-AkMotorCtrlInfoTypedef ak_motor_data_cache[AK_MOTOR_NUM];
+AkMotorCtrlInfoTypedef ak_motor_data_cache[AK_MOTOR_NUM_MAX];
 

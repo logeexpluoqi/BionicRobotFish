@@ -40,7 +40,7 @@ void ak_motor_ctrl_init()
 AkMotorType motor_type_detect(unsigned char id)
 {
 	AkMotorType type;
-    if(id == 9 || id == 16 || id == 17 || id == 18 || id == 1)
+    if(id == 9 || id == 16 || id == 17 || id == 18)
         type = AK10_9;
     else if(id == 1 || id == 2 || id == 3 || id == 4 || id == 5)
         type = AK80_9;
@@ -111,8 +111,6 @@ unsigned char ak_motor_ctrl(AkMotorCtrlTypedef ctrl_data)
     ak_motor_info_receive(ak_motor_info);  
     return err_state;
 }
-
-
 
 unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
 {
