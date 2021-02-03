@@ -50,6 +50,7 @@ unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits);
 float unit2float(unsigned int x, float x_min, float x_max, unsigned char bits);
 
 void ak_motor_ctrl_init(void);
+void get_ak_motor_ctrl_data(unsigned char *ctrl_data);
 unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd);
 unsigned char ak_motor_ctrl(AkMotorCtrlTypedef motor);
 unsigned char ak_motor_info_receive(AkMotorInfo* motor_info);

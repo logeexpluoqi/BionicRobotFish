@@ -13,9 +13,9 @@
 #include "can.h"
 #include "usart.h"
 
-CanMsgTypedef can1_msg;
+static CanMsgTypedef can1_msg;
 AkMotorCtrlTypedef ak_motor_ctrl_data;
-AkMotorInfo ak_motor_info[20];
+static AkMotorInfo ak_motor_info[20];
 
 void ak_motor_ctrl_init()
 {
@@ -44,6 +44,16 @@ AkMotorType motor_type_detect(unsigned char id)
         type = AK80_9;
 	
 	return type;
+}
+
+void get_ak_motor_ctrl_data(unsigned char *ctrl_data)
+{
+    ak_motor_ctrl_data.id    = ctrl_data[0];
+    ak_motor_ctrl_data.p_dst = msg_char_to_float(ctrl_data[1], ctrl_data[2]);
+    ak_motor_ctrl_data.v_dst = msg_char_to_float(ctrl_data[3], ctrl_data[4]);
+    ak_motor_ctrl_data.t_dst = msg_char_to_float(ctrl_data[5], ctrl_data[6]);
+    ak_motor_ctrl_data.kp    = msg_char_to_float(ctrl_data[7], ctrl_data[8]);
+    ak_motor_ctrl_data.kd    = msg_char_to_float(ctrl_data[9], ctrl_data[10]);
 }
 
 unsigned char ak_motor_ctrl(AkMotorCtrlTypedef ctrl_data)
@@ -164,7 +174,7 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     msg_upload[8] = '}'; // EOF
 
 #if ! CONTINUOUS_UPLOAD
-    if(get_usart_tx_state(USART_1) == 1)
+    if(get_usart_tx_flag(USART_1) == 1)
     {
 #endif
         usart1_dma_tx_data(msg_upload, 9);

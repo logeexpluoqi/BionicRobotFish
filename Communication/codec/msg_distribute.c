@@ -12,26 +12,43 @@
 #include "config.h"
 
 extern AkMotorCtrlTypedef ak_motor_ctrl_data;
-extern AkMotorCtrlInfoTypedef ak_motor_ctrl_cache[AK_MOTOR_NUM_MAX];
 
-void msg_distribute(unsigned char *msg)
+static unsigned char msg_cache[300];
+
+void get_msg(unsigned char* msg, unsigned int msg_size)
+{
+    mem_cpy(msg, msg_cache, msg_size);
+}
+
+// void get_ak_motor_ctrl_data(AkMotorCtrlTypedef* ctrl_data)
+// {
+//     ctrl_data -> id     = msg_cache[1];
+//     ctrl_data -> p_dst  = msg_char_to_float(msg_cache[2], msg_cache[3]);
+//     ctrl_data -> v_dst  = msg_char_to_float(msg_cache[4], msg_cache[5]);
+//     ctrl_data -> t_dst  = msg_char_to_float(msg_cache[6], msg_cache[7]);
+//     ctrl_data -> kp     = msg_char_to_float(msg_cache[8], msg_cache[9]);
+//     ctrl_data -> kd     = msg_char_to_float(msg_cache[10], msg_cache[11]);
+
+// }
+
+void msg_distribute()
 {
 #if AK_MOTOR_GROUP_CTRL
     
-#else // AK_MOTOR_GROUP_CCTRL
-    switch (msg[0])
+#else // AK_MOTOR_GROUP_CTRL
+    switch (msg_cache[0])
     {
-    case EN_MOTOR_MODE: ak_motor_mode_set(msg[1], ENTER_MOTOR_CTRL); break;
-    case EX_MOTOR_MODE: ak_motor_mode_set(msg[1], QUIT_MOTOR_CTRL); break;
-    case SET_MOTOR_ZERO: ak_motor_mode_set(msg[1], SET_ZERO_POS); break;
+    case EN_MOTOR_MODE: ak_motor_mode_set(msg_cache[1], ENTER_MOTOR_CTRL); break;
+    case EX_MOTOR_MODE: ak_motor_mode_set(msg_cache[1], QUIT_MOTOR_CTRL); break;
+    case SET_MOTOR_ZERO: ak_motor_mode_set(msg_cache[1], SET_ZERO_POS); break;
     case CTRL_MOTOR:
     {
-        ak_motor_ctrl_data.id    = msg[1];
-        ak_motor_ctrl_data.p_dst = msg_char_to_float(msg[2], msg[3]);
-        ak_motor_ctrl_data.v_dst = msg_char_to_float(msg[4], msg[5]);
-        ak_motor_ctrl_data.t_dst = msg_char_to_float(msg[6], msg[7]);
-        ak_motor_ctrl_data.kp    = msg_char_to_float(msg[8], msg[9]);
-        ak_motor_ctrl_data.kd    = msg_char_to_float(msg[10], msg[11]);
+        ak_motor_ctrl_data.id    = msg_cache[1];
+        ak_motor_ctrl_data.p_dst = msg_char_to_float(msg_cache[2], msg_cache[3]);
+        ak_motor_ctrl_data.v_dst = msg_char_to_float(msg_cache[4], msg_cache[5]);
+        ak_motor_ctrl_data.t_dst = msg_char_to_float(msg_cache[6], msg_cache[7]);
+        ak_motor_ctrl_data.kp    = msg_char_to_float(msg_cache[8], msg_cache[9]);
+        ak_motor_ctrl_data.kd    = msg_char_to_float(msg_cache[10], msg_cache[11]);
 
     #if CTRL_MODE_STROKE
 		ak_motor_ctrl(ak_motor_ctrl_data);
