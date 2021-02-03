@@ -6,8 +6,5 @@
  */
 
 #include "control_info.h"
-#include "config.h"
-#include "ak_motor.h"
 
-AkMotorCtrlInfoTypedef ak_motor_data_cache[AK_MOTOR_NUM_MAX];
 

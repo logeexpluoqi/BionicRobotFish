@@ -34,16 +34,15 @@ typedef struct
 
 typedef struct
 {
+    unsigned char id;
     float position;
     float velocity;
     float torque;
 } AkMotorInfo;
 
 
-void ak_motor_ctrl_init(void);
-void get_ak_motor_ctrl_data(unsigned char *ctrl_data);
 unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd);
-unsigned char ak_motor_ctrl(AkMotorCtrlTypedef motor);
-unsigned char ak_motor_info_receive(AkMotorInfo* motor_info);
+unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data);
+unsigned char ak_motor_info_receive(AkMotorInfo *motor_info);
 
 #endif
