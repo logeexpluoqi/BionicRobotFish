@@ -12,12 +12,12 @@
 */
 #define AK_MOTOR_NUM_MAX        8
 
-/* When mcu received all motor control data, then 
- * control all the data at same time. (in practice, 
- * these motors are controlled one by one in a short 
- * time)
+/** 
+ * Motor control mode
+ * 1: group control mode
+ * 0: stroke control mode
  */
-#define AK_MOTOR_GROUP_CTRL     0
+#define AK_MOTOR_CTRL_MODE     0
 
 /* Motor control mode:
  * 0: control in time_slice process;

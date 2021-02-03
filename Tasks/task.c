@@ -33,7 +33,7 @@ void task_1ms()
 
 void task_5ms()
 {
-#if ! CTRL_MODE_STROKE
+#if AK_MOTOR_CTRL_MODE == 1
     ak_motor_ctrl_task(); 
 #endif
 }

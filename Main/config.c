@@ -47,14 +47,14 @@ void sys_config_display()
     sys_disp_num(64, 2, AK_MOTOR_NUM_MAX, 1, SMALL);
     
     sys_disp_str(0, 3, "GrpCtrl: ", SMALL);
-    #if AK_MOTOR_GROUP_CTRL
+    #if AK_MOTOR_CTRL_MODE == 1
         sys_disp_char(64, 3, 'Y', SMALL);
     #else 
         sys_disp_char(64, 3, 'N', SMALL);
     #endif
 
     sys_disp_str(0, 4, "StrkCtrl: ", SMALL); // strock control
-    #if CTRL_MODE_STROKE
+    #if AK_MOTOR_CTRL_MODE == 0
         sys_disp_char(64, 4, 'Y', SMALL);
     #else
         sys_disp_char(64, 4, 'N', SMALL);

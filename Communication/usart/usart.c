@@ -171,7 +171,8 @@ void USART1_IRQHandler(void)
 		{
 			usart_set_tx_flag(USART_1);
 			get_msg(usart_dma_rx_buf + 1, rx_len - 2); // remove SOF and EOFs
-			#if CTRL_MODE_STROKE
+
+			#if AK_MOTOR_CTRL_MODE == 0
 				msg_distribute();
 			#endif
 		}

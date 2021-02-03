@@ -33,7 +33,7 @@ void get_msg(unsigned char* msg, unsigned int msg_size)
 
 void msg_distribute()
 {
-#if AK_MOTOR_GROUP_CTRL
+#if AK_MOTOR_CTRL_MODE == 1
     
 #else // AK_MOTOR_GROUP_CTRL
     switch (msg_cache[0])
@@ -50,7 +50,7 @@ void msg_distribute()
         ak_motor_ctrl_data.kp    = msg_char_to_float(msg_cache[8], msg_cache[9]);
         ak_motor_ctrl_data.kd    = msg_char_to_float(msg_cache[10], msg_cache[11]);
 
-    #if CTRL_MODE_STROKE
+    #if AK_MOTOR_CTRL_MODE == 0
 		ak_motor_ctrl(ak_motor_ctrl_data);
 	#endif
         break;
