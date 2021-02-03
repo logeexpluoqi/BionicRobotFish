@@ -39,15 +39,6 @@ typedef struct
     float torque;
 } AkMotorInfo;
 
-float p_limit(float p, AkMotorType m_type);
-float v_limit(float v, AkMotorType m_type);
-float t_limit(float t, AkMotorType m_type);
-float kp_limit(float kp, AkMotorType m_type);
-float kd_limit(float kd, AkMotorType m_type);
-
-AkMotorType motor_type_detect(unsigned char id);
-unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits);
-float unit2float(unsigned int x, float x_min, float x_max, unsigned char bits);
 
 void ak_motor_ctrl_init(void);
 void get_ak_motor_ctrl_data(unsigned char *ctrl_data);

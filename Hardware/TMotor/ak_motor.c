@@ -13,9 +13,23 @@
 #include "can.h"
 #include "usart.h"
 
+#define uint32 unsigned int
+#define uint8  unsigned char
+
 static CanMsgTypedef can1_msg;
 AkMotorCtrlTypedef ak_motor_ctrl_data;
 static AkMotorInfo ak_motor_info[20];
+
+/* Built-in functions */
+void ak_motor_data_encode(uint8* motor_data, uint32 P, uint32 V, uint32 T, uint32 Kp, uint32 Kd);
+float p_limit(float p, AkMotorType m_type);
+float v_limit(float v, AkMotorType m_type);
+float t_limit(float t, AkMotorType m_type);
+float kp_limit(float kp, AkMotorType m_type);
+float kd_limit(float kd, AkMotorType m_type);
+AkMotorType motor_type_detect(unsigned char id);
+unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits);
+float unit2float(unsigned int x, float x_min, float x_max, unsigned char bits);
 
 void ak_motor_ctrl_init()
 {
@@ -101,14 +115,7 @@ unsigned char ak_motor_ctrl(AkMotorCtrlTypedef ctrl_data)
     kp = float2uint(ctrl_data.kp, kp_min, kp_max, 12);
     kd = float2uint(ctrl_data.kd, kd_min, kd_max, 12);
 
-    can1_msg.send_data[0] = (p_dst >> 8) & 0xff;
-    can1_msg.send_data[1] = p_dst & 0xff;
-    can1_msg.send_data[2] = (v_dst >> 4) & 0xff;
-    can1_msg.send_data[3] = ((v_dst & 0x0f) << 4) | ((kp >> 8) & 0x0f);
-    can1_msg.send_data[4] = kp & 0xff;
-    can1_msg.send_data[5] = (kd >> 4) & 0xff;
-    can1_msg.send_data[6] = ((kd & 0x0f) << 4) | ((t_dst >> 8) & 0x0f);
-    can1_msg.send_data[7] = t_dst & 0xff;
+    ak_motor_data_encode(can1_msg.send_data, p_dst, v_dst, t_dst, kp, kd);
 
     while(can_send_msg(can1_msg))
     {
@@ -185,6 +192,18 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
 #endif
 
     return 0;
+}
+
+void ak_motor_data_encode(uint8* motor_data, uint32 P, uint32 V, uint32 T, uint32 Kp, uint32 Kd)
+{
+    motor_data[0] = (P >> 8) & 0xff;
+    motor_data[1] = P & 0xff;
+    motor_data[2] = (V >> 4) & 0xff;
+    motor_data[3] = ((V & 0x0f) << 4) | ((Kp >> 8) & 0x0f);
+    motor_data[4] = Kp & 0xff;
+    motor_data[5] = (Kd >> 4) & 0xff;
+    motor_data[6] = ((Kd & 0x0f) << 4) | ((T >> 8) & 0x0f);
+    motor_data[7] = T & 0xff;
 }
 
 unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
