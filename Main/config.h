@@ -17,19 +17,19 @@
  * 1: group control mode
  * 0: stroke control mode
  */
-#define AK_MOTOR_CTRL_MODE     0
-
-/* Motor control mode:
- * 0: control in time_slice process;
- * 1: control once when receive a control command from pc;
- */
-#define CTRL_MODE_STROKE        1
+#define AK_MOTOR_CTRL_MODE      0
 
 /* Data upload mode.
  * 1: continuous mode, upload data every control period;
  * 0: stroke mode, upload data while receive a control command.
  */
 #define CONTINUOUS_UPLOAD       0
+
+/* Using oled system display function 
+ * 1: enable
+ * 0: disnable
+ */
+#define USING_SYS_DISP          1
 
 /* @breif: This function is used to clear structures.
  * @param: *mem, structure position;
