@@ -30,8 +30,8 @@ void sys_disp_init()
     EXTI_Init(&EXTI_InitStructure);
 
     NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 5;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 }
@@ -85,7 +85,7 @@ void sys_disp_str(unsigned char x, unsigned char y, unsigned char *str, OledDisp
 
 void oled_sys_disp_task()
 { 
-    if(oled_disp.refresh_flag == 1)
+    if(oled_disp.refresh_flag == 1 && sys_disp_en == 1)
     {
         switch (oled_disp.type)
         {
