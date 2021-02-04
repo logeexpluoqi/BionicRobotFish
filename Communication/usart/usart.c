@@ -85,7 +85,6 @@ void usart1_init(unsigned int bound)
 	NVIC_Init(&NVIC_InitStructure);
 
 	usart_dma_rx_init(usart_dma_rx_buf, USART_RX_LEN_MAX);
-	usart_dma_tx_init();
 
 	USART_ClearFlag(USART1, USART_FLAG_IDLE);
 	USART_DMACmd(USART1, USART_DMAReq_Rx, ENABLE);

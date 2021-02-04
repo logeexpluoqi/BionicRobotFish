@@ -11,19 +11,6 @@
 #include "stm32f4xx_rcc.h"
 #include "usart.h"
 
-void usart_dma_tx_init()
-{
-    NVIC_InitTypeDef NVIC_InitStructure;
-
-    DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
-	NVIC_InitStructure.NVIC_IRQChannel                   = DMA2_Stream7_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority        = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd                = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-	DMA_ITConfig(DMA2_Stream7, DMA_IT_TC, ENABLE);
-}
-
 void usart_dma_rx_init(u8* mem_addr, u32 mem_size)
 {
     DMA_InitTypeDef DMA_InitStructure;
@@ -103,13 +90,4 @@ void usart_dma_tx_data(DMA_Stream_TypeDef *DMA_Streamx, u16 mem_size)
     while (DMA_GetCmdStatus(DMA_Streamx) != DISABLE);
     DMA_SetCurrDataCounter(DMA_Streamx, mem_size); // datatramsfer counter
     DMA_Cmd(DMA_Streamx, ENABLE); //start dma transfer
-}
-
-void DMA2_Stream7_IRQHandler(void)
-{
-	if(DMA_GetFlagStatus(DMA2_Stream7, DMA_FLAG_TCIF7) != RESET)
-	{
-		DMA_ClearFlag(DMA2_Stream7, DMA_FLAG_TCIF7);
-		DMA_ClearITPendingBit(DMA2_Stream7, DMA_IT_FEIF7);
-	}
 }
