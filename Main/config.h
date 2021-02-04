@@ -8,6 +8,12 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+typedef enum sys_disp 
+{
+    SYS_DISP_ENABLE,
+    SYS_DISP_DISABLE
+} SysDispState;
+
 /* The maximal quantity of motor we can control
 */
 #define AK_MOTOR_NUM_MAX        8
@@ -19,17 +25,12 @@
  */
 #define AK_MOTOR_CTRL_MODE      0
 
-/* Data upload mode.
- * 1: continuous mode, upload data every control period;
- * 0: stroke mode, upload data while receive a control command.
- */
-#define CONTINUOUS_UPLOAD       0
 
 /* Using oled system display function 
  * 1: enable
  * 0: disnable
  */
-#define USING_SYS_DISP          1
+#define USING_SYS_DISP          0
 
 /* @breif: This function is used to clear structures.
  * @param: *mem, structure position;
@@ -39,5 +40,6 @@ void mem_set(void* mem, unsigned char mem_val);
 void mem_cpy(void* mem_src, void* mem_dst, unsigned int m_size);
 void sys_reset(void);
 void sys_config_display(void);
+void sys_disp_config(SysDispState state);
 
 #endif
