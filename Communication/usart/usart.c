@@ -32,7 +32,7 @@ struct __FILE
 FILE __stdout;
 
 /* Define this function to avoid use half master mode */
-_sys_exit(int x)
+void _sys_exit(int x)
 {
 	x = x;
 }

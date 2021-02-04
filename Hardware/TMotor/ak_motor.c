@@ -180,10 +180,10 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
 unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
 {
     unsigned char ret;
-    unsigned char start[] = "{START  }";
-    unsigned char exit[]  = "{STOP   }";
-    unsigned char zero[]  = "{ZERO   }";
-    unsigned char error[] = "{CAN ERR}";
+    unsigned char start[] = "{MOTOR UNLOCK}";
+    unsigned char exit[]  = "{MOTOR LOCKED}";
+    unsigned char zero[]  = "{SET ZERO    }";
+    unsigned char error[] = "{CAN SEND ERR}";
     unsigned char *upload;
 
     can1_msg.std_id = id;
@@ -237,10 +237,10 @@ unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
     if(ret == 1)
     {
         upload = error;
-        usart1_dma_tx_data(upload, 9);
+        usart1_dma_tx_data(upload, 14);
     }
     else
-        usart1_dma_tx_data(upload, 9);
+        usart1_dma_tx_data(upload, 14);
 
     return ret;
 }
