@@ -9,7 +9,6 @@
 #include "config.h"
 #include "ak80_9.h"
 #include "ak10_9.h"
-#include "msg_codec.h"
 #include "can.h"
 #include "usart.h"
 
@@ -23,9 +22,8 @@ static CanMsgTypedef can1_msg = {
     .dlc             = 8
 };
 
-static AkMotorInfo ak_motor_info;
-
 /* Built-in functions */
+unsigned char ak_motor_info_receive(AkMotorInfo *motor_info);
 void ak_motor_data_encode(uint8* motor_data, uint32 P, uint32 V, uint32 T, uint32 Kp, uint32 Kd);
 float p_limit(float p, AkMotorType m_type);
 float v_limit(float v, AkMotorType m_type);
@@ -51,11 +49,11 @@ AkMotorType motor_type_detect(unsigned char id)
 }
 
 
-unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data)
+unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_info)
 {
     AkMotorType motor_type;
-    unsigned char err_cnt = 3;
-    unsigned char err_state = 0;
+    unsigned char state = 0;
+    unsigned char err_cnt = 0;
     unsigned int p_dst, v_dst, t_dst;
     unsigned int kp, kd;
     float p_min, p_max;
@@ -64,6 +62,7 @@ unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data)
     float kp_min, kp_max;
     float kd_min, kd_max;
 
+    sys_disp_config(SYS_DISP_DISABLE);
     can1_msg.std_id = ctrl_data -> id;
     motor_type = motor_type_detect(ctrl_data -> id);
 
@@ -95,23 +94,27 @@ unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data)
     t_dst = float2uint(ctrl_data -> t_dst, t_min, t_max, 12);
     kp    = float2uint(ctrl_data -> kp, kp_min, kp_max, 12);
     kd    = float2uint(ctrl_data -> kd, kd_min, kd_max, 12);
-
     ak_motor_data_encode(can1_msg.send_data, p_dst, v_dst, t_dst, kp, kd);
 
     while(can_send_msg(can1_msg))
     {
-        if(err_cnt == 0)
-            err_state = 1;
-        err_cnt --;
+        err_cnt ++;
+        if(err_cnt == 3)
+        {
+            state = 1;
+            break;
+        }
+        else 
+            state = 0;
     }
-    ak_motor_info_receive(&ak_motor_info);  
-    return err_state;
+
+    ak_motor_info_receive(motor_info); 
+    sys_disp_config(SYS_DISP_ENABLE); 
+    return state;
 }
 
 unsigned char ak_motor_info_receive(AkMotorInfo *motor_info)
 {
-    unsigned char chr[2];
-    unsigned char msg_upload[9]; // float to char, up to usart transmmit
     unsigned char motor_type;
     unsigned char len;
     unsigned int position, velocity, torque;
@@ -149,29 +152,6 @@ unsigned char ak_motor_info_receive(AkMotorInfo *motor_info)
     motor_info -> position = unit2float(position, p_min, p_max, 16);
     motor_info -> velocity = unit2float(velocity, v_min, v_max, 12);
     motor_info -> torque   = unit2float(torque, t_min, t_max, 12);
-    msg_upload[1] = can1_msg.receive_data[0];
-    msg_float_to_char(motor_info -> position, chr);
-    msg_upload[2] = chr[1];
-    msg_upload[3] = chr[0];
-    msg_float_to_char(motor_info -> velocity, chr);
-    msg_upload[4] = chr[1];
-    msg_upload[5] = chr[0];
-    msg_float_to_char(motor_info -> torque, chr);
-    msg_upload[6] = chr[1];
-    msg_upload[7] = chr[0];
-    msg_upload[0] = '{'; // SOF
-    msg_upload[8] = '}'; // EOF
-
-#if CONTINUOUS_UPLOAD == 0
-    if(get_usart_tx_flag(USART_1) == 1)
-    {
-#endif
-        usart1_dma_tx_data(msg_upload, 9);
-        usart_clear_tx_flag(USART_1);
-        
-#if CONTINUOUS_UPLOAD == 0
-    }
-#endif
 
     return 0;
 }
@@ -191,10 +171,10 @@ void ak_motor_data_encode(uint8* motor_data, uint32 P, uint32 V, uint32 T, uint3
 unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
 {
     unsigned char ret;
-    unsigned char start[] = "{START  }";
-    unsigned char exit[]  = "{STOP   }";
-    unsigned char zero[]  = "{ZERO   }";
-    unsigned char error[] = "{CAN ERR}";
+    unsigned char start[] = "{MOTOR UNLOCK}";
+    unsigned char exit[]  = "{MOTOR LOCKED}";
+    unsigned char zero[]  = "{SET ZERO    }";
+    unsigned char error[] = "{CAN SEND ERR}";
     unsigned char *upload;
 
     can1_msg.std_id = id;
@@ -248,10 +228,10 @@ unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
     if(ret == 1)
     {
         upload = error;
-        usart1_dma_tx_data(upload, 9);
+        usart1_dma_tx_data(upload, 14);
     }
     else
-        usart1_dma_tx_data(upload, 9);
+        usart1_dma_tx_data(upload, 14);
 
     return ret;
 }

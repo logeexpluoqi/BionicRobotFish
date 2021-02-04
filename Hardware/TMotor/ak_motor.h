@@ -42,7 +42,6 @@ typedef struct
 
 
 unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd);
-unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data);
-unsigned char ak_motor_info_receive(AkMotorInfo *motor_info);
+unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_info);
 
 #endif
