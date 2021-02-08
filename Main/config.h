@@ -30,7 +30,7 @@ typedef enum sys_disp
  * 1: enable
  * 0: disnable
  */
-#define USING_SYS_DISP          0
+#define USING_SYS_DISP          1
 
 /* @breif: This function is used to clear structures.
  * @param: *mem, structure position;

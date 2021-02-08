@@ -11,13 +11,20 @@
 #include "config.h"
 #include "usart.h"
 
-AkMotorCtrlTypedef ak_motor_ctrl_data = {
+static AkMotorCtrlTypedef ak_motor_ctrl_data = {
     .ctrl_en = 0,
     .p_dst   = 0,
     .v_dst   = 0,
     .t_dst   = 0,
     .kp      = 0,
     .kd      = 0
+};
+
+static AkMotorInfo motor_info = {
+    .id       = 0,
+    .position = 0,
+    .velocity = 0,
+    .torque   = 0
 };
 
 void ak_motor_ctrl_task()
@@ -28,7 +35,6 @@ void ak_motor_ctrl_task()
 
 void ak_motor_stroke_ctrl(unsigned char *ctrl_data)
 {
-    AkMotorInfo motor_info;
     unsigned char chr[2];
     unsigned char msg_upload[9]; // float to char, up to usart transmmit
 
