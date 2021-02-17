@@ -2,10 +2,11 @@
  * @Author: luoqi 
  * @Date: 2021-01-08 14:51:00 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-19 21:09:21
+ * @Last Modified time: 2021-02-17 20:30:00
  */
 
 #include "ak_motor_ctrl_task.h"
+#include "msg_box.h"
 #include "ak_motor.h"
 #include "msg_codec.h"
 #include "config.h"

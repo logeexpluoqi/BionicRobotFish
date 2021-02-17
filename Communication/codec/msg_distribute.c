@@ -2,13 +2,12 @@
  * @Author: luoqi 
  * @Date: 2021-01-14 08:29:43 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-02-15 19:50:47
+ * @Last Modified time: 2021-02-17 20:42:41
  */
 
 #include "msg_distribute.h"
-#include "ak_motor_ctrl_task.h"
+#include "msg_box.h"
 #include "config.h"
-#include "sensers_task.h"
 #include "stm32f4xx_crc.h"
 
 static unsigned char msg_cache[300];
