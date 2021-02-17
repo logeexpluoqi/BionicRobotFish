@@ -166,10 +166,10 @@ void USART1_IRQHandler(void)
 		rx_len = USART_DMA_RCV_BUF_SIZE - DMA_GetCurrDataCounter(DMA2_Stream5);
 
 		/* Receive a frame of data */
-		if((rx_len != 0) && (usart_dma_rx_buf[0] == '{') && (usart_dma_rx_buf[rx_len - 1] == '}'))
+		if(rx_len != 0)
 		{
 			usart_set_tx_flag(USART_1);
-			get_msg(usart_dma_rx_buf + 1, rx_len - 2); // remove SOF and EOFs
+			get_msg(usart_dma_rx_buf, rx_len); // remove SOF and EOFs
 			msg_distribute();
 		}
 		/* Reset DMA receive configuration */

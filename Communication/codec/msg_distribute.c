@@ -2,13 +2,14 @@
  * @Author: luoqi 
  * @Date: 2021-01-14 08:29:43 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-19 20:41:04
+ * @Last Modified time: 2021-02-15 19:50:47
  */
 
 #include "msg_distribute.h"
-#include "ak_motor.h"
 #include "ak_motor_ctrl_task.h"
 #include "config.h"
+#include "sensers_task.h"
+#include "stm32f4xx_crc.h"
 
 static unsigned char msg_cache[300];
 
@@ -19,31 +20,12 @@ void get_msg(unsigned char* msg, unsigned int msg_size)
 
 void msg_distribute()
 {
-#if AK_MOTOR_CTRL_MODE == 1
-    switch(msg_cache[0])
-    {
-    }
-    
-#else // strok control mode
-    switch (msg_cache[0])
-    {
-    case EN_MOTOR_MODE:  ak_motor_mode_set(msg_cache[1], ENTER_MOTOR_CTRL); break;
-    case EX_MOTOR_MODE:  ak_motor_mode_set(msg_cache[1], QUIT_MOTOR_CTRL); break;
-    case SET_MOTOR_ZERO: ak_motor_mode_set(msg_cache[1], SET_ZERO_POS); break;
-    case CTRL_MOTOR:
-    {
-    #if AK_MOTOR_CTRL_MODE == 0
-        ak_motor_stroke_ctrl(msg_cache + 1);
-	#endif
-        break;
-    }
-    case 255: 
-    {
-        sys_reset();
-    }
+    unsigned char datax_size = msg_cache[2];
+    unsigned char mode = msg_cache[1];
 
-    default:
-        break;
+    /* Check the data correctness and distribute this frame of data */
+    if((msg_cache[0] == '{') && (msg_cache[datax_size + 5] == '}'))
+    {
+        
     }
-#endif
-}
+} 

@@ -18,14 +18,6 @@ typedef enum sys_disp
 */
 #define AK_MOTOR_NUM_MAX        8
 
-/** 
- * Motor control mode
- * 1: group control mode
- * 0: stroke control mode
- */
-#define AK_MOTOR_CTRL_MODE      0
-
-
 /* Using oled system display function 
  * 1: enable
  * 0: disnable
