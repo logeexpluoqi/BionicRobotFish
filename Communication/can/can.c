@@ -65,29 +65,29 @@ unsigned char can1_mode_init(CanInitTypedef* can_init_data)
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource12, GPIO_AF_CAN1);
 
     /* Configure CAN mode */
-    CAN_InitStructure.CAN_TTCM = DISABLE;  // 非时间触发通信模式
-    CAN_InitStructure.CAN_ABOM = DISABLE;  // 软件自动离线管理
-    CAN_InitStructure.CAN_AWUM = DISABLE;  // 睡眠模式通过软件唤醒(清除CAN->MCR的SLEEP位)
-    CAN_InitStructure.CAN_NART = ENABLE;   // 禁止报文自动传送
-    CAN_InitStructure.CAN_RFLM = ENABLE;  // 报文不锁定,新的覆盖旧的
-    CAN_InitStructure.CAN_TXFP = DISABLE;  // 优先级由报文标识符决定
-    CAN_InitStructure.CAN_Mode = can_init_data->mode;
-    CAN_InitStructure.CAN_SJW = can_init_data->tsjw;      // Tsjw = tsjw+1, CAN_SJW_1tq~CAN_SJW_4tq
-    CAN_InitStructure.CAN_BS1 = can_init_data->tbs1;      // Tbs1: CAN_BS1_1tq ~CAN_BS1_16tq
-    CAN_InitStructure.CAN_BS2 = can_init_data->tbs2;      // Tbs2: CAN_BS2_1tq ~	CAN_BS2_8tq
+    CAN_InitStructure.CAN_TTCM      = DISABLE;  // 非时间触发通信模式
+    CAN_InitStructure.CAN_ABOM      = DISABLE;  // 软件自动离线管理
+    CAN_InitStructure.CAN_AWUM      = DISABLE;  // 睡眠模式通过软件唤醒(清除CAN->MCR的SLEEP位)
+    CAN_InitStructure.CAN_NART      = ENABLE;   // 禁止报文自动传送
+    CAN_InitStructure.CAN_RFLM      = ENABLE;   // 报文不锁定,新的覆盖旧的
+    CAN_InitStructure.CAN_TXFP      = DISABLE;  // 优先级由报文标识符决定
+    CAN_InitStructure.CAN_Mode      = can_init_data->mode;
+    CAN_InitStructure.CAN_SJW       = can_init_data->tsjw;      // Tsjw = tsjw+1, CAN_SJW_1tq~CAN_SJW_4tq
+    CAN_InitStructure.CAN_BS1       = can_init_data->tbs1;      // Tbs1: CAN_BS1_1tq ~CAN_BS1_16tq
+    CAN_InitStructure.CAN_BS2       = can_init_data->tbs2;      // Tbs2: CAN_BS2_1tq ~	CAN_BS2_8tq
     CAN_InitStructure.CAN_Prescaler = can_init_data->brp; // f_div = brp+1
     CAN_Init(CAN1, &CAN_InitStructure);
 
     /* Configure CAN filter */
-    CAN_FilterInitStructure.CAN_FilterNumber = 0; // filter 0
-    CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
-    CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit; 
-    CAN_FilterInitStructure.CAN_FilterIdHigh = 0x0000;               //32bit ID
-    CAN_FilterInitStructure.CAN_FilterIdLow = 0x0000;
-    CAN_FilterInitStructure.CAN_FilterMaskIdHigh = 0x0000; //32bit MASK
-    CAN_FilterInitStructure.CAN_FilterMaskIdLow = 0x0000;
+    CAN_FilterInitStructure.CAN_FilterNumber         = 0; // filter 0
+    CAN_FilterInitStructure.CAN_FilterMode           = CAN_FilterMode_IdMask;
+    CAN_FilterInitStructure.CAN_FilterScale          = CAN_FilterScale_32bit; 
+    CAN_FilterInitStructure.CAN_FilterIdHigh         = 0x0000;               //32bit ID
+    CAN_FilterInitStructure.CAN_FilterIdLow          = 0x0000;
+    CAN_FilterInitStructure.CAN_FilterMaskIdHigh     = 0x0000; //32bit MASK
+    CAN_FilterInitStructure.CAN_FilterMaskIdLow      = 0x0000;
     CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;
-    CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+    CAN_FilterInitStructure.CAN_FilterActivation     = ENABLE;
     CAN_FilterInit(&CAN_FilterInitStructure);
 
 #if CAN1_RX0_INT_ENABLE
@@ -110,9 +110,9 @@ unsigned char can_send_msg(CanMsgTypedef msg)
     CanTxMsg TxMessage;
     TxMessage.StdId = msg.std_id; // standard ID identify 
     TxMessage.ExtId = msg.ext_id; // extend ID identify 
-    TxMessage.IDE = msg.ide;      // indentifier extension
-    TxMessage.RTR = msg.rtr;      // remote transmission request
-    TxMessage.DLC = msg.dlc;      // data length code
+    TxMessage.IDE   = msg.ide;      // indentifier extension
+    TxMessage.RTR   = msg.rtr;      // remote transmission request
+    TxMessage.DLC   = msg.dlc;      // data length code
 
     for (i = 0; i < msg.dlc; i++)
     {
