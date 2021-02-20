@@ -34,6 +34,13 @@ void mem_cpy(void* mem_src, void* mem_dst, unsigned int m_size)
         *p_dst++ = *p_src++;
 }
 
+void sys_disp_config(SysDispState state)
+{
+    if(state == SYS_DISP_ENABLE)
+        sys_disp_open();
+    else if(state == SYS_DISP_DISABLE)
+        sys_disp_close();
+}
 
 void sys_reset()
 {
@@ -42,28 +49,22 @@ void sys_reset()
 
 void sys_config_display()
 {
+    sys_disp_config(SYS_DISP_ENABLE);
     sys_disp_str(0, 0, "SysInfo: ", SMALL);
     sys_disp_str(0, 2, "M_Num: ", SMALL);
     sys_disp_num(64, 2, AK_MOTOR_NUM_MAX, 1, SMALL);
     
     sys_disp_str(0, 3, "GrpCtrl: ", SMALL);
-    #if AK_MOTOR_GROUP_CTRL
+    #if AK_MOTOR_CTRL_MODE == 1
         sys_disp_char(64, 3, 'Y', SMALL);
     #else 
         sys_disp_char(64, 3, 'N', SMALL);
     #endif
 
     sys_disp_str(0, 4, "StrkCtrl: ", SMALL); // strock control
-    #if CTRL_MODE_STROKE
+    #if AK_MOTOR_CTRL_MODE == 0
         sys_disp_char(64, 4, 'Y', SMALL);
     #else
         sys_disp_char(64, 4, 'N', SMALL);
-    #endif
-
-    sys_disp_str(0, 5, "Upload: ", SMALL);
-    #if CONTINUOUS_UPLOAD
-        sys_disp_char(64, 5, 'C', SMALL);
-    #else
-        sys_disp_char(64, 5, 'S', SMALL);
     #endif
 }

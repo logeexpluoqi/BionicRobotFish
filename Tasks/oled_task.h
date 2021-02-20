@@ -35,6 +35,8 @@ typedef struct oled_disp_msg
 
 void sys_disp_init(void);
 void oled_sys_disp_task(void);
+void sys_disp_close(void);
+void sys_disp_open(void);
 
 void sys_disp_char(unsigned char x, unsigned int y, unsigned char chr, OledDispFont font);
 void sys_disp_num(unsigned char x, unsigned char y, unsigned int num, unsigned char len, OledDispFont font);

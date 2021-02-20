@@ -16,6 +16,7 @@ typedef enum cmd
     CTRL_MOTOR      = 4
 } MsgCmd;
 
-void msg_distribute(unsigned char *msg);
+void get_msg(unsigned char* msg, unsigned int msg_size);
+void msg_distribute(void);
 
 #endif

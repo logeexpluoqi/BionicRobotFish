@@ -9,31 +9,33 @@
 #include "config.h"
 #include "ak80_9.h"
 #include "ak10_9.h"
-#include "msg_codec.h"
 #include "can.h"
 #include "usart.h"
 
-CanMsgTypedef can1_msg;
-AkMotorCtrlTypedef ak_motor_ctrl_data;
-AkMotorInfo ak_motor_info[20];
+#define uint32 unsigned int
+#define uint8  unsigned char
 
-void ak_motor_ctrl_init()
-{
-    can1_msg.rtr = 0;
-    can1_msg.ext_id = 0;
-    can1_msg.ide = 0;
-    can1_msg.dlc = 8; // a frame 8 byte data
+static CanMsgTypedef can1_msg = {
+    .rtr             = 0,
+    .ext_id          = 0,
+    .ide             = 0,
+    .dlc             = 8
+};
 
-    ak_motor_ctrl_data.ctrl_en = 0;
-    ak_motor_ctrl_data.p_dst = 0;
-    ak_motor_ctrl_data.v_dst = 0;
-    ak_motor_ctrl_data.t_dst = 0;
-    ak_motor_ctrl_data.kp = 0;
-    ak_motor_ctrl_data.kd = 0;
-}
+/* Built-in functions */
+unsigned char ak_motor_info_receive(AkMotorInfo *motor_info);
+void ak_motor_data_encode(uint8* motor_data, uint32 P, uint32 V, uint32 T, uint32 Kp, uint32 Kd);
+float p_limit(float p, AkMotorType m_type);
+float v_limit(float v, AkMotorType m_type);
+float t_limit(float t, AkMotorType m_type);
+float kp_limit(float kp, AkMotorType m_type);
+float kd_limit(float kd, AkMotorType m_type);
+AkMotorType motor_type_detect(unsigned char id);
+unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits);
+float unit2float(unsigned int x, float x_min, float x_max, unsigned char bits);
 
-/* @Notation:
- * If motor id changed, there also need to change !!!
+/**
+ *  Notation: if motor id changed, there also need to change !!!
  */
 AkMotorType motor_type_detect(unsigned char id)
 {
@@ -46,11 +48,12 @@ AkMotorType motor_type_detect(unsigned char id)
 	return type;
 }
 
-unsigned char ak_motor_ctrl(AkMotorCtrlTypedef ctrl_data)
+
+unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_info)
 {
     AkMotorType motor_type;
-    unsigned char err_cnt = 3;
-    unsigned char err_state = 0;
+    unsigned char state = 0;
+    unsigned char err_cnt = 0;
     unsigned int p_dst, v_dst, t_dst;
     unsigned int kp, kd;
     float p_min, p_max;
@@ -59,61 +62,59 @@ unsigned char ak_motor_ctrl(AkMotorCtrlTypedef ctrl_data)
     float kp_min, kp_max;
     float kd_min, kd_max;
 
-    can1_msg.std_id = ctrl_data.id;
-    motor_type = motor_type_detect(ctrl_data.id);
+    sys_disp_config(SYS_DISP_DISABLE);
+    can1_msg.std_id = ctrl_data -> id;
+    motor_type = motor_type_detect(ctrl_data -> id);
 
     if(motor_type == AK10_9)
     {
-        p_min = AK10_9_P_MIN; p_max = AK10_9_P_MAX;
-        v_min = AK10_9_V_MIN; v_max = AK10_9_V_MAX;
-        t_min = AK10_9_T_MIN; t_max = AK10_9_T_MAX;
+        p_min  = AK10_9_P_MIN;  p_max  = AK10_9_P_MAX;
+        v_min  = AK10_9_V_MIN;  v_max  = AK10_9_V_MAX;
+        t_min  = AK10_9_T_MIN;  t_max  = AK10_9_T_MAX;
         kp_min = AK10_9_KP_MIN; kp_max = AK10_9_KP_MAX;
         kd_min = AK10_9_KD_MIN; kd_max = AK10_9_KD_MAX;
     }
     else if(motor_type == AK80_9)
     {
-        p_min = AK80_9_P_MIN; p_max = AK80_9_P_MAX;
-        v_min = AK80_9_V_MIN; v_max = AK80_9_V_MAX;
-        t_min = AK80_9_T_MIN; t_max = AK80_9_T_MAX;
+        p_min  = AK80_9_P_MIN;  p_max  = AK80_9_P_MAX;
+        v_min  = AK80_9_V_MIN;  v_max  = AK80_9_V_MAX;
+        t_min  = AK80_9_T_MIN;  t_max  = AK80_9_T_MAX;
         kp_min = AK80_9_KP_MIN; kp_max = AK80_9_KP_MAX;
         kd_min = AK80_9_KD_MIN; kd_max = AK80_9_KD_MAX;
     }
 
-    ctrl_data.p_dst = p_limit(ctrl_data.p_dst, motor_type);
-    ctrl_data.v_dst = v_limit(ctrl_data.v_dst, motor_type);
-    ctrl_data.t_dst = t_limit(ctrl_data.t_dst, motor_type);
-    ctrl_data.kp = kp_limit(ctrl_data.kp, motor_type);
-    ctrl_data.kd = kp_limit(ctrl_data.kd, motor_type);
+    ctrl_data -> p_dst = p_limit(ctrl_data -> p_dst, motor_type);
+    ctrl_data -> v_dst = v_limit(ctrl_data -> v_dst, motor_type);
+    ctrl_data -> t_dst = t_limit(ctrl_data -> t_dst, motor_type);
+    ctrl_data -> kp    = kp_limit(ctrl_data -> kp, motor_type);
+    ctrl_data -> kd    = kp_limit(ctrl_data -> kd, motor_type);
 
-    p_dst = float2uint(ctrl_data.p_dst, p_min, p_max, 16);
-    v_dst = float2uint(ctrl_data.v_dst, v_min, v_max, 12);
-    t_dst = float2uint(ctrl_data.t_dst, t_min, t_max, 12);
-    kp = float2uint(ctrl_data.kp, kp_min, kp_max, 12);
-    kd = float2uint(ctrl_data.kd, kd_min, kd_max, 12);
-
-    can1_msg.send_data[0] = (p_dst >> 8) & 0xff;
-    can1_msg.send_data[1] = p_dst & 0xff;
-    can1_msg.send_data[2] = (v_dst >> 4) & 0xff;
-    can1_msg.send_data[3] = ((v_dst & 0x0f) << 4) | ((kp >> 8) & 0x0f);
-    can1_msg.send_data[4] = kp & 0xff;
-    can1_msg.send_data[5] = (kd >> 4) & 0xff;
-    can1_msg.send_data[6] = ((kd & 0x0f) << 4) | ((t_dst >> 8) & 0x0f);
-    can1_msg.send_data[7] = t_dst & 0xff;
+    p_dst = float2uint(ctrl_data -> p_dst, p_min, p_max, 16);
+    v_dst = float2uint(ctrl_data -> v_dst, v_min, v_max, 12);
+    t_dst = float2uint(ctrl_data -> t_dst, t_min, t_max, 12);
+    kp    = float2uint(ctrl_data -> kp, kp_min, kp_max, 12);
+    kd    = float2uint(ctrl_data -> kd, kd_min, kd_max, 12);
+    ak_motor_data_encode(can1_msg.send_data, p_dst, v_dst, t_dst, kp, kd);
 
     while(can_send_msg(can1_msg))
     {
-        if(err_cnt == 0)
-            err_state = 1;
-        err_cnt --;
+        err_cnt ++;
+        if(err_cnt == 3)
+        {
+            state = 1;
+            break;
+        }
+        else 
+            state = 0;
     }
-    ak_motor_info_receive(ak_motor_info);  
-    return err_state;
+
+    ak_motor_info_receive(motor_info); 
+    sys_disp_config(SYS_DISP_ENABLE); 
+    return state;
 }
 
-unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
+unsigned char ak_motor_info_receive(AkMotorInfo *motor_info)
 {
-    unsigned char chr[2];
-    unsigned char msg_upload[9]; // float to char, up to usart transmmit
     unsigned char motor_type;
     unsigned char len;
     unsigned int position, velocity, torque;
@@ -145,36 +146,26 @@ unsigned char ak_motor_info_receive(AkMotorInfo* motor_info)
     {
         position = (can1_msg.receive_data[1] << 8) | can1_msg.receive_data[2];
         velocity = (can1_msg.receive_data[3] << 4) | (can1_msg.receive_data[4] >> 4);
-        torque = ((can1_msg.receive_data[4] & 0x0f) << 8) | can1_msg.receive_data[5];
+        torque   = ((can1_msg.receive_data[4] & 0x0f) << 8) | can1_msg.receive_data[5];
     }
-    ak_motor_info[can1_msg.receive_data[0]].position = unit2float(position, p_min, p_max, 16);
-    ak_motor_info[can1_msg.receive_data[0]].velocity = unit2float(velocity, v_min, v_max, 12);
-    ak_motor_info[can1_msg.receive_data[0]].torque = unit2float(torque, t_min, t_max, 12);
-    msg_upload[1] = can1_msg.receive_data[0];
-    msg_float_to_char(ak_motor_info[can1_msg.receive_data[0]].position, chr);
-    msg_upload[2] = chr[1];
-    msg_upload[3] = chr[0];
-    msg_float_to_char(ak_motor_info[can1_msg.receive_data[0]].velocity, chr);
-    msg_upload[4] = chr[1];
-    msg_upload[5] = chr[0];
-    msg_float_to_char(ak_motor_info[can1_msg.receive_data[0]].torque, chr);
-    msg_upload[6] = chr[1];
-    msg_upload[7] = chr[0];
-    msg_upload[0] = '{'; // SOF
-    msg_upload[8] = '}'; // EOF
-
-#if ! CONTINUOUS_UPLOAD
-    if(get_usart_tx_state(USART_1) == 1)
-    {
-#endif
-        usart1_dma_tx_data(msg_upload, 9);
-        usart_clear_tx_flag(USART_1);
-        
-#if ! CONTINUOUS_UPLOAD
-    }
-#endif
+    motor_info -> id       = can1_msg.receive_data[0];
+    motor_info -> position = unit2float(position, p_min, p_max, 16);
+    motor_info -> velocity = unit2float(velocity, v_min, v_max, 12);
+    motor_info -> torque   = unit2float(torque, t_min, t_max, 12);
 
     return 0;
+}
+
+void ak_motor_data_encode(uint8* motor_data, uint32 P, uint32 V, uint32 T, uint32 Kp, uint32 Kd)
+{
+    motor_data[0] = (P >> 8) & 0xff;
+    motor_data[1] = P & 0xff;
+    motor_data[2] = (V >> 4) & 0xff;
+    motor_data[3] = ((V & 0x0f) << 4) | ((Kp >> 8) & 0x0f);
+    motor_data[4] = Kp & 0xff;
+    motor_data[5] = (Kd >> 4) & 0xff;
+    motor_data[6] = ((Kd & 0x0f) << 4) | ((T >> 8) & 0x0f);
+    motor_data[7] = T & 0xff;
 }
 
 unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)

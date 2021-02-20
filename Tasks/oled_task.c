@@ -10,7 +10,8 @@
 #include "misc.h"
 #include "oled.h"
 
-OledDispMsgTypedef oled_disp;
+static OledDispMsgTypedef oled_disp;
+static unsigned char sys_disp_en = 0;
 
 void sys_disp_init()
 {
@@ -29,10 +30,20 @@ void sys_disp_init()
     EXTI_Init(&EXTI_InitStructure);
 
     NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 5;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
+}
+
+void sys_disp_close()
+{
+    sys_disp_en = 0;
+}
+
+void sys_disp_open()
+{
+    sys_disp_en = 1;
 }
 
 void sys_disp_char(unsigned char x, unsigned int y, unsigned char chr, OledDispFont font)
@@ -43,7 +54,8 @@ void sys_disp_char(unsigned char x, unsigned int y, unsigned char chr, OledDispF
     oled_disp.pos_y = y;
     oled_disp.disp_chr = chr;
     oled_disp.font = font;
-    EXTI_GenerateSWInterrupt(EXTI_Line3);
+    if(sys_disp_en)
+        EXTI_GenerateSWInterrupt(EXTI_Line3);
 }
 
 void sys_disp_num(unsigned char x, unsigned char y, unsigned int num, unsigned char len, OledDispFont font)
@@ -55,7 +67,8 @@ void sys_disp_num(unsigned char x, unsigned char y, unsigned int num, unsigned c
     oled_disp.disp_num = num;
     oled_disp.num_len = len;
     oled_disp.font = font;
-    EXTI_GenerateSWInterrupt(EXTI_Line3);
+    if(sys_disp_en)
+        EXTI_GenerateSWInterrupt(EXTI_Line3);
 }
 
 void sys_disp_str(unsigned char x, unsigned char y, unsigned char *str, OledDispFont font)
@@ -66,12 +79,13 @@ void sys_disp_str(unsigned char x, unsigned char y, unsigned char *str, OledDisp
     oled_disp.pos_y = y;
     oled_disp.disp_str = str;
     oled_disp.font = font;
-    EXTI_GenerateSWInterrupt(EXTI_Line3);
+    if(sys_disp_en)
+        EXTI_GenerateSWInterrupt(EXTI_Line3);
 }
 
 void oled_sys_disp_task()
 { 
-    if(oled_disp.refresh_flag == 1)
+    if(oled_disp.refresh_flag == 1 && sys_disp_en == 1)
     {
         switch (oled_disp.type)
         {

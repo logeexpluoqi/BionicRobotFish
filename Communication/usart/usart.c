@@ -85,7 +85,6 @@ void usart1_init(unsigned int bound)
 	NVIC_Init(&NVIC_InitStructure);
 
 	usart_dma_rx_init(usart_dma_rx_buf, USART_RX_LEN_MAX);
-	usart_dma_tx_init();
 
 	USART_ClearFlag(USART1, USART_FLAG_IDLE);
 	USART_DMACmd(USART1, USART_DMAReq_Rx, ENABLE);
@@ -101,7 +100,11 @@ void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
 	usart_dma_tx_data(DMA2_Stream7, len);
 }
 
-unsigned char get_usart_tx_state(UsartType port)
+/* Get USARTx TX state 
+ * 1: TX enable
+ * 0: TX disable
+ */
+unsigned char get_usart_tx_flag(UsartPort port)
 {
 	unsigned char state;
 	if(port == USART_1)
@@ -110,16 +113,41 @@ unsigned char get_usart_tx_state(UsartType port)
 	return state;
 }
 
-void usart_clear_tx_flag(UsartType port)
+void usart_clear_tx_flag(UsartPort port)
 {
 	if(port == USART_1)
 		usart1_msg.tx_en = 0;
 }
 
-void usart_set_tx_flag(UsartType port)
+void usart_set_tx_flag(UsartPort port)
 {
 	if(port == USART_1)
 		usart1_msg.tx_en = 1;
+}
+
+/* Get USARTx RX state 
+ * 1: RX enable
+ * 0: RX disable
+ */
+unsigned char get_usart_rx_flag(UsartPort port)
+{
+	unsigned char state;
+	if(port == USART_1)
+		state = usart1_msg.rx_en;
+	
+	return state;
+}
+
+void usart_clear_rx_flag(UsartPort port)
+{
+	if(port == USART_1)
+		usart1_msg.rx_en = 0;
+}
+
+void usart_set_rx_flag(UsartPort port)
+{
+	if(port == USART_1)
+		usart1_msg.rx_en = 1;
 }
 
 /* UART data receive interrupt function.
@@ -140,11 +168,9 @@ void USART1_IRQHandler(void)
 		/* Receive a frame of data */
 		if((rx_len != 0) && (usart_dma_rx_buf[0] == '{') && (usart_dma_rx_buf[rx_len - 1] == '}'))
 		{
-			mem_cpy(usart_dma_rx_buf + 1, usart1_msg.rx_data, rx_len);
 			usart_set_tx_flag(USART_1);
-			#if CTRL_MODE_STROKE
-				msg_distribute(usart1_msg.rx_data);
-			#endif
+			get_msg(usart_dma_rx_buf + 1, rx_len - 2); // remove SOF and EOFs
+			msg_distribute();
 		}
 		/* Reset DMA receive configuration */
     	DMA_SetCurrDataCounter(DMA2_Stream5, USART_DMA_RCV_BUF_SIZE);

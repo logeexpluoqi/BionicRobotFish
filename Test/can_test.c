@@ -13,42 +13,42 @@
 
 extern KeyTypedef key; // define in: /Tasks/keyboard task.c
 
-extern CanMsgTypedef can1_msg;
+// extern CanMsgTypedef can1_msg;
 
 void can_test_init()
 {
-//    can1_msg.send_data[0] = 0xff;
-//    can1_msg.send_data[1] = 0xff;
-//    can1_msg.send_data[2] = 0xff;
-//    can1_msg.send_data[3] = 0xff;
-//    can1_msg.send_data[4] = 0xff;
-//    can1_msg.send_data[5] = 0xff;
-//    can1_msg.send_data[6] = 0xff;
-//    can1_msg.send_data[7] = 0xfc;
+    // can1_msg.send_data[0] = 0xff;
+    // can1_msg.send_data[1] = 0xff;
+    // can1_msg.send_data[2] = 0xff;
+    // can1_msg.send_data[3] = 0xff;
+    // can1_msg.send_data[4] = 0xff;
+    // can1_msg.send_data[5] = 0xff;
+    // can1_msg.send_data[6] = 0xff;
+    // can1_msg.send_data[7] = 0xfc;
 
-    can1_msg.send_data[0] = 0x7f;
-    can1_msg.send_data[1] = 0xff;
-    can1_msg.send_data[2] = 0x8e;
-    can1_msg.send_data[3] = 0x30;
-    can1_msg.send_data[4] = 0x00;
-    can1_msg.send_data[5] = 0x3d;
-    can1_msg.send_data[6] = 0x68;
-    can1_msg.send_data[7] = 0x38;
+    // can1_msg.send_data[0] = 0x7f;
+    // can1_msg.send_data[1] = 0xff;
+    // can1_msg.send_data[2] = 0x8e;
+    // can1_msg.send_data[3] = 0x30;
+    // can1_msg.send_data[4] = 0x00;
+    // can1_msg.send_data[5] = 0x3d;
+    // can1_msg.send_data[6] = 0x68;
+    // can1_msg.send_data[7] = 0x38;
 
-    can1_msg.receive_data[0] = ' ';
-    can1_msg.receive_data[1] = ' ';
-    can1_msg.receive_data[2] = ' ';
-    can1_msg.receive_data[3] = ' ';
-    can1_msg.receive_data[4] = ' ';
-    can1_msg.receive_data[5] = ' ';
-    can1_msg.receive_data[6] = ' ';
-    can1_msg.receive_data[7] = ' ';
+    // can1_msg.receive_data[0] = ' ';
+    // can1_msg.receive_data[1] = ' ';
+    // can1_msg.receive_data[2] = ' ';
+    // can1_msg.receive_data[3] = ' ';
+    // can1_msg.receive_data[4] = ' ';
+    // can1_msg.receive_data[5] = ' ';
+    // can1_msg.receive_data[6] = ' ';
+    // can1_msg.receive_data[7] = ' ';
 	
-    can1_msg.std_id = 4;
-    can1_msg.rtr = 0;
-    can1_msg.ext_id = 0;
-    can1_msg.ide = 0;
-    can1_msg.dlc = 8; // a frame 8 byte data
+    // can1_msg.std_id = 4;
+    // can1_msg.rtr = 0;
+    // can1_msg.ext_id = 0;
+    // can1_msg.ide = 0;
+    // can1_msg.dlc = 8; // a frame 8 byte data
 
 	OLED_ShowString(0, 2, "S:", FONT_LARGE);
     OLED_ShowString(0, 4, "R:", FONT_LARGE);

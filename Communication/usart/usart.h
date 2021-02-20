@@ -13,7 +13,7 @@
 typedef enum 
 {
     USART_1
-} UsartType;
+} UsartPort;
 typedef struct 
 {
     unsigned char tx_en; // 1: enable, 0: disable
@@ -29,8 +29,11 @@ void usart1_init_dma(void);
 void usart1_tx_data(unsigned char *tx_data);
 void usart1_dma_tx_data(unsigned char *msg, unsigned char len);
 
-unsigned char get_usart_tx_state(UsartType port);
-void usart_clear_tx_flag(UsartType port);
-void usart_set_tx_flag(UsartType port);
+unsigned char get_usart_tx_flag(UsartPort port);
+unsigned char get_usart_rx_flag(UsartPort port);
+void usart_clear_tx_flag(UsartPort port);
+void usart_clear_rx_flag(UsartPort port);
+void usart_set_tx_flag(UsartPort port);
+void usart_set_rx_flag(UsartPort port);
 
 #endif
