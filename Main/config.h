@@ -36,10 +36,12 @@ typedef enum sys_disp
  * @param: *mem, structure position;
  * @param: c, fill number.
  */
-void mem_set(void* mem, unsigned char mem_val);
-void mem_cpy(void* mem_src, void* mem_dst, unsigned int m_size);
 void sys_reset(void);
 void sys_config_display(void);
 void sys_disp_config(SysDispState state);
+
+void sys_clk_init(void);
+void sys_clk_start(void);
+void sys_clk_stop(void);
 
 #endif

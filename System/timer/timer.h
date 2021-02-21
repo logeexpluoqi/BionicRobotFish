@@ -9,5 +9,6 @@
 #include "config.h"
 
 void tim3_int_init(uint16_t arr, uint16_t psc);
+void tim5_int_init(void);
 
 #endif
