@@ -46,6 +46,8 @@ void tim3_int_init(uint16_t arr, uint16_t psc)
 	NVIC_Init(&NVIC_InitStructure);
 }
 
+
+/* Used to count run-time */
 void tim5_int_init()
 { 
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
