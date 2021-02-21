@@ -11,7 +11,7 @@
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_usart.h"
 #include "stm32f4xx_dma.h"
-#include "msg_distribute.h"
+#include "msg_box.h"
 #include "dma.h"
 #include "misc.h"
 
@@ -93,7 +93,7 @@ void usart1_init(uint32_t bound)
 	usart1_msg.rx_cnt = 0;
 }
 
-void usart1_dma_tx_data(uint8_t *msg, uint8_t len)
+void usart1_dma_tx_data(uint8_t *msg, uint16_t len)
 {
 	usart_dma_tx_config(msg, len);
 	usart_dma_tx_data(DMA2_Stream7, len);
@@ -167,9 +167,8 @@ void USART1_IRQHandler(void)
 		/* Receive a frame of data */
 		if(rx_len != 0)
 		{
+			msg_get(COMPUTER, usart_dma_rx_buf, rx_len); // remove SOF and EOFs
 			usart_set_tx_flag(USART_1);
-			get_msg(usart_dma_rx_buf, rx_len); // remove SOF and EOFs
-			msg_distribute();
 		}
 		/* Reset DMA receive configuration */
     	DMA_SetCurrDataCounter(DMA2_Stream5, USART_DMA_RCV_BUF_SIZE);

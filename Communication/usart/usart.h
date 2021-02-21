@@ -28,7 +28,7 @@ typedef struct
 void usart1_init(uint32_t bound);
 void usart1_init_dma(void);
 void usart1_tx_data(uint8_t *tx_data);
-void usart1_dma_tx_data(uint8_t *msg, uint8_t len);
+void usart1_dma_tx_data(uint8_t *msg, uint16_t len);
 
 uint8_t get_usart_tx_flag(UsartPort port);
 uint8_t get_usart_rx_flag(UsartPort port);

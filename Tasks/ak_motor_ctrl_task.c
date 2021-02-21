@@ -8,9 +8,6 @@
 #include "ak_motor_ctrl_task.h"
 #include "msg_box.h"
 #include "ak_motor.h"
-#include "msg_codec.h"
-// #include "config.h"
-#include "usart.h"
 
 static AkMotorCtrlTypedef ak_motor_ctrl_data = {
     .ctrl_en = 0,
