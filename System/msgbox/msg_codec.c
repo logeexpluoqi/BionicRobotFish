@@ -12,9 +12,9 @@
  * a float data use 2byte, 
  * chr_1: higher 8bit, chr_0: lower 8bit
  */
-float msg_char_to_float(unsigned char chr_1, unsigned char chr_0)
+float msg_char_to_float(uint8_t chr_1, uint8_t chr_0)
 {
-    short int num_int;
+    int16_t num_int;
     
     if((chr_1 & 0x80) == 0x80)
         num_int = -(((chr_1 & 0x7f) << 8) | chr_0);
@@ -27,11 +27,11 @@ float msg_char_to_float(unsigned char chr_1, unsigned char chr_0)
  * pdst[0]: lower 8bit
  * pdst[1]: higher 8bit
  */
-void msg_float_to_char(float num, unsigned char *pdst)
+void msg_float_to_char(float num, uint8_t *pdst)
 {
-    short int num_int;
+    int16_t num_int;
 
-    num_int = (short int)(num * 100);
+    num_int = (int16_t)(num * 100);
     if(num_int < 0)
     {   
         num_int = -num_int;

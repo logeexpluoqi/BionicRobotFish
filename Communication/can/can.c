@@ -42,7 +42,7 @@ void can_init()
  * 
  * return value: 0, initial is ok; 1: fault
  */
-unsigned char can1_mode_init(CanInitTypedef* can_init_data)
+uint8_t can1_mode_init(CanInitTypedef* can_init_data)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     CAN_InitTypeDef CAN_InitStructure;
@@ -103,10 +103,10 @@ unsigned char can1_mode_init(CanInitTypedef* can_init_data)
     return 0;
 }
 
-unsigned char can_send_msg(CanMsgTypedef msg)
+uint8_t can_send_msg(CanMsgTypedef msg)
 {
-    unsigned char mbox;
-    unsigned short i = 0;
+    uint8_t mbox;
+    uint8_t i = 0;
     CanTxMsg TxMessage;
     TxMessage.StdId = msg.std_id; // standard ID identify 
     TxMessage.ExtId = msg.ext_id; // extend ID identify 
@@ -132,9 +132,9 @@ unsigned char can_send_msg(CanMsgTypedef msg)
     return 0;
 }
 
-unsigned char can_receive_msg(unsigned char *buf)
+uint8_t can_receive_msg(uint8_t *buf)
 {
-    unsigned int i;
+    uint32_t i;
     CanRxMsg RxMessage;
     if (CAN_MessagePending(CAN1, CAN_FIFO0) == 0)
     {

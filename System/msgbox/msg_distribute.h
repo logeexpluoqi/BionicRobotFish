@@ -7,6 +7,7 @@
 
 #ifndef _MSG_DISTRIBUTE_H
 #define _MSG_DISTRIBUTE_H
+#include "config.h"
 
 typedef enum cmd 
 {
@@ -16,7 +17,7 @@ typedef enum cmd
     CTRL_MOTOR      = 4
 } MsgCmd;
 
-void get_msg(unsigned char* msg, unsigned int msg_size);
+void get_msg(uint8_t* msg, uint32_t msg_size);
 void msg_distribute(void);
 
 #endif

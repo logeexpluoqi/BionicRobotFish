@@ -20,7 +20,7 @@
 /* Used to time slice system clock 
  *
  */
-void tim3_int_init(unsigned short arr, unsigned short psc)
+void tim3_int_init(uint16_t arr, uint16_t psc)
 { 
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;

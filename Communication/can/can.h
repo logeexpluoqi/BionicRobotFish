@@ -7,29 +7,31 @@
 
 #ifndef _CAN_H
 #define _CAN_H
+#include "config.h"
+
 typedef struct 
 {
-    unsigned char tsjw;
-    unsigned char tbs2;
-    unsigned char tbs1;
-    unsigned short brp;
-    unsigned char mode;
+    uint8_t  tsjw;
+    uint8_t  tbs2;
+    uint8_t  tbs1;
+    uint16_t brp;
+    uint8_t  mode;
 } CanInitTypedef;
 
 typedef struct
 {
-    unsigned char send_data[8];
-    unsigned char receive_data[8];
-    unsigned char dlc;      // data length code
-    unsigned char std_id;   // standard id
-    unsigned char ext_id;   // extend id
-    unsigned char ide;      // identifier extension
-    unsigned char rtr;      // remote request substitution
+    uint8_t send_data[8];
+    uint8_t receive_data[8];
+    uint8_t dlc;      // data length code
+    uint8_t std_id;   // standard id
+    uint8_t ext_id;   // extend id
+    uint8_t ide;      // identifier extension
+    uint8_t rtr;      // remote request substitution
 } CanMsgTypedef;
 
 void can_init(void);
-unsigned char can1_mode_init(CanInitTypedef* can_init_data);
-unsigned char can_send_msg(CanMsgTypedef msg);
-unsigned char can_receive_msg(unsigned char *buf);
+uint8_t can1_mode_init(CanInitTypedef* can_init_data);
+uint8_t can_send_msg(CanMsgTypedef msg);
+uint8_t can_receive_msg(uint8_t *buf);
 
 #endif

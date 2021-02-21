@@ -7,6 +7,6 @@
 
 #ifndef _SENSERS_TASK_H
 #define _SENSERS_TASK_H
-
+#include "config.h"
 
 #endif

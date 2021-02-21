@@ -7,6 +7,7 @@
 
 #ifndef _SYSTEM_RUN_H
 #define _SYSTEM_RUN_H
+#include "config.h"
 
 void led_sys_run(void);
 void oled_sys_run(void);

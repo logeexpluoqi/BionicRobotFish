@@ -6,6 +6,7 @@
  */
 #ifndef _USART_H
 #define _USART_H
+#include "config.h"
 
 #define USART_TX_LEN_MAX 300
 #define USART_RX_LEN_MAX 300
@@ -16,21 +17,21 @@ typedef enum
 } UsartPort;
 typedef struct 
 {
-    unsigned char tx_en; // 1: enable, 0: disable
-    unsigned char rx_en; // 1: enable, 0: disable
-    unsigned char tx_data[USART_TX_LEN_MAX];
-    unsigned char rx_data[USART_RX_LEN_MAX];
-    unsigned char rx_cnt;
+    uint8_t tx_en; // 1: enable, 0: disable
+    uint8_t rx_en; // 1: enable, 0: disable
+    uint8_t tx_data[USART_TX_LEN_MAX];
+    uint8_t rx_data[USART_RX_LEN_MAX];
+    uint8_t rx_cnt;
 } UsartMsgTypedef;
 
 
-void usart1_init(unsigned int bound);
+void usart1_init(uint32_t bound);
 void usart1_init_dma(void);
-void usart1_tx_data(unsigned char *tx_data);
-void usart1_dma_tx_data(unsigned char *msg, unsigned char len);
+void usart1_tx_data(uint8_t *tx_data);
+void usart1_dma_tx_data(uint8_t *msg, uint8_t len);
 
-unsigned char get_usart_tx_flag(UsartPort port);
-unsigned char get_usart_rx_flag(UsartPort port);
+uint8_t get_usart_tx_flag(UsartPort port);
+uint8_t get_usart_rx_flag(UsartPort port);
 void usart_clear_tx_flag(UsartPort port);
 void usart_clear_rx_flag(UsartPort port);
 void usart_set_tx_flag(UsartPort port);

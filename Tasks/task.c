@@ -6,7 +6,7 @@
  */
 
 #include "task.h"
-#include "config.h"
+// #include "config.h"
 #include "time_slice.h"
 #include "system_run.h"
 #include "keyboard_task.h"

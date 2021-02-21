@@ -12,12 +12,12 @@
 
 /* @breif: clear memery, after clear, the value is mem_val 
  * @param: *mem, memery position, &s_structure or array;
- * @param: mem_val, set the memery value, unsigned char type.
+ * @param: mem_val, set the memery value, uint8_t type.
  */
-void mem_set(void* mem, unsigned char mem_val)
+void mem_set(void* mem, uint8_t mem_val)
 {
-    unsigned char *p = mem;
-    unsigned int m_size = sizeof(p);
+    uint8_t *p = mem;
+    uint32_t m_size = sizeof(p);
     while(m_size > 0)
     {
         *p = mem_val;
@@ -26,10 +26,10 @@ void mem_set(void* mem, unsigned char mem_val)
     }
 }
 
-void mem_cpy(void* mem_src, void* mem_dst, unsigned int m_size)
+void mem_cpy(void* mem_src, void* mem_dst, uint32_t m_size)
 {
-    char* p_src = (char*)mem_src;
-    char* p_dst = (char*)mem_dst;
+    int8_t* p_src = (int8_t*)mem_src;
+    int8_t* p_dst = (int8_t*)mem_dst;
     while(m_size --)
         *p_dst++ = *p_src++;
 }
@@ -53,6 +53,4 @@ void sys_config_display()
     sys_disp_str(0, 0, "SysInfo: ", SMALL);
     sys_disp_str(0, 2, "M_Num: ", SMALL);
     sys_disp_num(64, 2, AK_MOTOR_NUM_MAX, 1, SMALL);
-    
-    sys_disp_str(0, 3, "GrpCtrl: ", SMALL);
 }

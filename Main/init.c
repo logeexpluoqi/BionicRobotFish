@@ -7,7 +7,6 @@
 
 #include "stdio.h"
 #include "init.h"
-#include "config.h"
 #include "misc.h"
 #include "delay.h"
 #include "time_slice.h"

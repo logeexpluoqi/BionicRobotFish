@@ -7,6 +7,7 @@
 
 #ifndef _KEYBOARD_TASK_H
 #define _KEYBOARD_TASK_H
+#include "config.h"
 
 void key_scan(void);
 void key_edge_action(void);

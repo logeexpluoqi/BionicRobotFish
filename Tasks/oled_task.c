@@ -11,7 +11,7 @@
 #include "oled.h"
 
 static OledDispMsgTypedef oled_disp;
-static unsigned char sys_disp_en = 0;
+static uint8_t sys_disp_en = 0;
 
 void sys_disp_init()
 {
@@ -46,7 +46,7 @@ void sys_disp_open()
     sys_disp_en = 1;
 }
 
-void sys_disp_char(unsigned char x, unsigned int y, unsigned char chr, OledDispFont font)
+void sys_disp_char(uint8_t x, unsigned int y, uint8_t chr, OledDispFont font)
 {
     oled_disp.refresh_flag = 1;
     oled_disp.type = TYPE_CHAR;
@@ -58,7 +58,7 @@ void sys_disp_char(unsigned char x, unsigned int y, unsigned char chr, OledDispF
         EXTI_GenerateSWInterrupt(EXTI_Line3);
 }
 
-void sys_disp_num(unsigned char x, unsigned char y, unsigned int num, unsigned char len, OledDispFont font)
+void sys_disp_num(uint8_t x, uint8_t y, unsigned int num, uint8_t len, OledDispFont font)
 {
     oled_disp.refresh_flag = 1;
     oled_disp.type = TYPE_NUM;
@@ -71,7 +71,7 @@ void sys_disp_num(unsigned char x, unsigned char y, unsigned int num, unsigned c
         EXTI_GenerateSWInterrupt(EXTI_Line3);
 }
 
-void sys_disp_str(unsigned char x, unsigned char y, unsigned char *str, OledDispFont font)
+void sys_disp_str(uint8_t x, uint8_t y, uint8_t *str, OledDispFont font)
 {
     oled_disp.refresh_flag = 1;
     oled_disp.type = TYPE_STRING;

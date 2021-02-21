@@ -6,6 +6,5 @@
  */
 
 #include "msg_box.h"
-#include "config.h"
 
 

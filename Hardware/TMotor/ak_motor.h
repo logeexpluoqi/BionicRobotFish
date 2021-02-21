@@ -7,6 +7,7 @@
 
 #ifndef _AK_MOTOR_H
 #define _AK_MOTOR_H
+#include "config.h"
 
 typedef enum
 {
@@ -23,8 +24,8 @@ typedef enum
 
 typedef struct
 {
-    unsigned char ctrl_en; // 1: enable, 0: disable
-    unsigned char id;
+    uint8_t ctrl_en; // 1: enable, 0: disable
+    uint8_t id;
     float p_dst;
     float v_dst;
     float t_dst;
@@ -34,14 +35,14 @@ typedef struct
 
 typedef struct
 {
-    unsigned char id;
+    uint8_t id;
     float position;
     float velocity;
     float torque;
 } AkMotorInfo;
 
 
-unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd);
-unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_info);
+uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd);
+uint8_t ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_info);
 
 #endif

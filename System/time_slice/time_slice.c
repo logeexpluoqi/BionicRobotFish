@@ -18,7 +18,7 @@ void time_slice_init()
 
 void time_slice_process()
 {
-	unsigned char i;
+	uint8_t i;
 	for(i=0; i<TASK_NUM; i++)
 	{
 		if(Tasks[i].TaskIsRunFlag == 1)
@@ -31,7 +31,7 @@ void time_slice_process()
 
 void time_slice_tick()
 {
-	unsigned char i;
+	uint8_t i;
 	
 	for(i=0; i<TASK_NUM; i++)
 	{

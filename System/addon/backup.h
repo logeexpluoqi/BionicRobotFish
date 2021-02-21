@@ -7,6 +7,6 @@
 
 #ifndef _BACKUP_H
 #define _BACKUP_H
-
+#include "config.h"
 
 #endif

@@ -7,12 +7,12 @@
 
 #ifndef _TIME_SLICE_H
 #define _TIME_SLICE_H
-
+#include "config.h"
 typedef struct TASK_COMPONENTS
 {
-    unsigned char TaskIsRunFlag;
-    unsigned int TaskTimer;
-    unsigned int TaskIntervalTime;
+    uint8_t TaskIsRunFlag;
+    uint32_t TaskTimer;
+    uint32_t TaskIntervalTime;
     void (*TaskHook)(void);
 } TimeSliceInitTypedef;
 
