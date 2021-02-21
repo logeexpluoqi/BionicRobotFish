@@ -21,6 +21,7 @@ void sys_init()
 {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
     delay_init(168);
+    sys_clk_init();
 #if USING_SYS_DISP
     sys_disp_init();
 #endif
@@ -30,6 +31,5 @@ void sys_init()
     usart1_init(921600);
     can_init();
     time_slice_init();
-
     sys_disp_str(72, 7, "by luoqi", SMALL);
 }

@@ -6,7 +6,6 @@
  */
 
 #include "task.h"
-// #include "config.h"
 #include "time_slice.h"
 #include "system_run.h"
 #include "keyboard_task.h"
@@ -28,14 +27,12 @@ TimeSliceInitTypedef Tasks[TASK_NUM] =
 
 void task_1ms()
 {
-
+    
 }
 
 void task_5ms()
 {
-#if AK_MOTOR_CTRL_MODE == 1
-    ak_motor_ctrl_task(); 
-#endif
+
 }
 
 void task_10ms()
@@ -60,7 +57,7 @@ void task_100ms()
 
 void task_200ms()
 {
-
+    
 }
 
 void task_500ms()
