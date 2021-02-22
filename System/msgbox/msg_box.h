@@ -31,10 +31,11 @@ typedef enum MSG_SRC
     TASKS
 } MsgSrc;
 
-typedef struct msg_box_akmotor_t
+struct msg_box_akmotor_t
 {
     /* motor control mode */
     uint8_t mode;
+    uint8_t exist;
 
     /* receive motor control data */
     uint8_t id_dst;
@@ -49,11 +50,18 @@ typedef struct msg_box_akmotor_t
     float p_upload;
     float v_upload;
     float t_upload;
-} MsgBoxAkmotor;
+};
+
+typedef struct msgbox
+{
+    struct msg_box_akmotor_t msgbox_akmotor[AK_MOTOR_NUM_MAX];
+} msgbox_t;
+
 
 void mem_set(void* mem, uint8_t mem_val);
 void mem_cpy(void* mem_src, void* mem_dst, uint32_t m_size);
 
+void msgbox_init(void);
 void msg_get(MsgSrc src, uint8_t* msg, uint16_t msg_size);
 uint8_t msg_verify(uint8_t* msg);
 void msg_send(uint8_t* msg, uint16_t len);
