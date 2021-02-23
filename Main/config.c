@@ -21,7 +21,7 @@ void sys_disp_config(SysDispState state)
 
 void sys_reset()
 {
-    SCB->AIRCR  = ((0x5FA << SCB_AIRCR_VECTKEY_Pos)      |
+    SCB->AIRCR  = ((0x5FA << SCB_AIRCR_VECTKEY_Pos)     |
                   (SCB->AIRCR & SCB_AIRCR_PRIGROUP_Msk) |
                    SCB_AIRCR_SYSRESETREQ_Msk);
 }
