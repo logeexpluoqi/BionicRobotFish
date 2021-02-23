@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 10:41:02 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-19 20:41:30
+ * @Last Modified time: 2021-02-23 20:55:33
  */
 
 #include "task.h"
@@ -10,6 +10,7 @@
 #include "system_run.h"
 #include "keyboard_task.h"
 #include "ak_motor_ctrl_task.h"
+#include "msg_box.h"
 
 TimeSliceInitTypedef Tasks[TASK_NUM] = 
 {
@@ -32,7 +33,7 @@ void task_1ms()
 
 void task_5ms()
 {
-
+    ak_motor_ctrl_task();
 }
 
 void task_10ms()
@@ -72,5 +73,4 @@ void task_1s()
 
 void task_5s()
 {
-    
 }

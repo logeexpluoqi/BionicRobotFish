@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 09:54:11 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-27 13:13:34
+ * @Last Modified time: 2021-02-23 20:04:52
  */
 #include "usart.h"
 #include "stdio.h"
@@ -167,7 +167,7 @@ void USART1_IRQHandler(void)
 		/* Receive a frame of data */
 		if(rx_len != 0)
 		{
-			msg_get(COMPUTER, usart_dma_rx_buf, rx_len); // remove SOF and EOFs
+			msg_get(usart_dma_rx_buf); // remove SOF and EOFs
 			usart_set_tx_flag(USART_1);
 		}
 		/* Reset DMA receive configuration */

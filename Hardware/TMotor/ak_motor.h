@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-08 09:15:07 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-09 09:39:08
+ * @Last Modified time: 2021-02-23 18:52:39
  */
 
 #ifndef _AK_MOTOR_H
@@ -17,14 +17,13 @@ typedef enum
 
 typedef enum
 {
-    ENTER_MOTOR_CTRL = 1,
-    QUIT_MOTOR_CTRL = 2,
-    SET_ZERO_POS = 3
+    EN_AK_MOTOR_MODE   = 1,
+    EX_AK_MOTOR_MODE   = 2,
+    SET_AK_MOTOR_ZERO  = 3
 } AkMotorCmd;
 
 typedef struct
 {
-    uint8_t ctrl_en; // 1: enable, 0: disable
     uint8_t id;
     float p_dst;
     float v_dst;

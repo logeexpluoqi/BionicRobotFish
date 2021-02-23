@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-02-17 20:27:52 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-02-17 20:45:42
+ * @Last Modified time: 2021-02-23 20:05:11
  */
 
 #ifndef _MSG_BOX_H
@@ -25,11 +25,11 @@ enum MSG_STATE
     ERR
 };
 
-typedef enum MSG_SRC
+typedef enum MSG_LOCATION
 {
     COMPUTER,
-    TASKS
-} MsgSrc;
+    AKMOTOR_CTRL_TASK
+} MsgLocation;
 
 struct msg_box_akmotor_t
 {
@@ -57,13 +57,8 @@ typedef struct msgbox
     struct msg_box_akmotor_t msgbox_akmotor[AK_MOTOR_NUM_MAX];
 } msgbox_t;
 
-
-void mem_set(void* mem, uint8_t mem_val);
-void mem_cpy(void* mem_src, void* mem_dst, uint32_t m_size);
-
 void msgbox_init(void);
-void msg_get(MsgSrc src, uint8_t* msg, uint16_t msg_size);
-uint8_t msg_verify(uint8_t* msg);
-void msg_send(uint8_t* msg, uint16_t len);
+void msg_get(uint8_t* msg);
+void msg_put(MsgLocation location, void* msg, uint16_t msg_size);
 
 #endif

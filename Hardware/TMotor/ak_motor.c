@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-08 09:16:00 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-02-23 14:17:19
+ * @Last Modified time: 2021-02-23 18:51:57
  */
 
 #include "ak_motor.h"
@@ -166,18 +166,11 @@ void ak_motor_data_encode(uint8_t* motor_data, uint32_t P, uint32_t V, uint32_t 
 
 uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd)
 {
-    uint8_t ret;
-    uint8_t start[] = "{MOTOR UNLOCK}";
-    uint8_t exit[]  = "{MOTOR LOCKED}";
-    uint8_t zero[]  = "{SET ZERO    }";
-    uint8_t error[] = "{CAN SEND ERR}";
-    uint8_t *upload;
-
     can1_msg.std_id = id;
 
     switch(cmd)
     {
-    case ENTER_MOTOR_CTRL:
+    case EN_AK_MOTOR_MODE:
     {
         can1_msg.send_data[0] = 0xff;
         can1_msg.send_data[1] = 0xff;
@@ -187,10 +180,9 @@ uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfc;
-        upload = start;
         break;
     }
-    case QUIT_MOTOR_CTRL:
+    case EX_AK_MOTOR_MODE:
     {
         can1_msg.send_data[0] = 0xff;
         can1_msg.send_data[1] = 0xff;
@@ -200,10 +192,9 @@ uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfd;
-        upload = exit;
         break;
     }
-    case SET_ZERO_POS:
+    case SET_AK_MOTOR_ZERO:
     {
         can1_msg.send_data[0] = 0xff;
         can1_msg.send_data[1] = 0xff;
@@ -213,23 +204,13 @@ uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfe;
-        upload = zero;
         break;
     }
     default:
         break;
     }
 
-    ret = can_send_msg(can1_msg);
-    if(ret == 1)
-    {
-        upload = error;
-        usart1_dma_tx_data(upload, 14);
-    }
-    else
-        usart1_dma_tx_data(upload, 14);
-
-    return ret;
+    return can_send_msg(can1_msg);
 }
 
 float unit2float(uint32_t x, float x_min, float x_max, uint8_t bits)
