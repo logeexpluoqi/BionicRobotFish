@@ -1,12 +1,12 @@
 /*
  * @Author: luoqi 
- * @Date: 2021-01-14 08:28:57 
+ * @Date: 2021-02-23 09:54:06 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-14 08:39:00
+ * @Last Modified time: 2021-02-23 09:57:58
  */
 
-#ifndef _MSG_DISTRIBUTE_H
-#define _MSG_DISTRIBUTE_H
+#ifndef _MSG_BOX_H
+#define _MSG_BOX_H
 
 typedef enum cmd 
 {

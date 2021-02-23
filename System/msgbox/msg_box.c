@@ -1,11 +1,10 @@
 /*
  * @Author: luoqi 
- * @Date: 2021-01-14 08:29:43 
+ * @Date: 2021-02-23 09:53:29 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-19 20:41:04
+ * @Last Modified time: 2021-02-23 09:57:35
  */
-
-#include "msg_distribute.h"
+#include "msg_box.h"
 #include "ak_motor.h"
 #include "ak_motor_ctrl_task.h"
 #include "config.h"

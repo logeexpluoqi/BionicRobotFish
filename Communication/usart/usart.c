@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 09:54:11 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-27 13:13:34
+ * @Last Modified time: 2021-02-23 09:58:21
  */
 #include "usart.h"
 #include "config.h"
@@ -12,7 +12,7 @@
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_usart.h"
 #include "stm32f4xx_dma.h"
-#include "msg_distribute.h"
+#include "msg_box.h"
 #include "dma.h"
 #include "misc.h"
 
