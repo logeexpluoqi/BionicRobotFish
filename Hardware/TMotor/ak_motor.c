@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-08 09:16:00 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-19 20:51:22
+ * @Last Modified time: 2021-02-23 14:17:19
  */
 
 #include "ak_motor.h"
@@ -19,16 +19,16 @@ static CanMsgTypedef can1_msg = {
 };
 
 /* Built-in functions */
-uint8_t ak_motor_info_receive(AkMotorInfo *motor_info);
-void ak_motor_data_encode(uint8_t* motor_data, uint32_t P, uint32_t V, uint32_t T, uint32_t Kp, uint32_t Kd);
-float p_limit(float p, AkMotorType m_type);
-float v_limit(float v, AkMotorType m_type);
-float t_limit(float t, AkMotorType m_type);
-float kp_limit(float kp, AkMotorType m_type);
-float kd_limit(float kd, AkMotorType m_type);
-AkMotorType motor_type_detect(uint8_t id);
-uint32_t float2uint(float x, float x_min, float x_max, uint8_t bits);
-float unit2float(uint32_t x, float x_min, float x_max, uint8_t bits);
+static uint8_t ak_motor_info_receive(AkMotorInfo *motor_info);
+static void ak_motor_data_encode(uint8_t* motor_data, uint32_t P, uint32_t V, uint32_t T, uint32_t Kp, uint32_t Kd);
+static float p_limit(float p, AkMotorType m_type);
+static float v_limit(float v, AkMotorType m_type);
+static float t_limit(float t, AkMotorType m_type);
+static float kp_limit(float kp, AkMotorType m_type);
+static float kd_limit(float kd, AkMotorType m_type);
+static AkMotorType motor_type_detect(uint8_t id);
+static uint32_t float2uint(float x, float x_min, float x_max, uint8_t bits);
+static float unit2float(uint32_t x, float x_min, float x_max, uint8_t bits);
 
 /**
  *  Notation: if motor id changed, there also need to change !!!
@@ -83,7 +83,7 @@ uint8_t ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_info)
     ctrl_data -> v_dst = v_limit(ctrl_data -> v_dst, motor_type);
     ctrl_data -> t_dst = t_limit(ctrl_data -> t_dst, motor_type);
     ctrl_data -> kp    = kp_limit(ctrl_data -> kp, motor_type);
-    ctrl_data -> kd    = kp_limit(ctrl_data -> kd, motor_type);
+    ctrl_data -> kd    = kd_limit(ctrl_data -> kd, motor_type);
 
     p_dst = float2uint(ctrl_data -> p_dst, p_min, p_max, 16);
     v_dst = float2uint(ctrl_data -> v_dst, v_min, v_max, 12);

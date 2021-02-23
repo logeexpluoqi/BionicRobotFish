@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-19 14:10:53 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-19 21:07:44
+ * @Last Modified time: 2021-02-23 14:58:10
  */
 
 #ifndef _CONFIG_H
@@ -32,10 +32,9 @@ typedef enum sys_disp
  */
 #define USING_SYS_DISP          1
 
-/* @breif: This function is used to clear structures.
- * @param: *mem, structure position;
- * @param: c, fill number.
- */
+void mem_set(void* mem, uint8_t mem_val);
+void mem_cpy(void* mem_src, void* mem_dst, uint32_t m_size);
+
 void sys_reset(void);
 void sys_config_display(void);
 void sys_disp_config(SysDispState state);
