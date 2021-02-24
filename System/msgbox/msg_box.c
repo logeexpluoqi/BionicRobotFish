@@ -12,6 +12,7 @@
 #define NULL (void*) 0
 
 static msgbox_t* msgbox;
+static uint8_t task_en = 0;
 
 static void msg_distribute(uint8_t* msg);
 static uint8_t msg_verify(uint8_t* msg);
@@ -55,6 +56,19 @@ uint8_t msg_verify(uint8_t* msg)
 void msgbox_init()
 {
     mem_set(msgbox, 0);
+}
+
+void msgbox_task_en(MsgboxTaskState state)
+{
+    if(state == TASK_ENABLE)
+        task_en = 1;
+    else if(state == TASK_DISABLE)
+        task_en = 0;
+}
+
+uint8_t msgbox_get_task_en()
+{
+    return task_en;
 }
 
 /* 
@@ -125,6 +139,7 @@ void msg_distribute(uint8_t* msg)
         default:
             break;
         }
+        msgbox_task_en(TASK_ENABLE);
     }
     else
     {

@@ -25,6 +25,12 @@ enum MSG_STATE
     ERR
 };
 
+typedef enum MSGBOX_TASK_EN
+{
+    TASK_ENABLE,
+    TASK_DISABLE
+} MsgboxTaskState;
+
 typedef enum MSG_LOCATION
 {
     COMPUTER,
@@ -58,6 +64,8 @@ typedef struct msgbox
 } msgbox_t;
 
 void msgbox_init(void);
+void msgbox_task_en(MsgboxTaskState state);
+uint8_t msgbox_get_task_en(void);
 void msg_get(uint8_t* msg);
 void msg_put(MsgLocation location, void* msg, uint16_t msg_size);
 
