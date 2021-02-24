@@ -31,13 +31,7 @@ typedef enum MSGBOX_TASK_EN
     TASK_DISABLE
 } MsgboxTaskState;
 
-typedef enum MSG_LOCATION
-{
-    COMPUTER,
-    AKMOTOR_CTRL_TASK
-} MsgLocation;
-
-struct msg_box_akmotor_t
+typedef struct msgbox_akmotor
 {
     /* motor control mode */
     uint8_t mode;
@@ -56,17 +50,19 @@ struct msg_box_akmotor_t
     float p_upload;
     float v_upload;
     float t_upload;
-};
+} msgbox_akmotor_t;
 
 typedef struct msgbox
 {
-    struct msg_box_akmotor_t msgbox_akmotor[AK_MOTOR_NUM_MAX];
+    msgbox_akmotor_t akmotor[AK_MOTOR_NUM_MAX];
 } msgbox_t;
 
 void msgbox_init(void);
 void msgbox_task_en(MsgboxTaskState state);
 uint8_t msgbox_get_task_en(void);
 void msg_get(uint8_t* msg);
-void msg_put(MsgLocation location, void* msg, uint16_t msg_size);
+
+void msg_put_computer(uint8_t* msg, uint16_t msg_size);
+void msg_put_akmotor_task(msgbox_akmotor_t** akmotor);
 
 #endif

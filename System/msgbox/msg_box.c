@@ -11,7 +11,7 @@
 
 #define NULL (void*) 0
 
-static msgbox_t* msgbox;
+static msgbox_t msgbox;
 static uint8_t task_en = 0;
 
 static void msg_distribute(uint8_t* msg);
@@ -20,17 +20,6 @@ static uint8_t msg_verify(uint8_t* msg);
 void msg_get(uint8_t* msg)
 {
     msg_distribute(msg);
-}
-
-void msg_put(MsgLocation location, void* msg, uint16_t msg_size)
-{
-    switch(location)
-    {
-    case COMPUTER:
-        usart1_dma_tx_data(msg, msg_size); break;
-    case AKMOTOR_CTRL_TASK:
-        msg = msgbox->msgbox_akmotor; break;
-    }
 }
 
 /* Verification receive message
@@ -55,7 +44,8 @@ uint8_t msg_verify(uint8_t* msg)
 
 void msgbox_init()
 {
-    mem_set(msgbox, 0);
+    mem_set(msgbox.akmotor, 0);
+    msg_put_computer("System initialize success!", 26);
 }
 
 void msgbox_task_en(MsgboxTaskState state)
@@ -88,9 +78,9 @@ void msg_distribute(uint8_t* msg)
             uint8_t akmotor_num = msg[2];
             for(i = 0; i < akmotor_num; i++)
             {
-                msgbox->msgbox_akmotor[i].exist  = 1;
-                msgbox->msgbox_akmotor[i].mode   = EN_MOTOR_MODE;
-                msgbox->msgbox_akmotor[i].id_dst = msg[3+i];
+                msgbox.akmotor[i].exist  = 1;
+                msgbox.akmotor[i].mode   = EN_MOTOR_MODE;
+                msgbox.akmotor[i].id_dst = msg[3+i];
             }
             break;
         }
@@ -99,9 +89,9 @@ void msg_distribute(uint8_t* msg)
             uint8_t akmotor_num = msg[2];
             for(i = 0; i < akmotor_num; i++)
             {
-                msgbox->msgbox_akmotor[i].exist  = 1;
-                msgbox->msgbox_akmotor[i].mode   = EX_MOTOR_MODE;
-                msgbox->msgbox_akmotor[i].id_dst = msg[3+i];
+                msgbox.akmotor[i].exist  = 1;
+                msgbox.akmotor[i].mode   = EX_MOTOR_MODE;
+                msgbox.akmotor[i].id_dst = msg[3+i];
             }
             break;
         }
@@ -110,9 +100,9 @@ void msg_distribute(uint8_t* msg)
             uint8_t akmotor_num = msg[2];
             for(i = 0; i < akmotor_num; i++)
             {
-                msgbox->msgbox_akmotor[i].exist  = 1;
-                msgbox->msgbox_akmotor[i].mode   = SET_MOTOR_ZERO;
-                msgbox->msgbox_akmotor[i].id_dst = msg[3+i];
+                msgbox.akmotor[i].exist  = 1;
+                msgbox.akmotor[i].mode   = SET_MOTOR_ZERO;
+                msgbox.akmotor[i].id_dst = msg[3+i];
             }
             break;
         }
@@ -121,13 +111,13 @@ void msg_distribute(uint8_t* msg)
             uint8_t akmotor_num = msg[2]/11;
             for(i = 0; i < akmotor_num; i++)
             {
-                msgbox->msgbox_akmotor[i].exist  = 1;
-                msgbox->msgbox_akmotor[i].id_dst = msg[3 + i*11];
-                msgbox->msgbox_akmotor[i].p_dst  = msg_char_to_float(msg[4 + i*11], msg[5 + i*11]);
-                msgbox->msgbox_akmotor[i].v_dst  = msg_char_to_float(msg[6 + i*11], msg[7 + i*11]);
-                msgbox->msgbox_akmotor[i].t_dst  = msg_char_to_float(msg[8 + i*11], msg[9 + i*11]);
-                msgbox->msgbox_akmotor[i].kp     = msg_char_to_float(msg[10 + i*11], msg[11 + i*11]);
-                msgbox->msgbox_akmotor[i].kd     = msg_char_to_float(msg[12 + i*11], msg[13 + i*11]);
+                msgbox.akmotor[i].exist  = 1;
+                msgbox.akmotor[i].id_dst = msg[3 + i*11];
+                msgbox.akmotor[i].p_dst  = msg_char_to_float(msg[4 + i*11], msg[5 + i*11]);
+                msgbox.akmotor[i].v_dst  = msg_char_to_float(msg[6 + i*11], msg[7 + i*11]);
+                msgbox.akmotor[i].t_dst  = msg_char_to_float(msg[8 + i*11], msg[9 + i*11]);
+                msgbox.akmotor[i].kp     = msg_char_to_float(msg[10 + i*11], msg[11 + i*11]);
+                msgbox.akmotor[i].kd     = msg_char_to_float(msg[12 + i*11], msg[13 + i*11]);
             }
             break;
         }
@@ -143,6 +133,16 @@ void msg_distribute(uint8_t* msg)
     }
     else
     {
-        
+        msg_put_computer("Message error !", 15);
     }
+}
+
+void msg_put_computer(uint8_t* msg, uint16_t msg_size)
+{
+    usart1_dma_tx_data(msg, msg_size);
+}
+
+void msg_put_akmotor_task(msgbox_akmotor_t** akmotor)
+{
+    *akmotor = msgbox.akmotor;
 }
