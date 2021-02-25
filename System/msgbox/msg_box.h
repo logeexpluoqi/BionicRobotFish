@@ -33,8 +33,7 @@ typedef enum MSGBOX_TASK_EN
 
 typedef struct msgbox_akmotor
 {
-    /* motor control mode */
-    uint8_t mode;
+    /* motor exixt */
     uint8_t exist;
 
     /* receive motor control data */
@@ -54,6 +53,7 @@ typedef struct msgbox_akmotor
 
 typedef struct msgbox
 {
+    uint8_t mode;
     msgbox_akmotor_t akmotor[AK_MOTOR_NUM_MAX];
 } msgbox_t;
 
@@ -63,6 +63,6 @@ uint8_t msgbox_get_task_en(void);
 void msg_get(uint8_t* msg);
 
 void msg_put_computer(uint8_t* msg, uint16_t msg_size);
-void msg_put_akmotor_task(msgbox_akmotor_t** akmotor);
+void msg_put_akmotor_task(msgbox_akmotor_t** akmotor, uint8_t* mode);
 
 #endif

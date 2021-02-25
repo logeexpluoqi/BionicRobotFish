@@ -66,12 +66,12 @@ uint8_t msgbox_get_task_en()
  */
 void msg_distribute(uint8_t* msg)
 {
-    uint8_t mode = msg[1];
     uint8_t i;
 
+    msgbox.mode = msg[1];
     if(msg_verify(msg) == OK)
     {
-        switch(mode)
+        switch(msgbox.mode)
         {
         case EN_MOTOR_MODE:
         { 
@@ -79,7 +79,6 @@ void msg_distribute(uint8_t* msg)
             for(i = 0; i < akmotor_num; i++)
             {
                 msgbox.akmotor[i].exist  = 1;
-                msgbox.akmotor[i].mode   = EN_MOTOR_MODE;
                 msgbox.akmotor[i].id_dst = msg[3+i];
             }
             break;
@@ -90,7 +89,6 @@ void msg_distribute(uint8_t* msg)
             for(i = 0; i < akmotor_num; i++)
             {
                 msgbox.akmotor[i].exist  = 1;
-                msgbox.akmotor[i].mode   = EX_MOTOR_MODE;
                 msgbox.akmotor[i].id_dst = msg[3+i];
             }
             break;
@@ -101,7 +99,6 @@ void msg_distribute(uint8_t* msg)
             for(i = 0; i < akmotor_num; i++)
             {
                 msgbox.akmotor[i].exist  = 1;
-                msgbox.akmotor[i].mode   = SET_MOTOR_ZERO;
                 msgbox.akmotor[i].id_dst = msg[3+i];
             }
             break;
@@ -142,7 +139,8 @@ void msg_put_computer(uint8_t* msg, uint16_t msg_size)
     usart1_dma_tx_data(msg, msg_size);
 }
 
-void msg_put_akmotor_task(msgbox_akmotor_t** akmotor)
+void msg_put_akmotor_task(msgbox_akmotor_t** akmotor, uint8_t* mode)
 {
     *akmotor = msgbox.akmotor;
+    *mode = msgbox.mode;
 }

@@ -13,27 +13,28 @@
 static AkMotorInfo motor_info;
 static AkMotorCtrlTypedef ak_motor_ctrl_data;
 static msgbox_akmotor_t* akmotor;
-static uint8_t ak_motor_upload_cache[62];
+static uint8_t ak_motor_upload_cache[62] = {0};
+
+static uint8_t start[] = "{MOTOR UNLOCK}";
+static uint8_t exit[]  = "{MOTOR LOCKED}";
+static uint8_t zero[]  = "{SET     ZERO}";
+static uint8_t error[] = "{CAN SEND ERR}";
 
 void ak_motor_ctrl_task()
 {
     uint8_t i, chr[2];
     uint8_t ctrl_motor_num = 0;
-
-    uint8_t start[] = "{MOTOR UNLOCK}";
-    uint8_t exit[]  = "{MOTOR LOCKED}";
-    uint8_t zero[]  = "{SET ZERO    }";
-    uint8_t error[] = "{CAN SEND ERR}";
+    uint8_t mode;
 
     if(msgbox_get_task_en())
     {
-        msg_put_akmotor_task(&akmotor);
+        msg_put_akmotor_task(&akmotor, &mode);
         for(i = 0; i < AK_MOTOR_NUM_MAX; i++)
         {
             if(akmotor[i].exist == 1)
             {
                 ctrl_motor_num  = ctrl_motor_num + 1;
-                switch(akmotor[i].mode)
+                switch(mode)
                 {
                 case EN_MOTOR_MODE: 
                 {
@@ -91,11 +92,14 @@ void ak_motor_ctrl_task()
             }
             akmotor[i].exist = 0;
         }
-        ak_motor_upload_cache[0] = '{';
-        ak_motor_upload_cache[1] = 4;
-        ak_motor_upload_cache[2] = ctrl_motor_num;
-        ak_motor_upload_cache[5 + ctrl_motor_num*7]= '}';
-        msg_put_computer(ak_motor_upload_cache, 6 + ctrl_motor_num*7);
+        if(mode == CTRL_MOTOR)
+        {
+            ak_motor_upload_cache[0] = '{';
+            ak_motor_upload_cache[1] = 4;
+            ak_motor_upload_cache[2] = ctrl_motor_num;
+            ak_motor_upload_cache[5 + ctrl_motor_num*7]= '}';
+            msg_put_computer(ak_motor_upload_cache, 6 + ctrl_motor_num*7);
+        }
     }
     msgbox_task_en(TASK_DISABLE);
 }
