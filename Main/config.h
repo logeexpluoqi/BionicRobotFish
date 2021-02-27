@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-19 14:10:53 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-02-23 14:58:10
+ * @Last Modified time: 2021-02-27 17:57:52
  */
 
 #ifndef _CONFIG_H
@@ -25,6 +25,12 @@ typedef enum sys_disp
 /* The maximal quantity of motor we can control
 */
 #define AK_MOTOR_NUM_MAX        8
+
+/* Enable or disable debuge mode
+ * 1: enable
+ * 0: disable 
+ */
+#define USING_SYS_DEBUG         0
 
 /* Using oled system display function 
  * 1: enable

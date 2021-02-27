@@ -9,6 +9,10 @@
 #include "usart.h"
 #include "msg_codec.h"
 
+#if USING_SYS_DEBUG
+ #include "sys_debug.h"
+#endif
+
 #define NULL (void*) 0
 
 static msgbox_t msgbox;
@@ -118,20 +122,16 @@ void msg_distribute(uint8_t* msg)
             }
             break;
         }
-        case SYS_RESET: 
-        {
-            sys_reset();
-            break;
-        }
-        default:
-            break;
+        #if USING_SYS_DEB
+         case SYS_DEBUG: sys_debug(msg);
+        #endif
+        case SYS_RESET: sys_reset(); break;
+        default: break;
         }
         msgbox_task_en(TASK_ENABLE);
     }
     else
-    {
         msg_put_computer("Message error !", 15);
-    }
 }
 
 void msg_put_computer(uint8_t* msg, uint16_t msg_size)

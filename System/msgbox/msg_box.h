@@ -16,6 +16,7 @@ enum MODE
     SET_MOTOR_ZERO  = 3,
     CTRL_MOTOR      = 4,
 
+    SYS_DEBUG       = 254,
     SYS_RESET       = 255
 };
 
