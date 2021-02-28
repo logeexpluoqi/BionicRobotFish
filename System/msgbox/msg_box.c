@@ -123,7 +123,7 @@ void msg_distribute(uint8_t* msg)
             break;
         }
         #if USING_SYS_DEB
-         case SYS_DEBUG: sys_debug(msg);
+         case SYS_DEBUG: sys_debug(msg) break;
         #endif
         case SYS_RESET: sys_reset(); break;
         default: break;
