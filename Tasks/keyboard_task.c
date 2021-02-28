@@ -36,7 +36,7 @@ void key_scan()
 
 void key_edge_action()
 {
-	static unsigned char flag = 0;
+	static uint8_t flag = 0;
 
     /* rising edge action */
 	if(key.key_1 == KEY_H && flag == 0)

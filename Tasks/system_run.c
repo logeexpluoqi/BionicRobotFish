@@ -11,7 +11,7 @@
 
 void led_sys_run()
 {
-    static unsigned char state = 0;
+    static uint8_t state = 0;
     
     state = !state;
     if(state)
@@ -26,7 +26,7 @@ void led_sys_run()
 
 void oled_sys_run()
 {
-    static unsigned char i = 0;
+    static uint8_t i = 0;
     i = i + 1;
     sys_disp_num(35, 7, i, 3, SMALL);
 }

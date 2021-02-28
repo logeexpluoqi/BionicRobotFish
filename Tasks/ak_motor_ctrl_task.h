@@ -7,7 +7,8 @@
 
 #ifndef _AK_MOTOR_CTRL_TASK_H
 #define _AK_MOTOR_CTRL_TASK_H
+#include "config.h"
 
 void ak_motor_ctrl_task(void);
-void ak_motor_stroke_ctrl(unsigned char *ctrl_data);
+
 #endif

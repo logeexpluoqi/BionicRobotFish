@@ -7,6 +7,7 @@
 
 #ifndef _TASK_H
 #define _TASK_H
+#include "config.h"
 
 #define TASK_NUM 10
 

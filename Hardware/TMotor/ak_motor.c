@@ -2,18 +2,14 @@
  * @Author: luoqi 
  * @Date: 2021-01-08 09:16:00 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-19 20:51:22
+ * @Last Modified time: 2021-02-23 18:51:57
  */
 
 #include "ak_motor.h"
-#include "config.h"
 #include "ak80_9.h"
 #include "ak10_9.h"
 #include "can.h"
 #include "usart.h"
-
-#define uint32 unsigned int
-#define uint8  unsigned char
 
 static CanMsgTypedef can1_msg = {
     .rtr             = 0,
@@ -23,21 +19,21 @@ static CanMsgTypedef can1_msg = {
 };
 
 /* Built-in functions */
-unsigned char ak_motor_info_receive(AkMotorInfo *motor_info);
-void ak_motor_data_encode(uint8* motor_data, uint32 P, uint32 V, uint32 T, uint32 Kp, uint32 Kd);
-float p_limit(float p, AkMotorType m_type);
-float v_limit(float v, AkMotorType m_type);
-float t_limit(float t, AkMotorType m_type);
-float kp_limit(float kp, AkMotorType m_type);
-float kd_limit(float kd, AkMotorType m_type);
-AkMotorType motor_type_detect(unsigned char id);
-unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits);
-float unit2float(unsigned int x, float x_min, float x_max, unsigned char bits);
+static uint8_t ak_motor_info_receive(AkMotorInfo *motor_info);
+static void ak_motor_data_encode(uint8_t* motor_data, uint32_t P, uint32_t V, uint32_t T, uint32_t Kp, uint32_t Kd);
+static float p_limit(float p, AkMotorType m_type);
+static float v_limit(float v, AkMotorType m_type);
+static float t_limit(float t, AkMotorType m_type);
+static float kp_limit(float kp, AkMotorType m_type);
+static float kd_limit(float kd, AkMotorType m_type);
+static AkMotorType motor_type_detect(uint8_t id);
+static uint32_t float2uint(float x, float x_min, float x_max, uint8_t bits);
+static float unit2float(uint32_t x, float x_min, float x_max, uint8_t bits);
 
 /**
  *  Notation: if motor id changed, there also need to change !!!
  */
-AkMotorType motor_type_detect(unsigned char id)
+AkMotorType motor_type_detect(uint8_t id)
 {
 	AkMotorType type;
     if(id == 9 || id == 16 || id == 17 || id == 18)
@@ -49,13 +45,13 @@ AkMotorType motor_type_detect(unsigned char id)
 }
 
 
-unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_info)
+uint8_t ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_info)
 {
     AkMotorType motor_type;
-    unsigned char state = 0;
-    unsigned char err_cnt = 0;
-    unsigned int p_dst, v_dst, t_dst;
-    unsigned int kp, kd;
+    uint8_t state = 0;
+    uint8_t err_cnt = 0;
+    uint32_t p_dst, v_dst, t_dst;
+    uint32_t kp, kd;
     float p_min, p_max;
     float v_min, v_max;
     float t_min, t_max;
@@ -87,7 +83,7 @@ unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_in
     ctrl_data -> v_dst = v_limit(ctrl_data -> v_dst, motor_type);
     ctrl_data -> t_dst = t_limit(ctrl_data -> t_dst, motor_type);
     ctrl_data -> kp    = kp_limit(ctrl_data -> kp, motor_type);
-    ctrl_data -> kd    = kp_limit(ctrl_data -> kd, motor_type);
+    ctrl_data -> kd    = kd_limit(ctrl_data -> kd, motor_type);
 
     p_dst = float2uint(ctrl_data -> p_dst, p_min, p_max, 16);
     v_dst = float2uint(ctrl_data -> v_dst, v_min, v_max, 12);
@@ -113,11 +109,11 @@ unsigned char ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_in
     return state;
 }
 
-unsigned char ak_motor_info_receive(AkMotorInfo *motor_info)
+uint8_t ak_motor_info_receive(AkMotorInfo *motor_info)
 {
-    unsigned char motor_type;
-    unsigned char len;
-    unsigned int position, velocity, torque;
+    uint8_t motor_type;
+    uint8_t len;
+    uint32_t position, velocity, torque;
     float p_min, p_max;
     float v_min, v_max;
     float t_min, t_max;
@@ -156,7 +152,7 @@ unsigned char ak_motor_info_receive(AkMotorInfo *motor_info)
     return 0;
 }
 
-void ak_motor_data_encode(uint8* motor_data, uint32 P, uint32 V, uint32 T, uint32 Kp, uint32 Kd)
+void ak_motor_data_encode(uint8_t* motor_data, uint32_t P, uint32_t V, uint32_t T, uint32_t Kp, uint32_t Kd)
 {
     motor_data[0] = (P >> 8) & 0xff;
     motor_data[1] = P & 0xff;
@@ -168,20 +164,13 @@ void ak_motor_data_encode(uint8* motor_data, uint32 P, uint32 V, uint32 T, uint3
     motor_data[7] = T & 0xff;
 }
 
-unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
+uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd)
 {
-    unsigned char ret;
-    unsigned char start[] = "{MOTOR UNLOCK}";
-    unsigned char exit[]  = "{MOTOR LOCKED}";
-    unsigned char zero[]  = "{SET ZERO    }";
-    unsigned char error[] = "{CAN SEND ERR}";
-    unsigned char *upload;
-
     can1_msg.std_id = id;
 
     switch(cmd)
     {
-    case ENTER_MOTOR_CTRL:
+    case EN_AK_MOTOR_MODE:
     {
         can1_msg.send_data[0] = 0xff;
         can1_msg.send_data[1] = 0xff;
@@ -191,10 +180,9 @@ unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfc;
-        upload = start;
         break;
     }
-    case QUIT_MOTOR_CTRL:
+    case EX_AK_MOTOR_MODE:
     {
         can1_msg.send_data[0] = 0xff;
         can1_msg.send_data[1] = 0xff;
@@ -204,10 +192,9 @@ unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfd;
-        upload = exit;
         break;
     }
-    case SET_ZERO_POS:
+    case SET_AK_MOTOR_ZERO:
     {
         can1_msg.send_data[0] = 0xff;
         can1_msg.send_data[1] = 0xff;
@@ -217,26 +204,16 @@ unsigned char ak_motor_mode_set(unsigned char id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfe;
-        upload = zero;
         break;
     }
     default:
         break;
     }
 
-    ret = can_send_msg(can1_msg);
-    if(ret == 1)
-    {
-        upload = error;
-        usart1_dma_tx_data(upload, 14);
-    }
-    else
-        usart1_dma_tx_data(upload, 14);
-
-    return ret;
+    return can_send_msg(can1_msg);
 }
 
-float unit2float(unsigned int x, float x_min, float x_max, unsigned char bits)
+float unit2float(uint32_t x, float x_min, float x_max, uint8_t bits)
 {
     float span = x_max - x_min;
     float offset = x_min;
@@ -244,12 +221,12 @@ float unit2float(unsigned int x, float x_min, float x_max, unsigned char bits)
     return ((float)x) * span / ((float)((1 << bits) - 1)) + offset;
 }
 
-unsigned int float2uint(float x, float x_min, float x_max, unsigned char bits)
+uint32_t float2uint(float x, float x_min, float x_max, uint8_t bits)
 {
     float span = x_max - x_min;
     float offset = x_min;
 
-    return (unsigned int)((x - offset) * ((float)((1 << bits) - 1)) / span); 
+    return (uint32_t)((x - offset) * ((float)((1 << bits) - 1)) / span); 
 }
 
 float p_limit(float p, AkMotorType m_type)

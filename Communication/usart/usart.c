@@ -2,10 +2,9 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 09:54:11 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-02-23 09:58:21
+ * @Last Modified time: 2021-02-23 20:04:52
  */
 #include "usart.h"
-#include "config.h"
 #include "stdio.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_rcc.h"
@@ -16,7 +15,7 @@
 #include "dma.h"
 #include "misc.h"
 
-static unsigned char usart_dma_rx_buf[USART_RX_LEN_MAX];
+static uint8_t usart_dma_rx_buf[USART_RX_LEN_MAX];
 static UsartMsgTypedef usart1_msg;
 
 /* ****************************start**************************** */
@@ -26,19 +25,19 @@ static UsartMsgTypedef usart1_msg;
 /* std lib requirs functions */
 struct __FILE
 {
-	int handle;
+	int32_t handle;
 };
 
 FILE __stdout;
 
 /* Define this function to avoid use half master mode */
-void _sys_exit(int x)
+void _sys_exit(int32_t x)
 {
 	x = x;
 }
 
 /* Redefine fputc function */
-int fputc(int ch, FILE *f)
+int32_t fputc(int32_t ch, FILE *f)
 {
 	while ((USART1->SR & 0X40) == 0); // until send over
 	USART1->DR = (u8)ch;
@@ -47,7 +46,7 @@ int fputc(int ch, FILE *f)
 #endif
 /* ****************************end***************************** */
 
-void usart1_init(unsigned int bound)
+void usart1_init(uint32_t bound)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	USART_InitTypeDef USART_InitStructure;
@@ -94,7 +93,7 @@ void usart1_init(unsigned int bound)
 	usart1_msg.rx_cnt = 0;
 }
 
-void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
+void usart1_dma_tx_data(uint8_t *msg, uint16_t len)
 {
 	usart_dma_tx_config(msg, len);
 	usart_dma_tx_data(DMA2_Stream7, len);
@@ -104,9 +103,9 @@ void usart1_dma_tx_data(unsigned char *msg, unsigned char len)
  * 1: TX enable
  * 0: TX disable
  */
-unsigned char get_usart_tx_flag(UsartPort port)
+uint8_t get_usart_tx_flag(UsartPort port)
 {
-	unsigned char state;
+	uint8_t state;
 	if(port == USART_1)
 		state = usart1_msg.tx_en;
 		
@@ -129,9 +128,9 @@ void usart_set_tx_flag(UsartPort port)
  * 1: RX enable
  * 0: RX disable
  */
-unsigned char get_usart_rx_flag(UsartPort port)
+uint8_t get_usart_rx_flag(UsartPort port)
 {
-	unsigned char state;
+	uint8_t state;
 	if(port == USART_1)
 		state = usart1_msg.rx_en;
 	
@@ -156,7 +155,7 @@ void usart_set_rx_flag(UsartPort port)
  */
 void USART1_IRQHandler(void)
 {
-	unsigned char rx_len;
+	uint8_t rx_len;
 
 	if(USART_GetFlagStatus(USART1, USART_FLAG_IDLE) != RESET)
 	{
@@ -166,11 +165,10 @@ void USART1_IRQHandler(void)
 		rx_len = USART_DMA_RCV_BUF_SIZE - DMA_GetCurrDataCounter(DMA2_Stream5);
 
 		/* Receive a frame of data */
-		if((rx_len != 0) && (usart_dma_rx_buf[0] == '{') && (usart_dma_rx_buf[rx_len - 1] == '}'))
+		if(rx_len != 0)
 		{
+			msg_get(usart_dma_rx_buf); // remove SOF and EOFs
 			usart_set_tx_flag(USART_1);
-			get_msg(usart_dma_rx_buf + 1, rx_len - 2); // remove SOF and EOFs
-			msg_distribute();
 		}
 		/* Reset DMA receive configuration */
     	DMA_SetCurrDataCounter(DMA2_Stream5, USART_DMA_RCV_BUF_SIZE);
