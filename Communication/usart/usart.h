@@ -32,6 +32,7 @@ void usart1_dma_tx_data(uint8_t *msg, uint16_t len);
 
 uint8_t get_usart_tx_flag(UsartPort port);
 uint8_t get_usart_rx_flag(UsartPort port);
+uint8_t usart1_get_dma_tx_status(void);
 void usart_clear_tx_flag(UsartPort port);
 void usart_clear_rx_flag(UsartPort port);
 void usart_set_tx_flag(UsartPort port);
