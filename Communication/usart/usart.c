@@ -168,7 +168,6 @@ void USART1_IRQHandler(void)
 		if(rx_len != 0)
 		{
 			msg_get(usart_dma_rx_buf); // remove SOF and EOFs
-			usart_set_tx_flag(USART_1);
 		}
 		/* Reset DMA receive configuration */
     	DMA_SetCurrDataCounter(DMA2_Stream5, USART_DMA_RCV_BUF_SIZE);
