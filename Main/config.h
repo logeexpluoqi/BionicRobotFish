@@ -22,6 +22,16 @@ typedef enum sys_disp
     SYS_DISP_DISABLE
 } SysDispState;
 
+typedef enum state
+{
+    OK,
+    ERR,
+    BUSY,
+    IDLE,
+    PENDING,
+    
+} state_t;
+
 /* The maximal quantity of motor we can control
 */
 #define AK_MOTOR_NUM_MAX        8
@@ -38,8 +48,8 @@ typedef enum sys_disp
  */
 #define USING_SYS_DISP          1
 
-void mem_set(void* mem, uint8_t mem_val);
-void mem_cpy(void* mem_src, void* mem_dst, uint32_t m_size);
+void mem_set(void* mem, uint8_t mem_val, uint32_t mem_size);
+void mem_cpy(void* mem_src, void* mem_dst, uint32_t mem_size);
 
 void sys_reset(void);
 void sys_config_display(void);
