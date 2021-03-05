@@ -9,6 +9,6 @@
 #define _AK_MOTOR_CTRL_TASK_H
 #include "config.h"
 
-void ak_motor_ctrl_task(void);
+state_t ak_motor_ctrl_task(void);
 
 #endif
