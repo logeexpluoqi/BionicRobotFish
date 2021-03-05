@@ -102,8 +102,11 @@ void usart1_dma_tx_data(uint8_t *msg, uint16_t len)
 /* 1: TX finished, 0: TX unfinish  */
 uint8_t usart1_get_dma_tx_status(UsartPort port)
 {
-	if(port == USART1)
-		return DMA_GetFlagStatus(DMA2_Stream7, DMA_FLAG_TCIF7);
+	uint8_t state;
+	if(port == USART_1)
+		state = DMA_GetFlagStatus(DMA2_Stream7, DMA_FLAG_TCIF7);
+
+	return state;
 }
 
 /* Get USARTx TX state 
