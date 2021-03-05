@@ -19,7 +19,7 @@ static msgbox_t msgbox;
 static uint8_t task_en = 0;
 
 static void msg_distribute(uint8_t* msg);
-static uint8_t msg_verify(uint8_t* msg);
+static msg_state_t msg_verify(uint8_t* msg);
 
 void msg_get(uint8_t* msg)
 {
@@ -30,9 +30,9 @@ void msg_get(uint8_t* msg)
  * Msg format: SOF | MODE | SIZE | DATA0 - DATAx | FCS_h | FCS_l | EOF
  * retval: 0, OK; 1, Error
  */
-uint8_t msg_verify(uint8_t* msg)
+msg_state_t msg_verify(uint8_t* msg)
 {
-    uint8_t err = OK;
+    msg_state_t msg_state = MSG_OK;
     uint8_t datax_size = msg[2];
 
     /* Check the data correctness and distribute this frame of data */
@@ -41,15 +41,27 @@ uint8_t msg_verify(uint8_t* msg)
         // crc verification
     }
     else
-        err = ERR;
+        msg_state = MSG_ERR;
     
-    return err;
+    return msg_state;
 }
 
 void msgbox_init()
 {
-    mem_set(msgbox.akmotor, 0);
+    mem_set(msgbox.akmotor, 0, sizeof(msgbox.akmotor));
     msg_put_computer("System initialize success!", 26);
+}
+
+void msg_put_computer(uint8_t* msg, uint16_t msg_size)
+{
+    usart1_dma_tx_data(msg, msg_size);
+    while(!usart1_get_dma_tx_status(USART_1));
+}
+
+void msg_put_akmotor_task(msgbox_akmotor_t** akmotor, uint8_t* mode)
+{
+    *akmotor = msgbox.akmotor;
+    *mode = msgbox.mode;
 }
 
 void msgbox_task_en(MsgboxTaskState state)
@@ -132,15 +144,4 @@ void msg_distribute(uint8_t* msg)
     }
     else
         msg_put_computer("Message error !", 15);
-}
-
-void msg_put_computer(uint8_t* msg, uint16_t msg_size)
-{
-    usart1_dma_tx_data(msg, msg_size);
-}
-
-void msg_put_akmotor_task(msgbox_akmotor_t** akmotor, uint8_t* mode)
-{
-    *akmotor = msgbox.akmotor;
-    *mode = msgbox.mode;
 }

@@ -99,6 +99,16 @@ void usart1_dma_tx_data(uint8_t *msg, uint16_t len)
 	usart_dma_tx_data(DMA2_Stream7, len);
 }
 
+/* 1: TX finished, 0: TX unfinish  */
+uint8_t usart1_get_dma_tx_status(UsartPort port)
+{
+	uint8_t state;
+	if(port == USART_1)
+		state = DMA_GetFlagStatus(DMA2_Stream7, DMA_FLAG_TCIF7);
+
+	return state;
+}
+
 /* Get USARTx TX state 
  * 1: TX enable
  * 0: TX disable
@@ -168,7 +178,6 @@ void USART1_IRQHandler(void)
 		if(rx_len != 0)
 		{
 			msg_get(usart_dma_rx_buf); // remove SOF and EOFs
-			usart_set_tx_flag(USART_1);
 		}
 		/* Reset DMA receive configuration */
     	DMA_SetCurrDataCounter(DMA2_Stream5, USART_DMA_RCV_BUF_SIZE);

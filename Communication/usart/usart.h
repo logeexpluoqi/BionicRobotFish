@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 09:54:24 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-12 14:56:15
+ * @Last Modified time: 2021-03-05 13:49:52
  */
 #ifndef _USART_H
 #define _USART_H
@@ -32,6 +32,7 @@ void usart1_dma_tx_data(uint8_t *msg, uint16_t len);
 
 uint8_t get_usart_tx_flag(UsartPort port);
 uint8_t get_usart_rx_flag(UsartPort port);
+uint8_t usart1_get_dma_tx_status(UsartPort port);
 void usart_clear_tx_flag(UsartPort port);
 void usart_clear_rx_flag(UsartPort port);
 void usart_set_tx_flag(UsartPort port);

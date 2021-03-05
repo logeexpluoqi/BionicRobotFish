@@ -20,11 +20,11 @@ enum MODE
     SYS_RESET       = 255
 };
 
-enum MSG_STATE
+typedef enum MSG_STATE
 {
-    OK,
-    ERR
-};
+    MSG_OK,
+    MSG_ERR
+} msg_state_t;
 
 typedef enum MSGBOX_TASK_EN
 {

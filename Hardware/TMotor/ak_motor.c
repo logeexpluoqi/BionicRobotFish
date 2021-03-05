@@ -19,7 +19,7 @@ static CanMsgTypedef can1_msg = {
 };
 
 /* Built-in functions */
-static uint8_t ak_motor_info_receive(AkMotorInfo *motor_info);
+static uint8_t ak_motor_info_receive(AkMotorInfo *motor_feedback);
 static void ak_motor_data_encode(uint8_t* motor_data, uint32_t P, uint32_t V, uint32_t T, uint32_t Kp, uint32_t Kd);
 static float p_limit(float p, AkMotorType m_type);
 static float v_limit(float v, AkMotorType m_type);
@@ -45,7 +45,7 @@ AkMotorType motor_type_detect(uint8_t id)
 }
 
 
-uint8_t ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_info)
+uint8_t ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_feedback)
 {
     AkMotorType motor_type;
     uint8_t state = 0;
@@ -103,13 +103,23 @@ uint8_t ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_info)
         else 
             state = 0;
     }
-
-    ak_motor_info_receive(motor_info); 
+    err_cnt = 0;
+    while(ak_motor_info_receive(motor_feedback))
+    {
+        err_cnt ++;
+        if(err_cnt == 30)
+        {
+            state = 1;
+            break;
+        }
+        else 
+            state = 0;
+    }
     sys_disp_config(SYS_DISP_ENABLE); 
     return state;
 }
 
-uint8_t ak_motor_info_receive(AkMotorInfo *motor_info)
+uint8_t ak_motor_info_receive(AkMotorInfo *motor_feedback)
 {
     uint8_t motor_type;
     uint8_t len;
@@ -144,10 +154,10 @@ uint8_t ak_motor_info_receive(AkMotorInfo *motor_info)
         velocity = (can1_msg.receive_data[3] << 4) | (can1_msg.receive_data[4] >> 4);
         torque   = ((can1_msg.receive_data[4] & 0x0f) << 8) | can1_msg.receive_data[5];
     }
-    motor_info -> id       = can1_msg.receive_data[0];
-    motor_info -> position = unit2float(position, p_min, p_max, 16);
-    motor_info -> velocity = unit2float(velocity, v_min, v_max, 12);
-    motor_info -> torque   = unit2float(torque, t_min, t_max, 12);
+    motor_feedback -> id       = can1_msg.receive_data[0];
+    motor_feedback -> position = unit2float(position, p_min, p_max, 16);
+    motor_feedback -> velocity = unit2float(velocity, v_min, v_max, 12);
+    motor_feedback -> torque   = unit2float(torque, t_min, t_max, 12);
 
     return 0;
 }
