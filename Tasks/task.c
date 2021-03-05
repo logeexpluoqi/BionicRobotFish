@@ -6,6 +6,7 @@
  */
 
 #include "task.h"
+#include "config.h"
 #include "time_slice.h"
 #include "system_run.h"
 #include "keyboard_task.h"
@@ -33,7 +34,8 @@ void task_1ms()
 
 void task_5ms()
 {
-    ak_motor_ctrl_task();
+    if(ak_motor_ctrl_task() == ERR)
+        msg_put_computer("Motor control task error! ", 26);
 }
 
 void task_10ms()

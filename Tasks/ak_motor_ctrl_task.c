@@ -12,7 +12,7 @@
 #include "delay.h"
 #include "oled_task.h"
 
-static AkMotorInfo motor_info;
+static AkMotorInfo motor_feedback;
 static AkMotorCtrlTypedef ak_motor_ctrl_data;
 static msgbox_akmotor_t* akmotor;
 static uint8_t ak_motor_upload_cache[62] = {0};
@@ -71,7 +71,7 @@ state_t ak_motor_ctrl_task()
                     ak_motor_ctrl_data.kp    = akmotor[i].kp;
                     ak_motor_ctrl_data.kd    = akmotor[i].kd;
 
-                    while(ak_motor_ctrl(&ak_motor_ctrl_data, &motor_info))
+                    while(ak_motor_ctrl(&ak_motor_ctrl_data, &motor_feedback))
                     {
                         err_cnt ++;
                         if(err_cnt == 3)
@@ -81,19 +81,19 @@ state_t ak_motor_ctrl_task()
                         }
                     }
                     
-                    akmotor[i].id_upload = motor_info.id;
-                    akmotor[i].p_upload  = motor_info.position;
-                    akmotor[i].v_upload  = motor_info.velocity;
-                    akmotor[i].t_upload  = motor_info.torque;
+                    akmotor[i].id_upload = motor_feedback.id;
+                    akmotor[i].p_upload  = motor_feedback.position;
+                    akmotor[i].v_upload  = motor_feedback.velocity;
+                    akmotor[i].t_upload  = motor_feedback.torque;
                     
-                    ak_motor_upload_cache[3 + i*7] = motor_info.id;
-                    msg_float_to_char(motor_info.position, chr);
+                    ak_motor_upload_cache[3 + i*7] = motor_feedback.id;
+                    msg_float_to_char(motor_feedback.position, chr);
                     ak_motor_upload_cache[4 + i*7] = chr[1];
                     ak_motor_upload_cache[5 + i*7] = chr[0];
-                    msg_float_to_char(motor_info.velocity, chr);
+                    msg_float_to_char(motor_feedback.velocity, chr);
                     ak_motor_upload_cache[6 + i*7] = chr[1];
                     ak_motor_upload_cache[7 + i*7] = chr[0];
-                    msg_float_to_char(motor_info.torque, chr);
+                    msg_float_to_char(motor_feedback.torque, chr);
                     ak_motor_upload_cache[8 + i*7] = chr[1];
                     ak_motor_upload_cache[9 + i*7] = chr[0];
                     break;
