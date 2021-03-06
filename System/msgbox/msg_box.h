@@ -15,6 +15,7 @@ enum MODE
     EX_MOTOR_MODE   = 2,
     SET_MOTOR_ZERO  = 3,
     CTRL_MOTOR      = 4,
+    GET_MOTOR_INFO  = 5,
 
     SYS_DEBUG       = 254,
     SYS_RESET       = 255

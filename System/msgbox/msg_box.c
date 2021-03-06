@@ -58,12 +58,6 @@ void msg_put_computer(uint8_t* msg, uint16_t msg_size)
     while(!usart1_get_dma_tx_status(USART_1));
 }
 
-void msg_put_akmotor_task(msgbox_akmotor_t** akmotor, uint8_t* mode)
-{
-    *akmotor = msgbox.akmotor;
-    *mode = msgbox.mode;
-}
-
 void msgbox_task_en(MsgboxTaskState state)
 {
     if(state == TASK_ENABLE)
@@ -97,6 +91,7 @@ void msg_distribute(uint8_t* msg)
                 msgbox.akmotor[i].exist  = 1;
                 msgbox.akmotor[i].id_dst = msg[3+i];
             }
+            msgbox_task_en(TASK_ENABLE);
             break;
         }
         case EX_MOTOR_MODE:
@@ -107,6 +102,7 @@ void msg_distribute(uint8_t* msg)
                 msgbox.akmotor[i].exist  = 1;
                 msgbox.akmotor[i].id_dst = msg[3+i];
             }
+            msgbox_task_en(TASK_ENABLE);
             break;
         }
         case SET_MOTOR_ZERO: 
@@ -117,6 +113,7 @@ void msg_distribute(uint8_t* msg)
                 msgbox.akmotor[i].exist  = 1;
                 msgbox.akmotor[i].id_dst = msg[3+i];
             }
+            msgbox_task_en(TASK_ENABLE);
             break;
         }
         case CTRL_MOTOR: 
@@ -132,7 +129,12 @@ void msg_distribute(uint8_t* msg)
                 msgbox.akmotor[i].kp     = msg_char_to_float(msg[10 + i*11], msg[11 + i*11]);
                 msgbox.akmotor[i].kd     = msg_char_to_float(msg[12 + i*11], msg[13 + i*11]);
             }
+            msgbox_task_en(TASK_ENABLE);
             break;
+        }
+        case GET_MOTOR_INFO:
+        {
+            
         }
         #if USING_SYS_DEB
          case SYS_DEBUG: sys_debug(msg) break;
@@ -140,8 +142,13 @@ void msg_distribute(uint8_t* msg)
         case SYS_RESET: sys_reset(); break;
         default: break;
         }
-        msgbox_task_en(TASK_ENABLE);
     }
     else
         msg_put_computer("Message error !", 15);
+}
+
+void msg_put_akmotor_task(msgbox_akmotor_t** akmotor, uint8_t* mode)
+{
+    *akmotor = msgbox.akmotor;
+    *mode    = msgbox.mode;
 }
