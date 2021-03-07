@@ -75,17 +75,6 @@ void can1_init()
     CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;
     CAN_FilterInitStructure.CAN_FilterActivation     = ENABLE;
     CAN_FilterInit(&CAN_FilterInitStructure);
-
-#if CAN1_RX0_INT_ENABLE
-
-    CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE); // fifo 0  msg append enable 
-
-    NVIC_InitStructure.NVIC_IRQChannel = CAN1_RX0_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1; 
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-#endif
 }
 
 uint8_t can_send_msg(CanMsgTypedef msg)
@@ -117,7 +106,7 @@ uint8_t can_send_msg(CanMsgTypedef msg)
     return 0;
 }
 
-uint8_t can_receive_msg(uint8_t *buf)
+uint8_t can_receive_msg(uint8_t *msg)
 {
     uint32_t i;
     CanRxMsg RxMessage;
@@ -128,18 +117,9 @@ uint8_t can_receive_msg(uint8_t *buf)
     CAN_Receive(CAN1, CAN_FIFO0, &RxMessage); // read receive data from fifo
     for (i = 0; i < RxMessage.DLC; i++)
     {
-        buf[i] = RxMessage.Data[i];
+        msg[i] = RxMessage.Data[i];
     }
+    CAN_FIFORelease(CAN1, CAN_FIFO0);
     return RxMessage.DLC;
 }
 
-#if CAN1_RX0_INT_ENABLE // enable can1 rx0 interrupt
-void CAN1_RX0_IRQHandler(void)
-{
-    CanRxMsg RxMessage;
-    int i = 0;
-    CAN_Receive(CAN1, 0, &RxMessage);
-    for (i = 0; i < 8; i++)
-        printf("rxbuf[%d]:%d\r\n", i, RxMessage.Data[i]);
-}
-#endif
