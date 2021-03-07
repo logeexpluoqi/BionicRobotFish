@@ -33,18 +33,16 @@ void can1_init()
     GPIO_InitTypeDef GPIO_InitStructure;
     CAN_InitTypeDef CAN_InitStructure;
     CAN_FilterInitTypeDef CAN_FilterInitStructure;
-#if CAN1_RX0_INT_ENABLE
-    NVIC_InitTypeDef NVIC_InitStructure;
-#endif
+
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE); 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE); 
 
     //初始化GPIO
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_12;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+    GPIO_InitStructure.GPIO_Pin     = GPIO_Pin_11 | GPIO_Pin_12;
+    GPIO_InitStructure.GPIO_Mode    = GPIO_Mode_AF;
+    GPIO_InitStructure.GPIO_OType   = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed   = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd    = GPIO_PuPd_UP;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource11, GPIO_AF_CAN1);
@@ -58,7 +56,7 @@ void can1_init()
     CAN_InitStructure.CAN_RFLM      = ENABLE;   // 报文不锁定,新的覆盖旧的
     CAN_InitStructure.CAN_TXFP      = DISABLE;  // 优先级由报文标识符决定
     CAN_InitStructure.CAN_Mode      = CAN_Mode_Normal;
-    CAN_InitStructure.CAN_SJW       = CAN_SJW_1tq;      // Tsjw = tsjw+1, CAN_SJW_1tq~CAN_SJW_4tq
+    CAN_InitStructure.CAN_SJW       = CAN_SJW_2tq;      // Tsjw = tsjw+1, CAN_SJW_1tq~CAN_SJW_4tq
     CAN_InitStructure.CAN_BS1       = CAN_BS1_7tq;      // Tbs1: CAN_BS1_1tq ~CAN_BS1_16tq
     CAN_InitStructure.CAN_BS2       = CAN_BS2_6tq;      // Tbs2: CAN_BS2_1tq ~	CAN_BS2_8tq
     CAN_InitStructure.CAN_Prescaler = 3;                // f_div = brp+1
@@ -110,16 +108,16 @@ uint8_t can_receive_msg(uint8_t *msg)
 {
     uint32_t i;
     CanRxMsg RxMessage;
-    if (CAN_MessagePending(CAN1, CAN_FIFO0) == 0)
+    if (CAN_MessagePending(CAN1, CAN_FIFO0) != 0)
     {
-        return 0; // if no data received, quit 
+        CAN_Receive(CAN1, CAN_FIFO0, &RxMessage); // read receive data from fifo
+        for (i = 0; i < RxMessage.DLC; i++)
+        {
+            msg[i] = RxMessage.Data[i];
+        }
+        return RxMessage.DLC;
     }
-    CAN_Receive(CAN1, CAN_FIFO0, &RxMessage); // read receive data from fifo
-    for (i = 0; i < RxMessage.DLC; i++)
-    {
-        msg[i] = RxMessage.Data[i];
-    }
-    CAN_FIFORelease(CAN1, CAN_FIFO0);
-    return RxMessage.DLC;
+    else
+        return 0;
 }
 
