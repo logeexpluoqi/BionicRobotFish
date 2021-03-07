@@ -47,10 +47,10 @@ typedef struct msgbox_akmotor
     float kd;
 
     /* upload motor control data */
-    uint8_t id_upload;
-    float p_upload;
-    float v_upload;
-    float t_upload;
+    uint8_t id_feedback;
+    float p_feedback;
+    float v_feedback;
+    float t_feedback;
 } msgbox_akmotor_t;
 
 typedef struct msgbox

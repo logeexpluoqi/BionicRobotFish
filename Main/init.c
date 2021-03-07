@@ -30,7 +30,7 @@ void sys_init()
     led_init();
 	keyboard_init();
     usart1_init(921600);
-    can_init();
+    can1_init();
     msgbox_init();
     time_slice_init();
     sys_disp_str(72, 7, "by luoqi", SMALL);

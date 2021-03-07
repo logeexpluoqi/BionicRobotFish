@@ -107,7 +107,7 @@ uint8_t ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_feedback
     while(ak_motor_info_receive(motor_feedback))
     {
         err_cnt ++;
-        if(err_cnt == 30)
+        if(err_cnt == 3)
         {
             state = 1;
             break;

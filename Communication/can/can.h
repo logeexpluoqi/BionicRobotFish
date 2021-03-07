@@ -9,15 +9,6 @@
 #define _CAN_H
 #include "config.h"
 
-typedef struct 
-{
-    uint8_t  tsjw;
-    uint8_t  tbs2;
-    uint8_t  tbs1;
-    uint16_t brp;
-    uint8_t  mode;
-} CanInitTypedef;
-
 typedef struct
 {
     uint8_t send_data[8];
@@ -29,8 +20,7 @@ typedef struct
     uint8_t rtr;      // remote request substitution
 } CanMsgTypedef;
 
-void can_init(void);
-uint8_t can1_mode_init(CanInitTypedef* can_init_data);
+void can1_init(void);
 uint8_t can_send_msg(CanMsgTypedef msg);
 uint8_t can_receive_msg(uint8_t *buf);
 
