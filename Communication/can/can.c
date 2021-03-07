@@ -13,20 +13,6 @@
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_gpio.h"
 
-
-void can_init()
-{
-    CanInitTypedef can1;
-    /* 1Mbps */
-    can1.tsjw = CAN_SJW_1tq;
-    can1.tbs2 = CAN_BS2_6tq;
-    can1.tbs1 = CAN_BS1_7tq;
-    can1.brp = 3;
-    can1.mode = CAN_Mode_Normal;
-	
-    can1_mode_init(&can1);
-}
-
 /* CAN initialize
  * tsjw: Resynchronize jump time unit. @ref CAN_synchronisation_jump_width;  
  *       Rage: CAN_SJW_1tq~ CAN_SJW_4tq;
@@ -42,7 +28,7 @@ void can_init()
  * 
  * return value: 0, initial is ok; 1: fault
  */
-uint8_t can1_mode_init(CanInitTypedef* can_init_data)
+void can1_init()
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     CAN_InitTypeDef CAN_InitStructure;
@@ -71,20 +57,20 @@ uint8_t can1_mode_init(CanInitTypedef* can_init_data)
     CAN_InitStructure.CAN_NART      = ENABLE;   // 禁止报文自动传送
     CAN_InitStructure.CAN_RFLM      = ENABLE;   // 报文不锁定,新的覆盖旧的
     CAN_InitStructure.CAN_TXFP      = DISABLE;  // 优先级由报文标识符决定
-    CAN_InitStructure.CAN_Mode      = can_init_data->mode;
-    CAN_InitStructure.CAN_SJW       = can_init_data->tsjw;      // Tsjw = tsjw+1, CAN_SJW_1tq~CAN_SJW_4tq
-    CAN_InitStructure.CAN_BS1       = can_init_data->tbs1;      // Tbs1: CAN_BS1_1tq ~CAN_BS1_16tq
-    CAN_InitStructure.CAN_BS2       = can_init_data->tbs2;      // Tbs2: CAN_BS2_1tq ~	CAN_BS2_8tq
-    CAN_InitStructure.CAN_Prescaler = can_init_data->brp; // f_div = brp+1
+    CAN_InitStructure.CAN_Mode      = CAN_Mode_Normal;
+    CAN_InitStructure.CAN_SJW       = CAN_SJW_1tq;      // Tsjw = tsjw+1, CAN_SJW_1tq~CAN_SJW_4tq
+    CAN_InitStructure.CAN_BS1       = CAN_BS1_7tq;      // Tbs1: CAN_BS1_1tq ~CAN_BS1_16tq
+    CAN_InitStructure.CAN_BS2       = CAN_BS2_6tq;      // Tbs2: CAN_BS2_1tq ~	CAN_BS2_8tq
+    CAN_InitStructure.CAN_Prescaler = 3;                // f_div = brp+1
     CAN_Init(CAN1, &CAN_InitStructure);
 
     /* Configure CAN filter */
     CAN_FilterInitStructure.CAN_FilterNumber         = 0; // filter 0
     CAN_FilterInitStructure.CAN_FilterMode           = CAN_FilterMode_IdMask;
     CAN_FilterInitStructure.CAN_FilterScale          = CAN_FilterScale_32bit; 
-    CAN_FilterInitStructure.CAN_FilterIdHigh         = 0x0000;               //32bit ID
+    CAN_FilterInitStructure.CAN_FilterIdHigh         = 0x0000;
     CAN_FilterInitStructure.CAN_FilterIdLow          = 0x0000;
-    CAN_FilterInitStructure.CAN_FilterMaskIdHigh     = 0x0000; //32bit MASK
+    CAN_FilterInitStructure.CAN_FilterMaskIdHigh     = 0x0000;
     CAN_FilterInitStructure.CAN_FilterMaskIdLow      = 0x0000;
     CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;
     CAN_FilterInitStructure.CAN_FilterActivation     = ENABLE;
@@ -100,7 +86,6 @@ uint8_t can1_mode_init(CanInitTypedef* can_init_data)
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 #endif
-    return 0;
 }
 
 uint8_t can_send_msg(CanMsgTypedef msg)
@@ -120,11 +105,11 @@ uint8_t can_send_msg(CanMsgTypedef msg)
     }
     mbox = CAN_Transmit(CAN1, &TxMessage);
     i = 0;
-    while ((CAN_TransmitStatus(CAN1, mbox) == CAN_TxStatus_Failed) && (i < 2500))
+    while ((CAN_TransmitStatus(CAN1, mbox) == CAN_TxStatus_Failed) && (i < 500))
     {
         i++; // wait for send finish
     }
-    if (i >= 2500)
+    if (i >= 500)
     {
         return 1;
     }
