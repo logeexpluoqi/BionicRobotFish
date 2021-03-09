@@ -44,6 +44,7 @@ state_t ak_motor_ctrl_task()
                 }
                 case EX_MOTOR_MODE: 
                 {
+                    ak_motor_upload_cache[3 + motor_num*2] = akmotor[motor_num].id_dst;
                     if(ak_motor_mode_set(akmotor[motor_num].id_dst, EX_AK_MOTOR_MODE) == 0)
                         ak_motor_upload_cache[4 + motor_num*2] = 1;
                     else
@@ -52,6 +53,7 @@ state_t ak_motor_ctrl_task()
                 }
                 case SET_MOTOR_ZERO: 
                 {
+                    ak_motor_upload_cache[3 + motor_num*2] = akmotor[motor_num].id_dst;
                     if(ak_motor_mode_set(akmotor[motor_num].id_dst, SET_AK_MOTOR_ZERO) == 0)
                         ak_motor_upload_cache[4 + motor_num*2] = 1;
                     else
@@ -91,7 +93,7 @@ state_t ak_motor_ctrl_task()
                 }
                 }
                 akmotor[motor_num].exist = 0;
-                motor_num  = motor_num + 1;
+                motor_num = motor_num + 1;
             }
         }
         msgbox_task_en(TASK_DISABLE);
