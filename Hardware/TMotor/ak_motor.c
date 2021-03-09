@@ -176,6 +176,8 @@ void ak_motor_data_encode(uint8_t* motor_data, uint32_t P, uint32_t V, uint32_t 
 
 uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd)
 {
+    uint8_t state;
+    uint8_t temp[8];
     can1_msg.std_id = id;
 
     switch(cmd)
@@ -190,6 +192,8 @@ uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfc;
+        state = can_send_msg(can1_msg);
+        can_receive_msg(temp);
         break;
     }
     case EX_AK_MOTOR_MODE:
@@ -202,6 +206,8 @@ uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfd;
+        state = can_send_msg(can1_msg);
+        can_receive_msg(temp);
         break;
     }
     case SET_AK_MOTOR_ZERO:
@@ -214,13 +220,15 @@ uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd)
         can1_msg.send_data[5] = 0xff;
         can1_msg.send_data[6] = 0xff;
         can1_msg.send_data[7] = 0xfe;
+        state = can_send_msg(can1_msg);
+        can_receive_msg(temp);
         break;
     }
     default:
         break;
     }
 
-    return can_send_msg(can1_msg);
+    return state;
 }
 
 float unit2float(uint32_t x, float x_min, float x_max, uint8_t bits)
