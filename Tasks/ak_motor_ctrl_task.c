@@ -10,7 +10,6 @@
 #include "msg_codec.h"
 #include "ak_motor.h"
 #include "delay.h"
-#include "oled_task.h"
 
 static msgbox_akmotor_t* akmotor;
 static uint8_t ak_motor_upload_cache[62] = {0};
@@ -30,7 +29,6 @@ state_t ak_motor_ctrl_task()
         {
             if(akmotor[i].exist == 1)
             {
-                delay_us(330); // this delay is necessary for CAN bus transmmit
                 switch(mode)
                 {
                 case EN_MOTOR_MODE: 
@@ -94,6 +92,7 @@ state_t ak_motor_ctrl_task()
                 }
                 akmotor[motor_num].exist = 0;
                 motor_num = motor_num + 1;
+                delay_us(330); // this delay is necessary for CAN bus transmmit
             }
         }
         msgbox_task_en(TASK_DISABLE);

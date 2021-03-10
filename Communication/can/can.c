@@ -78,43 +78,42 @@ void can1_init()
 uint8_t can_send_msg(CanMsgTypedef msg)
 {
     uint8_t mbox;
+    uint8_t state = 0;
     uint8_t i = 0;
     CanTxMsg TxMessage;
+
     TxMessage.StdId = msg.std_id; // standard ID identify 
     TxMessage.ExtId = msg.ext_id; // extend ID identify 
     TxMessage.IDE   = msg.ide;      // indentifier extension
     TxMessage.RTR   = msg.rtr;      // remote transmission request
     TxMessage.DLC   = msg.dlc;      // data length code
 
-    for (i = 0; i < msg.dlc; i++)
-    {
-        TxMessage.Data[i] = msg.send_data[i]; // send a frame
-    }
+    mem_cpy(msg.send_data, TxMessage.Data, 8);
     mbox = CAN_Transmit(CAN1, &TxMessage);
     i = 0;
-    while ((CAN_TransmitStatus(CAN1, mbox) == CAN_TxStatus_Failed) && (i < 500))
+    while ((CAN_TransmitStatus(CAN1, mbox) == CAN_TxStatus_Failed) && (i <= 50))
     {
         i++; // wait for send finish
     }
-    if (i >= 500)
-    {
-        return 1;
-    }
+    if (i >= 50)
+        state = 1;
+    else
+        state = 0;
 
-    return 0;
+    return state;
 }
 
 uint8_t can_receive_msg(uint8_t *msg)
 {
-    uint32_t i;
+    uint8_t rx_mbox = 0;
     CanRxMsg RxMessage;
-    if (CAN_MessagePending(CAN1, CAN_FIFO0) != 0)
+
+    rx_mbox = CAN_MessagePending(CAN1, CAN_FIFO0);
+    if (rx_mbox != 0)
     {
         CAN_Receive(CAN1, CAN_FIFO0, &RxMessage); // read receive data from fifo
-        for (i = 0; i < RxMessage.DLC; i++)
-        {
-            msg[i] = RxMessage.Data[i];
-        }
+        CAN_FIFORelease(CAN1, CAN_FIFO0);
+        mem_cpy(RxMessage.Data, msg, RxMessage.DLC);
         return RxMessage.DLC;
     }
     else
