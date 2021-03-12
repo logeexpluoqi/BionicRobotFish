@@ -2,12 +2,13 @@
  * @Author: luoqi 
  * @Date: 2021-02-17 20:28:45 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-02-23 20:04:13
+ * @Last Modified time: 2021-03-12 13:32:58
  */
 
 #include "msg_box.h"
 #include "usart.h"
 #include "msg_codec.h"
+#include "imu.h"
 
 #if USING_SYS_DEBUG
  #include "sys_debug.h"
@@ -86,6 +87,7 @@ void msg_distribute(uint8_t* msg)
         case EN_MOTOR_MODE:
         { 
             uint8_t akmotor_num = msg[2];
+            imu_start();
             for(i = 0; i < akmotor_num; i++)
             {
                 msgbox.akmotor[i].exist  = 1;
@@ -97,6 +99,7 @@ void msg_distribute(uint8_t* msg)
         case EX_MOTOR_MODE:
         { 
             uint8_t akmotor_num = msg[2];
+            imu_stop();
             for(i = 0; i < akmotor_num; i++)
             {
                 msgbox.akmotor[i].exist  = 1;

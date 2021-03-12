@@ -2,7 +2,7 @@
  * @Author: luoqi 
  * @Date: 2021-01-04 18:21:16 
  * @Last Modified by: luoqi
- * @Last Modified time: 2021-01-06 19:35:00
+ * @Last Modified time: 2021-03-12 13:27:55
  */
 /*
  * @Author: luoqi 
@@ -13,6 +13,7 @@
 
 #include "led.h"
 #include "stm32f4xx_gpio.h"
+#include "stm32f4xx_rcc.h"
 
 void led_init()
 {
