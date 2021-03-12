@@ -34,10 +34,10 @@ void imu_pin_init()
 
 void imu_start()
 {
-    GPIO_ResetBits(GPIOB, GPIO_Pin_15);
+    GPIO_SetBits(GPIOB, GPIO_Pin_15);
 }
 
 void imu_stop()
 {
-    GPIO_SetBits(GPIOB, GPIO_Pin_15);
+    GPIO_ResetBits(GPIOB, GPIO_Pin_15);
 }
