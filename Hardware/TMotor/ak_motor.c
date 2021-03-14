@@ -231,6 +231,54 @@ uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd)
     return state;
 }
 
+void ak_motor_get_state(uint8_t id, AkMotorInfo *motor_feedback)
+{
+    uint8_t temp[8];
+    uint8_t motor_type;
+    uint8_t len;
+    uint32_t position, velocity, torque;
+    float p_min, p_max;
+    float v_min, v_max;
+    float t_min, t_max;
+
+    can1_msg.send_data[0] = 0x00;
+    can1_msg.send_data[1] = 0x00;
+    can1_msg.send_data[2] = 0x00;
+    can1_msg.send_data[3] = 0x00;
+    can1_msg.send_data[4] = 0x00;
+    can1_msg.send_data[5] = 0x00;
+    can1_msg.send_data[6] = 0x00;
+    can1_msg.send_data[7] = 0x00;
+    can_send_msg(can1_msg);
+    can_receive_msg(temp);
+
+    motor_type = motor_type_detect(temp[0]);
+
+    if(motor_type == AK10_9)
+    {
+        p_min = AK10_9_P_MIN; p_max = AK10_9_P_MAX;
+        v_min = AK10_9_V_MIN; v_max = AK10_9_V_MAX;
+        t_min = AK10_9_T_MIN; t_max = AK10_9_T_MAX;
+    }
+    else if(motor_type == AK80_9)
+    {
+        p_min = AK80_9_P_MIN; p_max = AK80_9_P_MAX;
+        v_min = AK80_9_V_MIN; v_max = AK80_9_V_MAX;
+        t_min = AK80_9_T_MIN; t_max = AK80_9_T_MAX;
+    }
+
+    if(len != 0)
+    {
+        position = (can1_msg.receive_data[1] << 8) | can1_msg.receive_data[2];
+        velocity = (can1_msg.receive_data[3] << 4) | (can1_msg.receive_data[4] >> 4);
+        torque   = ((can1_msg.receive_data[4] & 0x0f) << 8) | can1_msg.receive_data[5];
+    }
+    motor_feedback -> id       = can1_msg.receive_data[0];
+    motor_feedback -> position = unit2float(position, p_min, p_max, 16);
+    motor_feedback -> velocity = unit2float(velocity, v_min, v_max, 12);
+    motor_feedback -> torque   = unit2float(torque, t_min, t_max, 12);
+}
+
 float unit2float(uint32_t x, float x_min, float x_max, uint8_t bits)
 {
     float span = x_max - x_min;

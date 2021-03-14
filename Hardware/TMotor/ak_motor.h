@@ -42,6 +42,7 @@ typedef struct
 
 
 uint8_t ak_motor_mode_set(uint8_t id, AkMotorCmd cmd);
+void ak_motor_get_state(uint8_t id, AkMotorInfo *motor_feedback);
 uint8_t ak_motor_ctrl(AkMotorCtrlTypedef *ctrl_data, AkMotorInfo *motor_feedback);
 
 #endif
